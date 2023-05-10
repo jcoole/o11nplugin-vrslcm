@@ -11,9 +11,9 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
  * This class is the basis for all objects in the system delivered by ObjectFactory.
- * 
+ * All objects will have the necessary connection, resource, and internal ID values needed for lookups in the plugin.
  * @author justin
- *
+ * @see ObjectFactory
  */
 public abstract class BaseLifecycleManagerObject {
 

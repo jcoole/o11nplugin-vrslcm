@@ -12,7 +12,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 	description = "CM Content", // shows up in the 'Types'
 	idAccessor = "getId()", // method in the class to use for specific lookup
 	image = "images/cm32.png", // relative path to image in inventory use
-	hidden = true
+	hidden = true // hides the type from API Explorer 'types' section.
 )
 public class ContentManagementFolder extends Folder {
 

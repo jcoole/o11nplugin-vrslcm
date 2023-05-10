@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import java.util.ArrayList;
@@ -25,7 +22,6 @@ import ch.dunes.vso.sdk.api.IPluginFactory;
  * @see String#toLowerCase() ConnectionPersister
  * @author justin
  */
-
 @VsoObject(description = "Management of vRSLCM Connections.", singleton = true)
 public class ConnectionManager {
 
@@ -39,6 +35,17 @@ public class ConnectionManager {
 
 	}
 
+	/**
+	 * This static method is required when VsoObject 'singleton' is specified as 'true'.
+	 * Failing to do so will create errors at runtime!
+	 * This method makes it possible to invoke the class statically in Orchestrator rather than instantiate it.
+	 * 
+	 * Example:
+	 * var myVar = vRSLCMConnectionManager.doSomething(someVar)
+	 * --instead of--
+	 * var myVar = new vRSLCMConnectionManager()
+	 * myVar.doSomething(someVar)
+	 */
 	// makes the type *directly* referenceable in scripts
     public static ConnectionManager createScriptingSingleton(IPluginFactory factory) {
         return ((AbstractSpringPluginFactory) factory).createScriptingObject(ConnectionManager.class);

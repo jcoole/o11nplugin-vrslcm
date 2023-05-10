@@ -9,15 +9,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.vmware.o11n.plugin.sdk.spring.AbstractSpringPluginAdaptor;
 
-// Step 1 - The Plugin Adaptor is what is loaded during server startup.
+/**
+ * The PluginAdaptor is the starting point of loading the plugin at server startup and subsequently the ApplicationContext used by Spring.
+ * @author justin
+ *
+ */
 public final class vRSLCMPluginAdaptor extends AbstractSpringPluginAdaptor {
-	// Enable Logging - not normally in source file.
+	
+	// Enable Logging - not normally in source file when generated from the VMware archetype.
 	private static final Logger log = LoggerFactory.getLogger(vRSLCMPluginAdaptor.class);
 	
-	// This file is not created as part of the archetype, so you have to make it yourself.
-	// Reference Document (page 8-9) : https://communities.vmware.com/wbsdv95928/attachments/wbsdv95928/4527/14/1/vCO%20Plug-in%20Dev%20Tools%20-%201.0.0%20Documentation.pdf
+	// This file can be used to configure your Spring beans at startup, and is an optional parameter to the 'createApplicationContext()' method.
+	// It seems easier to use annotations such as @Component, etc in the classes directly.
+	// A Reference Document (page 8-9) : https://communities.vmware.com/wbsdv95928/attachments/wbsdv95928/4527/14/1/vCO%20Plug-in%20Dev%20Tools%20-%201.0.0%20Documentation.pdf
     private static final String DEFAULT_CONFIG = "com/sprockitconsulting/vrslcm/plugin/pluginConfig.xml";
 
+/*
     // This value is obvious, but unused here. The ModuleBuilder class actually does the work.
     public static final String PLUGIN_NAME = "vRealize Suite Lifecycle Manager";
 
@@ -26,7 +33,7 @@ public final class vRSLCMPluginAdaptor extends AbstractSpringPluginAdaptor {
     // Update it to point to your root object (such as, "Connection" in most other docs)
     static final String ROOT = "ConnectionFinder";
     static final String REL_ROOTS = "roots";
-
+*/
     /**
      * Creates the plugin Spring ApplicationContext during server startup.
      * The ApplicationContext is used to hold singleton and prototype "beans" ie Classes that can be injected throughout the framework.

@@ -17,24 +17,25 @@ import ch.dunes.vso.sdk.endpoints.IEndpointConfiguration;
 import ch.dunes.vso.sdk.endpoints.IEndpointConfigurationService;
 
 /**
- * ConnectionPersister is used to perform CRUD operations on vRSLCM Connections stored in the vRO Endpoint Configuration Service.
+ * ConnectionPersister is used to perform CRUD operations on Connections stored in the Orchestrator EndpointConfigurationService.
  * It also performs some validations, such as ensuring ID exists, there aren't duplicate endpoints, etc.
- * @author justin
- * @linkplain Plug-In SDK Guide for vRealize Orchestrator
+ * This is mostly taken from available VMware docs but with additional info and context.
+ * @author justin/VMware SDK
+ * @linkplain Plug-In SDK Guide for Orchestrator
  */
 
 @Component
 public class ConnectionPersister implements IEndpointPersister {
 
 	// Injects the service needed to store Connections in the database.
-	// The Connection is turned into a vRO ResourceElement you can review yourself.
+	// The Connection is turned into a Orchestrator ResourceElement you can review yourself.
 	@Autowired
 	private IEndpointConfigurationService endpointConfigurationService;
 	
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(ConnectionPersister.class);
 
-	// Setup Event Listeners
+	// Setup Event Listeners - any class implementing the interface can be added to this collection.
 	private final Collection<IConfigurationChangeListener> listeners;
 	
 	public ConnectionPersister() {
@@ -45,7 +46,7 @@ public class ConnectionPersister implements IEndpointPersister {
 	/**
 	 * Interface method from IEndpointPersister
 	 * 
-	 * This method returns all vRSLCM connections inside of Orchestrator and converts them to a ConnectionInfo object.
+	 * This method returns all LCM connections inside of Orchestrator and converts them to a ConnectionInfo object.
 	 * 
 	 * @return List of ConnectionInfo objects.
 	 */
@@ -75,7 +76,7 @@ public class ConnectionPersister implements IEndpointPersister {
 	/**
 	 * Interface method from IEndpointPersister
 	 * 
-	 * This method retrieves the specified vRSLCM ConnectionInfo by its unique ID in Orchestrator.
+	 * This method retrieves the specified LCM ConnectionInfo by its unique ID in Orchestrator.
 	 * @param id The Connection ID.
 	 *
 	 * @return The ConnectionInfo object.
@@ -98,9 +99,9 @@ public class ConnectionPersister implements IEndpointPersister {
 	}
 
 	/**
-	 * This method takes an IEndpointConfiguration from vRO and converts it into a vRSLCM ConnectionInfo object.
+	 * This method takes an IEndpointConfiguration from Orchestrator and converts it into a LCM ConnectionInfo object.
 	 * @param config The Endpoint Configuration object
-	 * @return The vRSLCM ConnectionInfo object
+	 * @return The LCM ConnectionInfo object
 	 */
 	private ConnectionInfo getConnectionInfo(IEndpointConfiguration config) {
 		ConnectionInfo info = null;
@@ -126,9 +127,9 @@ public class ConnectionPersister implements IEndpointPersister {
 
 
 	/**
-	 * This method adds vRSLCM ConnectionInfo to an IEndpointConfiguration object that will be then stored inside of vRO.
+	 * This method adds LCM ConnectionInfo to an IEndpointConfiguration object that will be then stored inside of Orchestrator.
 	 * @param config The Endpoint Configuration object
-	 * @param info The vRSLCM ConnectionInfo object
+	 * @param info The LCM ConnectionInfo object
 	 * @see String#toLowerCase() save
 	 */
 	private void addConnectionInfoToConfig(IEndpointConfiguration config, ConnectionInfo info) {
@@ -172,11 +173,15 @@ public class ConnectionPersister implements IEndpointPersister {
 		if(info.getId() == null || info.getId() == "") {
 			throw new NullPointerException("ConnectionInfo ID cannot be null or empty!");
 		}
+		
+		// Ensure no duplicate named entries.
 		validateConnectionName(info);
+		
 		try {
 			// Check the endpointConfiguration for a Connection with an existing ID.
 			// If it exists, it's an update operation, otherwise it is a new one and our process must create the unique ID value.
 			IEndpointConfiguration endpointConfiguration = endpointConfigurationService.getEndpointConfiguration(info.getId().toString());
+			
 			if (endpointConfiguration == null) {
 				// Create a new IEndpointConfiguration with the specific ID.
  				endpointConfiguration = endpointConfigurationService.newEndpointConfiguration(info.getId().toString());
@@ -202,7 +207,6 @@ public class ConnectionPersister implements IEndpointPersister {
 	 * This method will delete the specified Connection from vRO.
 	 * @param info The Connection Info, containing the ID to delete.
 	 */
-
 	@Override
 	public void delete(ConnectionInfo info) {
 		try {
@@ -251,7 +255,9 @@ public class ConnectionPersister implements IEndpointPersister {
 	}
 
 
-	// Load the configuration of the plugins' connections, and fires an event to anything listening.
+	/**
+	 * Load the configuration of the plugins' connections, and fires an event to anything listening.
+	 */
 	@Override
 	public void load() {
 		List<ConnectionInfo> findAll = findAll();
@@ -261,7 +267,7 @@ public class ConnectionPersister implements IEndpointPersister {
 		}
 	}
 
-	/*
+	/**
 	 * Attach a configuration listener.
 	 */
 	@Override 
@@ -269,7 +275,7 @@ public class ConnectionPersister implements IEndpointPersister {
 		listeners.add(listener);
 	}
 
-	/*
+	/**
 	 * A helper method which iterates all event subscribers and fires the update notification for the provided connection info.
 	 */
 	private void fireConnectionUpdated(ConnectionInfo connectionInfo) {
@@ -278,7 +284,7 @@ public class ConnectionPersister implements IEndpointPersister {
 		}
 	}
 
-	/*
+	/**
 	 * A helper method which iterates all event subscribers and fires the delete notification for the provided connection info.
 	 */
 	private void fireConnectionRemoved(ConnectionInfo connectionInfo) {

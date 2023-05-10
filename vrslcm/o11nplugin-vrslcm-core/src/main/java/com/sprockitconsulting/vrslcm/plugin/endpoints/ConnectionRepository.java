@@ -19,7 +19,8 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
 
 /**
  * Connection Repository is used as a local cache of the plugin for live connections.
- * It implements the ConfigurationChangeListener so that any changes made to configurations are passed through here.
+ * It implements the IConfigurationChangeListener so that any changes made to configurations are passed through here.
+ * In addition it is initialized as a Spring singleton bean at startup, and it is available for auto-wiring to any concrete class.
  * @author justin
  */
 
@@ -33,7 +34,8 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	private ConnectionPersister persister;
 	
 	/*
-	 * ApplicationContext is injected here so that the Repository can create Connection Beans for other classes to use.
+	 * ApplicationContext is injected here so that the Repository can create Connection Beans (with constructor arguments) for other classes to use.
+	 * These Connection beans are stored in the 'connections' map as they are created.
 	 */
 	@Autowired
 	private ApplicationContext context;
@@ -94,7 +96,7 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	 * Implementing this interface gives you the ability to perform changes to Beans *after* startup and *before* they are provided for usage.
 	 * In our case, we are doing the following :
 	 * 		- Attaching this class to the change listener in ConnectionPersister, so we can monitor for updates and respond to them.
-	 * 		- Then, tell the ConnectionPersister to load all Connections from the Orchestrator DB
+	 * 		- Then, tell the ConnectionPersister to load all Connections from the Orchestrator EndpointConfigurationService.
 	 */
 	@Override 
 	public void afterPropertiesSet() throws Exception {
@@ -117,7 +119,8 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	}
 	
 	/**
-	 * Creates a factory with the connectionID
+	 * Creates an ObjectFactory for the particular Connection.
+	 * Similar to 'createConnection' this is used to create a prototype scoped bean with a constructor argument.
 	 */
 	private ObjectFactory createObjectFactory(Connection connection) {
 		ObjectFactory ofb = (ObjectFactory) context.getBean("objectFactory", connection);
@@ -129,9 +132,11 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	/**
 	 * Interface method from ConfigurationChangeListener
 	 * 
-	 * Called whenever a new vRSLCM Connection is added or updated.
+	 * Called whenever a new Connection is added or updated.
 	 * 
 	 * In particular, this method will place the newly updated Connection into the 'connections' map, which can be accessed by other classes elsewhere.
+	 * 
+	 * In addition, this will handle the ObjectFactory in the same way.
 	 * 
 	 * @param info The ConnectionInfo object sent by the ConfigurationChangeListener.
 	 */

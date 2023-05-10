@@ -37,12 +37,16 @@ public class ConnectionInfo {
 		this.id = UUID.randomUUID().toString();
 	}
 
-	// This constructor is used during validation
+	/** 
+	 * This constructor is used during validation.
+	 */
 	public ConnectionInfo(String id) {
 		this.id = id;
 	}
 
-	// This constructor is used during the ConnectionPersister getConnectionInfo() call to make it immutable (hence the 'final').
+	/**
+	 * This constructor is used during the ConnectionPersister getConnectionInfo() call to make it immutable (hence the 'final').
+	 */
 	public ConnectionInfo(final ConnectionInfo config) {
 		this.id = config.id;
 		this.name = config.name;

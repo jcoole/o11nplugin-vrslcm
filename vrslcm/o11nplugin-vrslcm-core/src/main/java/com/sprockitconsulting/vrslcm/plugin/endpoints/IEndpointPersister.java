@@ -8,7 +8,9 @@ import java.util.List;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
 
 /**
- * @author justin
+ * Interface based on the available public VMware docs and guides.
+ * This interface is implemented by ConnectionPersister to manage Connections to/from Orchestrator's EndpointConfiguration service.
+ * @author VMware SDK
  *
  */
 public interface IEndpointPersister {
