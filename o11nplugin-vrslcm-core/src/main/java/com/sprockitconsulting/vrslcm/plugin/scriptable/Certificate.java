@@ -27,13 +27,14 @@ public class Certificate extends BaseLifecycleManagerObject {
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(Certificate.class);
 	
+	private String name;
 	private String alias;
 	private String algorithm;
 	private String subject;
 	private String issuer;
 	private String sha1;
 	private String sha256;
-	private String keyLength;
+	private int keyLength;
 	private String sans;
 	private String expirationDate;
 	private String issueDate;
@@ -47,6 +48,11 @@ public class Certificate extends BaseLifecycleManagerObject {
 	}
 	
 	// Getters
+
+	@VsoProperty(description = "An alias...for the Alias(!) of the Certificate.")
+	public String getName() {
+		return name;
+	}
 
 	@VsoProperty(description = "The Alias aka Friendly Name of the Certificate.")
 	public String getAlias() {
@@ -73,7 +79,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 		return sha256;
 	}
 	@VsoProperty(description = "The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.")
-	public String getKeyLength() {
+	public int getKeyLength() {
 		return keyLength;
 	}
 	@VsoProperty(description = "The Subject Alternative Name(s) in the Certificate.")
@@ -115,6 +121,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 	@JsonProperty("alias")
 	public void setAlias(String alias) {
 		this.alias = alias;
+		this.name = alias;
 	}
 	@JsonProperty("algorithm")
 	public void setAlgorithm(String algorithm) {
@@ -156,7 +163,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 		this.sha256 = sha256;
 	}
 
-	public void setKeyLength(String keyLength) {
+	public void setKeyLength(int keyLength) {
 		this.keyLength = keyLength;
 	}
 
@@ -188,7 +195,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 	 */
 	@JsonProperty("certInfo") 
 	private void getCertInfo(Map<String, Object> certInfo) {
-		this.keyLength = (String)certInfo.get("keyLength");
+		this.keyLength = (int)certInfo.get("keyLength");
 		this.sans = (String)certInfo.get("san");
 		this.sha256 = (String)certInfo.get("sha256");
 	}

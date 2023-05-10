@@ -260,6 +260,7 @@ public class ObjectFactory {
 	public Certificate[] getAllCertificates() {
 		// First, get the data back as a string
 		String allCertsBody = doApiRequest("GET", APIConstants.URI_LOCKER_CERTIFICATES, "{}", String.class);
+		log.debug("Certificates API response : "+allCertsBody);
 		// Read the body as a tree, and extract the certificates nested object.
 		JsonNode allCertsObject = null;
 		try {
