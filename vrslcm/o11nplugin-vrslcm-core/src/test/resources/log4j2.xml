@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout pattern="%-5p %c{1} - %m%n" />
+		</Console>
+	</Appenders>
+
+	<Loggers>
+		<Logger additivity="true" name="ch.dunes" level="DEBUG" />
+		<Logger additivity="true" name="com.vmware" level="DEBUG" />
+		<Logger additivity="true" name="com.sprockitconsulting.vrslcm.plugin"
+			level="DEBUG" />
+
+		<Root level="INFO">
+			<AppenderRef ref="CONSOLE" />
+		</Root>
+	</Loggers>
+</Configuration>

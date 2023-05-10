@@ -1,0 +1,50 @@
+vRealize Suite Lifecycle Manager plugin for vRealize Orchestrator
+
+(C) 2023 Sprockit Holdings, LLC.
+This plugin or code repository is a Sprockit Holdings, LLC Product, licensed under GPL 3.
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+
+See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with this program. 
+If not, see <https://www.gnu.org/licenses/>.
+
+It includes and references other open source software packages, whose copyright statements and licenses are below.
+The software/plugin may not use all of the packages referred to below, and may only use portions of a particular package.
+
+======
+TABLE OF CONTENTS
+======
+
+Section 1. Components released under [Apache License, V2.0]
+
+
+====== Section 1 - Components released under [Apache License, V2.0] ======
+
+The following components are included and distributed with this product under the Apache 2.0 License:
+
+	Jackson Core
+	
+	> jackson-core-2.13.3
+	> jackson-databind-2.13.3
+	> jackson-annotations-2.13.3
+
+	Square OkHttp and OkIo - Copyright 2019 Square, Inc.
+	> okhttp-4.10.0
+    > okio-jvm:3.0.0
+    
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
