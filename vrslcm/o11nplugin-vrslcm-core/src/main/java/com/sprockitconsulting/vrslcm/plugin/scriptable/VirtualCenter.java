@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import org.slf4j.Logger;
@@ -14,8 +11,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 /**
+ * Represents a vCenter instance in a Datacenter in LCM.
  * @author justin
- *
  */
 @JsonIgnoreProperties({"vCDataCenters", "templateCustomSpecs", "contentLibraries"})
 @VsoObject(description = "Represents a vCenter Server in vRSLCM.")

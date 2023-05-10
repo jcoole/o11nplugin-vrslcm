@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import org.slf4j.Logger;
@@ -40,7 +37,7 @@ public abstract class Folder extends BaseLifecycleManagerObject {
 	private static final Logger log = LoggerFactory.getLogger(Folder.class);
 
 	public String name; // This value will appear in the vRO Inventory view when the folder shows up.
-	public String id; // This ID should be the <ConnectionID>/Datacenters as a string to preserve uniqueness when instantiated
+	public String id; // This ID should be in the form of "Datacenters@[ConnectionId] as a string to preserve uniqueness when instantiated
 
 	public Folder() {
 		

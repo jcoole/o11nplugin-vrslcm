@@ -12,11 +12,10 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
+ * Represents an Environment in LCM.
  * @author justin
- *
  */
-
-// TODO: Revisit this list, may be better to build up the list than make exceptions.
+// TODO: Revisit this ignore list, may be better to build up the list than make exceptions.
 @JsonIgnoreProperties({"logHistory","infrastructure","products","metaData","transactionId","state","environmentData","dataCenterVmid","dataCenterName"})
 @VsoObject(description = "Represents a vRSLCM Environment, containing Products and their Nodes/Servers.")
 //Creating the VsoFinder exposes this in the 'Types' section of API Explorer.
@@ -38,7 +37,7 @@ public class Environment extends BaseLifecycleManagerObject {
 	public String tenant;
 
 	public Environment() {
-		
+		super();
 	}
 	
 	@VsoProperty(description = "Name of the Environment")

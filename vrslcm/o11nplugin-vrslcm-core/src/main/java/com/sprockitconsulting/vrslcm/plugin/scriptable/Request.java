@@ -12,7 +12,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
- * Represents a Request object in vRSLCM.
+ * Represents a Request object in LCM.
  * @author justin
  */
 @JsonIgnoreProperties(value = {"lastUpdatedOnDateTime"} )

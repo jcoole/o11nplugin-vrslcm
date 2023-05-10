@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import java.util.ArrayList;

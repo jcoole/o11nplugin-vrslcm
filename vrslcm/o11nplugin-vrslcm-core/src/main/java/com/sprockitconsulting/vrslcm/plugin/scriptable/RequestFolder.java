@@ -7,8 +7,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 
 /**
+ * Represents the Requests content in the Inventory view.
  * @author justin
- *
  */
 @VsoObject(description = "Folder containing vRSLCM Requests in the Inventory Tab.", create = false)
 @VsoFinder(

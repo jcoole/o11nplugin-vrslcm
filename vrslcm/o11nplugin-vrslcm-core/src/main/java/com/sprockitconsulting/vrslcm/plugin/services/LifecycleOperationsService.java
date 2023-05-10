@@ -22,9 +22,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 
 /**
  * This class is a front-end used by the Connection object in Orchestrator as a means to communicate with the core ObjectFactory.
- * The Connection object is passed down so that the ObjectFactory can utilize it.
+ * When initialized by the Connection class, the Connection ID is used to to also get the ObjectFactory instance.
  * @author justin
- *
  */
 @VsoObject(description = "Enables access to Lifecycle Operations specific methods for the server connection.")
 public class LifecycleOperationsService extends AbstractService {

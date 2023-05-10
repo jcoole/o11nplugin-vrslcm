@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
-
+/**
+ * Represents the Locker content in the Inventory view.
+ * @author justin
+ */
 @VsoObject(description = "Locker Content", create = false)
 @VsoFinder(
 	name = "LockerFolder", // Type name!!! This value actually translates to 'type' in VSO.XML!!

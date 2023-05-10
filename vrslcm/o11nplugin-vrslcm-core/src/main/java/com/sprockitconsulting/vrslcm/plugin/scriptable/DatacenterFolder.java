@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import org.slf4j.Logger;
@@ -10,8 +7,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 
 /**
+ * Folder used in the Inventory view to hold Datacenters.
  * @author justin
- *
  */
 @VsoObject(description = "Folder containing vRSLCM Datacenters in the Inventory Tab.", create = false)
 @VsoFinder(
@@ -24,9 +21,7 @@ public class DatacenterFolder extends Folder {
 
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(DatacenterFolder.class);
-	/**
-	 * @param connectionId The Connection ID associated to the folder.
-	 */
+
 	public DatacenterFolder(String connectionId) {
 		super(); // call the Folder constructor
 		this.name = "Datacenters";

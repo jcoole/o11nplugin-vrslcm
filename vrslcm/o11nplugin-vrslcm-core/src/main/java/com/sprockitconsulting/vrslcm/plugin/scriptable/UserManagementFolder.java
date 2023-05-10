@@ -25,7 +25,7 @@ public class UserManagementFolder extends Folder {
 	public UserManagementFolder(String connectionId) {
 		super();
 		this.name = "User Management";
-		this.id = this.name.trim()+"@"+connectionId;
+		this.id = "UserManagement@"+connectionId;
 		log.debug("Constructor initialized successfully");
 	}
 }

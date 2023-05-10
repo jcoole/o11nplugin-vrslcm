@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 
+/**
+ * Represents the Lifecycle Operations content in the Inventory view.
+ * @author justin
+ */
 @VsoObject(description = "Lifecycle Operations Content", create = false)
 @VsoFinder(
 	name = "LifecycleOperationsFolder", // Type name!!! This value actually translates to 'type' in VSO.XML!!
