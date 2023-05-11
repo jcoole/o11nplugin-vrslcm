@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import com.sprockitconsulting.vrslcm.plugin.APIConstants;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateInfo;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Credential;
@@ -260,7 +261,6 @@ public class ObjectFactory {
 	public Certificate[] getAllCertificates() {
 		// First, get the data back as a string
 		String allCertsBody = doApiRequest("GET", APIConstants.URI_LOCKER_CERTIFICATES, "{}", String.class);
-		log.debug("Certificates API response : "+allCertsBody);
 		// Read the body as a tree, and extract the certificates nested object.
 		JsonNode allCertsObject = null;
 		try {
@@ -316,17 +316,79 @@ public class ObjectFactory {
 		return cert;
 	}
 	
-
+	/**
+	 * Locker - Get All Credentials
+	 * Of note - this is a paginated list, and the actual array of Credentials is in the nested object 'passwords'.
+	 * So, some minor massaging of the data is required once returned from the API to convert it properly.
+	 * @return Array of Credentials
+	 * @throws IOException 
+	 */
 	public Credential[] getAllCredentials() {
-		// TODO Auto-generated method stub
-		return null;
+		// First, get the data back as a string
+		String allCredsBody = doApiRequest("GET", APIConstants.URI_LOCKER_PASSWORDS, "{}", String.class);
+		// Read the body as a tree, and extract the certificates nested object.
+		JsonNode allCredsObject = null;
+		try {
+			allCredsObject = vroObjectMapper.readTree(allCredsBody).path("passwords");
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// Convert to Credentials array, and proceed
+		Credential[] creds = null;
+		try {
+			creds = vroObjectMapper.readerFor(Credential[].class).readValue(allCredsObject);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assignConnectionIdToList(creds, connection.getId());
+		return creds;
+	}
+	
+	/**
+	 * Locker - Get a Credential by its ID value.
+	 * @param id The ID to search on
+	 * @return Credential
+	 */
+	public Credential getCredentialByNameOrId(String aliasOrId) {
+		// Check input
+		if(aliasOrId.isBlank()) {
+			throw new RuntimeException("You must specify a value to search for during Credential lookup!");
+		}
+		Credential cred = doApiRequest("GET", APIConstants.URI_LOCKER_PASSWORDS+aliasOrId, "{}", Credential.class);
+		assignConnectionIdToObject(cred, connection.getId());
+		return cred;
 	}
 
-	public Credential getCredentialByNameOrId(String nameOrId) {
-		// TODO Auto-generated method stub
+	/**
+	 * Locker - Create Certificate
+	 * Creates a Locker-signed SSL certificate with the given information.
+	 * @param certificateInfo Information for the SSL certificate request.
+	 */
+	public Certificate createCertificate(CertificateInfo certificateInfo) {
 		return null;
 	}
-
+	
+	/**
+	 * Locker - Creates a Certificate Signing request with the given information.
+	 * Once signed, user should invoke the importSignedCertificate() method.
+	 * @param certificateInfo Information for the SSL certificate request.
+	 * @return Base64 encoded CSR
+	 */
+	public String createCertificateRequest(CertificateInfo certificateInfo) {
+		return null;
+	}
+	
+	/**
+	 * Locker - Imports a signed SSL certificate, chain, and private key to the server.
+	 */
+	public Certificate importSignedCertificate(String name, String passphrase, String certificateChain, String privateKey) {
+		return null;
+	}
 
 	/**
 	 * This is the core method that performs the exchange of requests and responses for objects in the LCM API.
@@ -342,11 +404,6 @@ public class ObjectFactory {
 	public <R, T> T doApiRequest(String method, String urlTemplate, R body, Class<T> responseType) {
 		log.debug("doApiRequest("+method+", "+urlTemplate+", "+body+") starting, using connection ["+connection.toString()+"]");
 		
-		try {
-			log.debug("vroRestTemplate : "+vroRestTemplate.toString()+", vroObjectMapper : "+vroObjectMapper.toString());
-		} catch (RuntimeException e) {
-			log.warn("Issue with template or mapper");
-		}
 		// Add the headers to the request entity
 		// TODO: Move the token/header logic to separate method/class based on token type
 		HttpHeaders headers = new HttpHeaders();

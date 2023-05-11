@@ -16,6 +16,7 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateFolder;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ContentManagementFolder;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.CredentialFolder;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Credential;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.DatacenterFolder;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
@@ -91,6 +92,10 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 	    	
 	    	if(ref.isOfType("Certificate")) {
 	    		return objectFactory.getCertificateById(resourceId);
+	    	}
+	    	
+	    	if(ref.isOfType("Credential")) {
+	    		return objectFactory.getCredentialByNameOrId(resourceId);
 	    	}
         }
         return null;
@@ -344,6 +349,25 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 					cert.setResourceId(UUID.randomUUID().toString());
 					certs.add(cert);
 					return certs;
+				}
+        	}
+        	
+        	// Parent Type: CredentialFolder -> Relation: Credentials - defined in ModuleBuilder class.
+        	if(parent.isOfType("CredentialFolder") && relationName.equals("Credentials")) {
+        		log.debug("findChildrenInRelation - Creating CERTS with Reference ID ["+connectionId+"]"); 
+        		List<Credential> creds = new ArrayList<Credential>();
+        		
+        		// Lookup requests in the ObjectFactory.
+        		try {
+        			creds = Arrays.asList(objectFactory.getAllCredentials());
+        			return creds;
+        		} catch (RuntimeException e) {
+					// In case of an issue, return an Error type for the UI experience
+        			Credential cred = new Credential();
+					cred.setAlias("Credential Lookup Error");
+					cred.setResourceId(UUID.randomUUID().toString());
+					creds.add(cred);
+					return creds;
 				}
         	}
         }

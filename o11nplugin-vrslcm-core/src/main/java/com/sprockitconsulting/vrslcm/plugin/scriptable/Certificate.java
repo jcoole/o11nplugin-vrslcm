@@ -20,7 +20,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 	name = "Certificate", // Type name!!! This value actually translates to 'type' in VSO.XML!!
 	description = "A LCM Certificate, either self-signed or signed by a trusted CA.", // shows up in the 'Types'
 	idAccessor = "getInternalId()", // method in the class to use for specific lookup
-	image = "images/certificate.png" // relative path to image in inventory use
+	image = "images/certificate.png", // relative path to image in inventory use
+	properties = {}
 )
 public class Certificate extends BaseLifecycleManagerObject {
 
@@ -78,6 +79,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 	public String getSha256() {
 		return sha256;
 	}
+	//TODO: the finder shows a '0' for this for some reason, even though the logs show the proper value
 	@VsoProperty(description = "The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.")
 	public int getKeyLength() {
 		return keyLength;
@@ -198,6 +200,14 @@ public class Certificate extends BaseLifecycleManagerObject {
 		this.keyLength = (int)certInfo.get("keyLength");
 		this.sans = (String)certInfo.get("san");
 		this.sha256 = (String)certInfo.get("sha256");
+	}
+
+	@Override
+	public String toString() {
+		return String.format(
+				"Certificate [name=%s, alias=%s, algorithm=%s, subject=%s, issuer=%s, sha1=%s, sha256=%s, keyLength=%s, sans=%s, expirationDate=%s, issueDate=%s, certChain=%s, leafCert=%s, isReferenced=%s, isHealthy=%s, internalId=%s]",
+				name, alias, algorithm, subject, issuer, sha1, sha256, keyLength, sans, expirationDate, issueDate,
+				certChain, leafCert, isReferenced, isHealthy, internalId);
 	}
 	
 }
