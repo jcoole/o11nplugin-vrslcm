@@ -1,6 +1,7 @@
 package com.sprockitconsulting.vrslcm.plugin.component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import com.sprockitconsulting.vrslcm.plugin.APIConstants;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateInfo;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateImport;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Credential;
@@ -368,28 +370,56 @@ public class ObjectFactory {
 	 * Locker - Create Certificate
 	 * Creates a Locker-signed SSL certificate with the given information.
 	 * @param certificateInfo Information for the SSL certificate request.
+	 * @throws JsonProcessingException 
 	 */
-	public Certificate createCertificate(CertificateInfo certificateInfo) {
-		return null;
+	public Certificate createCertificate(CertificateInfo certificateInfo) throws JsonProcessingException {
+		String body = vroObjectMapper.writeValueAsString(certificateInfo);
+		Certificate cert = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES, body, Certificate.class);
+		assignConnectionIdToObject(cert, connection.getId());
+		return cert;
 	}
 	
 	/**
 	 * Locker - Creates a Certificate Signing request with the given information.
 	 * Once signed, user should invoke the importSignedCertificate() method.
+	 * Initially since this comes back as an attachment, it is a byte[] array - converting to string happens after
 	 * @param certificateInfo Information for the SSL certificate request.
 	 * @return Base64 encoded CSR
+	 * @throws JsonProcessingException 
 	 */
-	public String createCertificateRequest(CertificateInfo certificateInfo) {
-		return null;
+	public byte[] createCertificateRequest(CertificateInfo certificateInfo) throws JsonProcessingException {
+		String body = vroObjectMapper.writeValueAsString(certificateInfo);
+		byte[] csr = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES+"csr", body, byte[].class);
+		log.debug("CSR as bytes : "+csr);
+		return csr;
 	}
 	
 	/**
 	 * Locker - Imports a signed SSL certificate, chain, and private key to the server.
+	 * @throws JsonProcessingException 
 	 */
-	public Certificate importSignedCertificate(String name, String passphrase, String certificateChain, String privateKey) {
-		return null;
+	public Certificate importSignedCertificate(String name, String passphrase, String certificateChain, String privateKey) throws JsonProcessingException {
+		CertificateImport importData = new CertificateImport(name, certificateChain, passphrase, privateKey);
+		// Convert to JSON String for request
+		String importDataBody = vroObjectMapper.writeValueAsString(importData);
+		Certificate cert = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES+"import", importDataBody, Certificate.class);
+		assignConnectionIdToObject(cert, connection.getId());
+		return cert;
 	}
 
+	/**
+	 * Locker - Deletes a Certificate from the store.
+	 * The certificate must be unreferenced, otherwise the request will fail.
+	 */
+	public String deleteCertificate(Certificate cert) {
+		// Test for reference boolean.
+		if(cert.isReferenced()) {
+			throw new RuntimeException("The certificate is still in use by one or more products. Please try either removing the related product, or replacing the certificate with another one before trying this operation.");
+		}
+		String req = doApiRequest("DELETE", APIConstants.URI_LOCKER_CERTIFICATES+cert.getResourceId(), "{}", String.class);
+		return req;
+	}
+	
 	/**
 	 * This is the core method that performs the exchange of requests and responses for objects in the LCM API.
 	 * 
@@ -409,6 +439,7 @@ public class ObjectFactory {
 		HttpHeaders headers = new HttpHeaders();
 		String authToEncode = connection.getConnectionInfo().getUserName()+":"+connection.getConnectionInfo().getUserPassword();
 		headers.set("Accept", "application/json");
+		headers.set("Content-Type", "application/json");
 		headers.set("Authorization", "Basic "+Base64.getEncoder().encodeToString((authToEncode).getBytes()) );
 		
 		// Define a generic response type value to hold the data before returning
