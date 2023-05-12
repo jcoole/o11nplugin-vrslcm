@@ -1,5 +1,6 @@
 package com.sprockitconsulting.vrslcm.plugin.services;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +34,19 @@ public class LockerService extends AbstractService {
 	
 	@VsoMethod(description = "Creates a new Locker-signed certificate based on inputs.")
 	public Certificate createCertificate(@VsoParam(description = "The specifications of the certificate to request.")CertificateInfo info) throws JsonProcessingException {
-		return objectFactory.createCertificate(info);
+		Certificate cert = null;
+		try {
+			cert = objectFactory.createCertificate(info);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cert;
 	}
 	@VsoMethod(description = "Creates a Certificate Signing Request based on inputs. Once you have signed the certificate, you can import it using the [importCertificate] method.")
 	public String createCertificateSigningRequest(@VsoParam(description = "The specifications of the certificate to request.")CertificateInfo info) throws JsonProcessingException {
-		byte[] csr =  objectFactory.createCertificateRequest(info);
-		log.debug("CSR as bytes: "+csr);
-		return new String(csr, StandardCharsets.UTF_8);
+		String csr =  objectFactory.createCertificateRequest(info);
+		return csr;
 	}
 		
 	@VsoMethod(description = "Retrieves all Certificates for this server.")
@@ -48,7 +55,7 @@ public class LockerService extends AbstractService {
 	}
 	
 	@VsoMethod(description = "Retrieves all Certificates for this server matching the list of aliases.")
-	public List<Certificate> getAllCertificatesMatchingAliases(@VsoParam(description = "One more values to query for in the list. All matches will be returned.")String[] aliases) {
+	public List<Certificate> getAllCertificatesMatchingAliases(@VsoParam(description = "One more values to query for in the list. All matches will be returned.")String[] aliases) throws IOException {
 		return Arrays.asList(objectFactory.getAllCertificatesMatchingAliases(aliases));
 	}
 	

@@ -289,8 +289,9 @@ public class ObjectFactory {
 	/**
 	 * Locker - Get All Certificates matching aliases
 	 * @return Array of Certificates that match, if any
+	 * @throws IOException 
 	 */
-	public Certificate[] getAllCertificatesMatchingAliases(String[] aliases) {
+	public Certificate[] getAllCertificatesMatchingAliases(String[] aliases) throws IOException {
 		// Check input
 		if(aliases == null || aliases.length < 1) {
 			throw new RuntimeException("You must specify one or more aliases to search for!");
@@ -298,7 +299,13 @@ public class ObjectFactory {
 		// Build the query string. A better URI builder should probably be used here but it works for now.
 		String query = "?aliasQuery="+String.join("&",aliases);
 		String searchUrl = APIConstants.URI_LOCKER_CERTIFICATES+query;
-		Certificate[] certs = doApiRequest("GET", searchUrl, "{}", Certificate[].class);
+		
+		// Return the response as a String and extract the array from '.certificates'
+		String allCertsBody = doApiRequest("GET", searchUrl, "{}", String.class);
+		JsonNode allCertsObject = null;
+		allCertsObject = vroObjectMapper.readTree(allCertsBody).path("certificates");
+		
+		Certificate[] certs = vroObjectMapper.readerFor(Certificate[].class).readValue(allCertsObject);
 		assignConnectionIdToList(certs, connection.getId());
 		return certs;
 	}
@@ -313,7 +320,7 @@ public class ObjectFactory {
 		if(aliasOrId.isBlank()) {
 			throw new RuntimeException("You must specify a value to search for during Certificate lookup!");
 		}
-		Certificate cert = doApiRequest("GET", APIConstants.URI_LOCKER_CERTIFICATES+aliasOrId, "{}", Certificate.class);
+		Certificate cert = doApiRequest("GET", APIConstants.URI_LOCKER_CERTIFICATES+"/"+aliasOrId, "{}", Certificate.class);
 		assignConnectionIdToObject(cert, connection.getId());
 		return cert;
 	}
@@ -361,7 +368,7 @@ public class ObjectFactory {
 		if(aliasOrId.isBlank()) {
 			throw new RuntimeException("You must specify a value to search for during Credential lookup!");
 		}
-		Credential cred = doApiRequest("GET", APIConstants.URI_LOCKER_PASSWORDS+aliasOrId, "{}", Credential.class);
+		Credential cred = doApiRequest("GET", APIConstants.URI_LOCKER_PASSWORDS+"/"+aliasOrId, "{}", Credential.class);
 		assignConnectionIdToObject(cred, connection.getId());
 		return cred;
 	}
@@ -370,27 +377,33 @@ public class ObjectFactory {
 	 * Locker - Create Certificate
 	 * Creates a Locker-signed SSL certificate with the given information.
 	 * @param certificateInfo Information for the SSL certificate request.
-	 * @throws JsonProcessingException 
+	 * @throws IOException 
 	 */
-	public Certificate createCertificate(CertificateInfo certificateInfo) throws JsonProcessingException {
+	public Certificate createCertificate(CertificateInfo certificateInfo) throws IOException {
 		String body = vroObjectMapper.writeValueAsString(certificateInfo);
-		Certificate cert = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES, body, Certificate.class);
-		assignConnectionIdToObject(cert, connection.getId());
+		String response = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES, body, String.class);
+		
+		// The HTTP response upon creating a certificate does not come back with a referenceable ID, so re-look it up by name/alias so it can be returned to the workflow.
+		// There is probably a WAY more elegant way of doing this but...
+		String[] aliases = new String[1];
+		aliases[0] = certificateInfo.getNameOrAlias();
+		Certificate[] certs = getAllCertificatesMatchingAliases(aliases);
+		Certificate cert = certs[0];
+
 		return cert;
 	}
 	
 	/**
 	 * Locker - Creates a Certificate Signing request with the given information.
 	 * Once signed, user should invoke the importSignedCertificate() method.
-	 * Initially since this comes back as an attachment, it is a byte[] array - converting to string happens after
+	 * Initially since this comes back as an attachment, it's returned as a raw string.
 	 * @param certificateInfo Information for the SSL certificate request.
 	 * @return Base64 encoded CSR
 	 * @throws JsonProcessingException 
 	 */
-	public byte[] createCertificateRequest(CertificateInfo certificateInfo) throws JsonProcessingException {
+	public String createCertificateRequest(CertificateInfo certificateInfo) throws JsonProcessingException {
 		String body = vroObjectMapper.writeValueAsString(certificateInfo);
-		byte[] csr = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES+"csr", body, byte[].class);
-		log.debug("CSR as bytes : "+csr);
+		String csr = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES+"/csr", body, String.class);
 		return csr;
 	}
 	
@@ -402,7 +415,7 @@ public class ObjectFactory {
 		CertificateImport importData = new CertificateImport(name, certificateChain, passphrase, privateKey);
 		// Convert to JSON String for request
 		String importDataBody = vroObjectMapper.writeValueAsString(importData);
-		Certificate cert = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES+"import", importDataBody, Certificate.class);
+		Certificate cert = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES+"/import", importDataBody, Certificate.class);
 		assignConnectionIdToObject(cert, connection.getId());
 		return cert;
 	}
@@ -416,7 +429,7 @@ public class ObjectFactory {
 		if(cert.isReferenced()) {
 			throw new RuntimeException("The certificate is still in use by one or more products. Please try either removing the related product, or replacing the certificate with another one before trying this operation.");
 		}
-		String req = doApiRequest("DELETE", APIConstants.URI_LOCKER_CERTIFICATES+cert.getResourceId(), "{}", String.class);
+		String req = doApiRequest("DELETE", APIConstants.URI_LOCKER_CERTIFICATES+"/"+cert.getResourceId(), "{}", String.class);
 		return req;
 	}
 	
