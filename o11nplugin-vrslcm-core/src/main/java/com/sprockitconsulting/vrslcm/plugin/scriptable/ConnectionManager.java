@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionPersister;
+import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoParam;
@@ -27,6 +28,8 @@ public class ConnectionManager {
 
 	@Autowired
 	private ConnectionPersister persister;
+	@Autowired
+	private ConnectionRepository repository;
 
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(ConnectionManager.class);
@@ -64,14 +67,19 @@ public class ConnectionManager {
 		return conns;
 	}
 
-	// TODO: this method should be reviewed since it returns the INFO and not object.
+	/**
+	 * This method retrieves a Connection by ID.
+	 * It differs in that it looks it up in the ConnectionRepository which is in the ApplicationContext, rather than the Persister, which is in Orchestrator only.
+	 * @param id ID of the Connection
+	 * @return The Connection
+	 */
 	@VsoMethod(description = "Retrieves a vRSLCM Connection in the Orchestrator inventory with the given ID.")
 	public Connection getConnectionById(@VsoParam(description = "ID of the vRSLCM Connection to retrieve.")String id)
 	{
 		log.debug("ConnectionManager is calling getConnectionById("+id+")");
-		ConnectionInfo info = persister.findById(id);
-		log.debug("ConnectionManager found ConnectionInfo ["+info.toString()+"]");
-		return new Connection(info);
+		Connection conn = repository.findLiveConnection(id);
+		log.debug("ConnectionManager found Connection ["+conn.getName()+"]");
+		return conn;
 	}
 
 	@VsoMethod(description = "Creates a new vRSLCM Connection in the Orchestrator inventory with the given information."

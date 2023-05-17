@@ -3,7 +3,13 @@ package com.sprockitconsulting.vrslcm.plugin.scriptable;
 import java.time.Instant;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sprockitconsulting.vrslcm.plugin.component.ObjectFactory;
 import com.vmware.o11n.plugin.sdk.annotation.VsoConstructor;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoGauge;
@@ -16,6 +22,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 import com.vmware.o11n.plugin.sdk.annotation.VsoTrigger;
 import com.vmware.o11n.plugin.sdk.annotation.VsoTriggerProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true) // during deserialization, if a field isn't mapped to a JSON property, skip it
+@JsonInclude(JsonInclude.Include.NON_NULL) // during serialization, ignores fields set to null (helps on inherited fields and fields not needed during creation)
 @VsoObject(description = "Represents a Credential (Password) in LCM.")
 @VsoFinder(
 	name = "Credential", // Type name!!! This value actually translates to 'type' in VSO.XML!!
@@ -24,7 +32,9 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoTriggerProperty;
 	image = "images/password.png" // relative path to image in inventory use
 )
 public class Credential extends BaseLifecycleManagerObject {
-
+	// Enable Logging
+	private static final Logger log = LoggerFactory.getLogger(Credential.class);
+	
 	private String name;
 	private String alias;
 	private String userName;
@@ -54,35 +64,36 @@ public class Credential extends BaseLifecycleManagerObject {
 	public String getAlias() {
 		return alias;
 	}
-	@VsoProperty
+	@VsoProperty(description = "User name associated to the credential.")
 	public String getUserName() {
 		return userName;
 	}
-	@VsoProperty 
+
 	public String getPassword() {
 		return password;
 	}
-	@VsoProperty
+	@VsoProperty(description = "Description of the credential's intended use")
 	public String getPasswordDescription() {
 		return passwordDescription;
 	}
-	@VsoProperty
+	
+	@VsoProperty(description = "Name/Alias of the credential.")
 	public String getName() {
 		return name;
 	}
-	@VsoProperty
+	@VsoProperty(description = "The tenant associated with the credential")
 	public String getTenant() {
 		return tenant;
 	}
-	@VsoProperty
+	@VsoProperty(description = "Date/Time when the object was created.")
 	public String getCreatedOn() {
 		return createdOn;
 	}
-	@VsoProperty
+	@VsoProperty(description = "Date/Time when the object was last updated.")
 	public String getLastUpdatedOn() {
 		return lastUpdatedOn;
 	}
-	@VsoProperty
+	@VsoProperty(description = "Whether or not the credential is currently in use by LCM-managed resource. If true, the item cannot be deleted.")
 	public boolean isReferenced() {
 		return isReferenced;
 	}
@@ -129,9 +140,5 @@ public class Credential extends BaseLifecycleManagerObject {
 	public void setReferenced(boolean isReferenced) {
 		this.isReferenced = isReferenced;
 	}
-
-	
-
-	
 
 }

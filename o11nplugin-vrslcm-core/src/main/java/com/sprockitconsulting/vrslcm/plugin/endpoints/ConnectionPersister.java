@@ -113,6 +113,14 @@ public class ConnectionPersister implements IEndpointPersister {
 			info.setUserName(config.getString("userName"));
 			info.setUserPassword(config.getPassword("userPassword"));
 			
+			// if domain isn't present, put in local
+			if(config.getString("userDomain") == null) {
+				info.setUserDomain("local");
+			} else {
+				info.setUserDomain(config.getString("userDomain"));
+			}
+			
+			
 			// Identity Manager values - if the identityManagerHost is not blank, load the values into the ConnectionInfo.
 			if(config.getString("identityManagerHost") != null) {
 				info.setIdentityManagerHost(config.getString("identityManagerHost"));
@@ -142,6 +150,13 @@ public class ConnectionPersister implements IEndpointPersister {
 			config.setString("host", info.getHost());
 			config.setString("userName", info.getUserName());
 			config.setPassword("userPassword", info.getUserPassword());
+			
+			// if userdomain somehow missing, assume local
+			if(info.getUserDomain() == null) {
+				config.setString("userDomain", "local");
+			} else {
+				config.setString("userDomain", info.getUserDomain() );
+			}
 
 			// Identity Manager settings. If the identityManagerHost isn't populated, do not add to config.
 			// The platform will throw errors about the 'string too short' otherwise!

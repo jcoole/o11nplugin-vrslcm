@@ -24,6 +24,7 @@ public class ConnectionInfo {
 	private String name;
 	private String host;
 	private String userName;
+	private String userDomain;
 	private String identityManagerHost;
 	private String identityManagerClientId;
 	
@@ -68,10 +69,15 @@ public class ConnectionInfo {
 	public String getHost() {
 		return host;
 	}
-	@VsoProperty(description="The User Account (USER@DOMAIN.TLD format) used in the vRSLCM Server Connection. For example, admin@local or user@domain.com")
+	@VsoProperty(description="The User Account used in the vRSLCM Server Connection.")
 	public String getUserName() {
 		return userName;
 	}
+	@VsoProperty(description = "The User Domain. If unspecified, @local is assumed.")
+	public String getUserDomain() {
+		return userDomain;
+	}
+
 	@VsoProperty(description="The User Password used in the vRSLCM Server Connection. Encrypted by the platform.")
 	public String getUserPassword() {
 		return userPassword;
@@ -109,6 +115,10 @@ public class ConnectionInfo {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public void setUserDomain(String userDomain) {
+		this.userDomain = userDomain;
 	}
 
 	public void setUserPassword(String userPassword) {

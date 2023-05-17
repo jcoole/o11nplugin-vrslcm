@@ -58,14 +58,15 @@ public abstract class BaseLifecycleManagerObject {
 		this.resourceId = resourceId;
 	}
 	
+/*
 	// Revisit this method until it works. Any object should be able to use this, or do lookup by id in ConnectionManager.
 	@VsoMethod(description = "The connection associated to this object.")
-	protected final Connection getServerConnection() {
-		String id = getConnectionId();
+	public Connection getServerConnection() {
+		String id = this.getConnectionId();
 		log.debug("Attempting to query repository for Connection ID ["+id+"] from repo ["+repository.toString()+"]");
 		
 		Connection conn = repository.findLiveConnection(id); // this lookup fails. Autowire failure?
 		return conn;
 	}
-
+*/
 }

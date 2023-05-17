@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import com.sprockitconsulting.vrslcm.plugin.APIConstants;
+import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionAuthentication;
+import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionPrincipal;
+import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateInfo;
@@ -60,7 +64,7 @@ public class ObjectFactory {
 	private RestTemplate vroRestTemplate;
 	@Autowired // Lazy initialized
 	private ObjectMapper vroObjectMapper;
-	
+
 	private Connection connection;
 
 
@@ -68,6 +72,7 @@ public class ObjectFactory {
 		log.debug("Initializing ObjectFactory - for Connection ID ["+connection.getId()+"]");
 		this.connection = connection;
 	}
+
 	
 	public Connection getConnection() {
 		return connection;
@@ -368,7 +373,7 @@ public class ObjectFactory {
 		if(aliasOrId.isBlank()) {
 			throw new RuntimeException("You must specify a value to search for during Credential lookup!");
 		}
-		Credential cred = doApiRequest("GET", APIConstants.URI_LOCKER_PASSWORDS+"/"+aliasOrId, "{}", Credential.class);
+		Credential cred = doApiRequest("GET", APIConstants.URI_LOCKER_PASSWORDS+aliasOrId, "{}", Credential.class);
 		assignConnectionIdToObject(cred, connection.getId());
 		return cred;
 	}
@@ -382,7 +387,7 @@ public class ObjectFactory {
 	public Certificate createCertificate(CertificateInfo certificateInfo) throws IOException {
 		String body = vroObjectMapper.writeValueAsString(certificateInfo);
 		String response = doApiRequest("POST", APIConstants.URI_LOCKER_CERTIFICATES, body, String.class);
-		
+		log.debug("createCertificate response: "+response);
 		// The HTTP response upon creating a certificate does not come back with a referenceable ID, so re-look it up by name/alias so it can be returned to the workflow.
 		// There is probably a WAY more elegant way of doing this but...
 		String[] aliases = new String[1];
@@ -434,6 +439,58 @@ public class ObjectFactory {
 	}
 	
 	/**
+	 * Authorization - This method returns the list of roles assigned to the account.
+	 * Used in the Factory to handle who can do/see things in LCM.
+	 * @throws IOException 
+	 * @throws JsonProcessingException 
+	 * @throws JsonMappingException 
+	 */
+
+	public String[] getConnectionAuthorizedRoles() throws JsonMappingException, JsonProcessingException, IOException {
+		String principalString = doApiRequest("GET", APIConstants.URI_AUTHZN_WHOAMI, "{}", String.class);
+		log.debug("whoami :: "+principalString);
+		ConnectionPrincipal principal = vroObjectMapper.readerFor(ConnectionPrincipal.class).readValue(vroObjectMapper.readTree(principalString));
+		return principal.getAuthorities();
+	}
+	
+
+	/**
+	 * Locker - Creates a new Credential with the given information.
+	 * @throws JsonProcessingException 
+	 */
+	public Credential createCredential(String alias, String userName, String password, String description) throws JsonProcessingException {
+		Credential newCred = new Credential(alias, userName, password, description);
+		String newCredBody = vroObjectMapper.writeValueAsString(newCred);
+		Credential cred = doApiRequest("POST", APIConstants.URI_LOCKER_PASSWORDS, newCredBody, Credential.class);
+		assignConnectionIdToObject(cred, connection.getId());
+		return cred;
+	}
+	
+	/**
+	 * Locker - Updates an existing Credential with the given information.
+	 * @throws JsonProcessingException 
+	 */
+	public Credential updateCredential(Credential credential, String alias, String description, String password, String userName) throws JsonProcessingException {
+		Credential updatedCred = new Credential(alias, userName, password, description);
+		String updatedCredBody = vroObjectMapper.writeValueAsString(updatedCred);
+		Credential cred = doApiRequest("PATCH", APIConstants.URI_LOCKER_PASSWORDS+credential.getResourceId(), updatedCredBody, Credential.class);
+		assignConnectionIdToObject(cred, connection.getId());
+		return cred;
+	}
+	
+	/**
+	 * Locker - Deletes an existing credential.
+	 */
+	public String deleteCredential(Credential credential) {
+		// Test for reference boolean.
+		if(credential.isReferenced()) {
+			throw new RuntimeException("The credential is still in use by one or more products. Please try either removing the related product, or replacing the certificate with another one before trying this operation.");
+		}
+		String req = doApiRequest("DELETE", APIConstants.URI_LOCKER_PASSWORDS+credential.getResourceId(), "{}", String.class);
+		return req;
+	}
+
+	/**
 	 * This is the core method that performs the exchange of requests and responses for objects in the LCM API.
 	 * 
 	 * @param <R> Generic that represents the Request Body for the API call, as this will differ based on the resource.
@@ -446,14 +503,22 @@ public class ObjectFactory {
 	 */
 	public <R, T> T doApiRequest(String method, String urlTemplate, R body, Class<T> responseType) {
 		log.debug("doApiRequest("+method+", "+urlTemplate+", "+body+") starting, using connection ["+connection.toString()+"]");
+
+		// Get the Authentication Header for the connection.
+		ConnectionAuthentication auth = connection.getConnectionAuthenticationFromRepository();
 		
-		// Add the headers to the request entity
-		// TODO: Move the token/header logic to separate method/class based on token type
+		// Validate the token isn't empty/missing/error state
+		if(auth.isTokenValid()) {
+			// proceed
+			log.debug("doApiRequest : authentication seems valid");
+		} else {
+			throw new RuntimeException("Authentication not valid: "+auth.toString() );
+		}
+		// Setup headers
 		HttpHeaders headers = new HttpHeaders();
-		String authToEncode = connection.getConnectionInfo().getUserName()+":"+connection.getConnectionInfo().getUserPassword();
 		headers.set("Accept", "application/json");
 		headers.set("Content-Type", "application/json");
-		headers.set("Authorization", "Basic "+Base64.getEncoder().encodeToString((authToEncode).getBytes()) );
+		headers.set("Authorization", auth.getTokenType()+" "+auth.getToken());
 		
 		// Define a generic response type value to hold the data before returning
 		T response = null;
@@ -477,6 +542,9 @@ public class ObjectFactory {
 				response = responseEntity.getBody();
 			
 				log.debug("doApiRequest("+method+", "+urlTemplate+", "+body+") request completed, response : "+responseEntity.toString());
+			} else if(responseEntity.getStatusCodeValue() == 401) {
+				// 401 is Unauthorized.
+				log.error("Unauthorized request to the API!");
 			} else {
 				throw new RuntimeException(this.getClass().getEnclosingMethod().getName()+" error, status code ["+responseEntity.getStatusCodeValue()+"], body ["+responseEntity.getBody()+"]");
 			}
@@ -493,6 +561,9 @@ public class ObjectFactory {
 		return String.format("ObjectFactory [vroRestTemplate=%s, vroObjectMapper=%s, connection=%s]", vroRestTemplate,
 				vroObjectMapper, connection);
 	}
+
+
+
 
 	
 }

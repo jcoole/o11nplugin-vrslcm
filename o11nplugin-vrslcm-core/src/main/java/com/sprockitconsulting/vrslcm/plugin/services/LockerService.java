@@ -31,7 +31,9 @@ public class LockerService extends AbstractService {
 	public LockerService() {
 		super();
 	}
+
 	
+	// Certificates
 	@VsoMethod(description = "Creates a new Locker-signed certificate based on inputs.")
 	public Certificate createCertificate(@VsoParam(description = "The specifications of the certificate to request.")CertificateInfo info) throws JsonProcessingException {
 		Certificate cert = null;
@@ -69,6 +71,7 @@ public class LockerService extends AbstractService {
 		return objectFactory.deleteCertificate(cert);
 	}
 	
+	// Credentials
 	@VsoMethod(description = "Retrieves all Credentials for this server.")
 	public List<Credential> getAllCredentials() {
 		return Arrays.asList(objectFactory.getAllCredentials());
@@ -78,5 +81,37 @@ public class LockerService extends AbstractService {
 	public Credential getCredentialByValue(@VsoParam(description = "The Name or ID to search in the credential list.")String nameOrId) {
 		return objectFactory.getCredentialByNameOrId(nameOrId);
 	}
+	@VsoMethod(description = "Creates a new Credential with the specified values.")
+	public Credential createCredential(
+			@VsoParam(description = "The Alias/Name to assign to the credential.")String alias, 
+			@VsoParam(description = "The Description to assign to the credential.")String description, 
+			@VsoParam(description = "The Password to specify for this credential.")String password, 
+			@VsoParam(description = "The associated username for this credential, for example root or sshuser.")String userName
+	) throws JsonProcessingException {
+		return objectFactory.createCredential(alias, description, password, userName);
+	}
+	@VsoMethod(description = "Updates an existing Credential with the specified values.")
+	public Credential updateCredential(
+			@VsoParam(description = "The credential to update.")Credential credential,
+			@VsoParam(description = "The Alias/Name to assign to the credential.")String alias, 
+			@VsoParam(description = "The Description to assign to the credential.")String description, 
+			@VsoParam(description = "The Password to specify for this credential.")String password, 
+			@VsoParam(description = "The associated username for this credential, for example root or sshuser.")String userName
+	) throws JsonProcessingException {
+		return objectFactory.updateCredential(credential, alias, description, password, userName);
+	}
+	
+	@VsoMethod(description = "Deletes an existing Credential. If the credential is in use, this will fail!")
+	public String deleteCredential(
+			@VsoParam(description = "The credential to delete.")Credential credential
+	) {
+		return objectFactory.deleteCredential(credential);
+	}
 
+	@Override
+	public String toString() {
+		return String.format("LockerService [objectFactory=%s, connection=%s]", objectFactory, connection);
+	}
+	
+	
 }

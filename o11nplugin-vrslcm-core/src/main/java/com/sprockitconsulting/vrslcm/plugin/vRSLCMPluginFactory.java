@@ -1,5 +1,6 @@
 package com.sprockitconsulting.vrslcm.plugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.sprockitconsulting.vrslcm.plugin.component.ObjectFactory;
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate;
@@ -29,6 +32,7 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.RequestFolder;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.UserManagementFolder;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.VirtualCenter;
+import com.sprockitconsulting.vrslcm.plugin.utility.PluginUtility;
 import com.vmware.o11n.plugin.sdk.spring.AbstractSpringPluginFactory;
 import com.vmware.o11n.plugin.sdk.spring.InventoryRef;
 
@@ -172,7 +176,8 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     public List<?> findChildrenInRelation(InventoryRef parent, String relationName) {
     	log.debug("findChildrenInRelation - Starting - InventoryRef ["+parent.getType()+"] ["+parent.getId()+"] Relation Name ["+relationName+"]");
     	
-    	// Specify the ConnectionId for all child objects to create necessary association to the connection that created them.
+    	// All child items have an association to a particular Connection via ID.
+    	// The inventoryRef ID value is structured so that the format is [ResourceID]@[ConnectionID].
      	String connectionId;
         if(parent.getId().indexOf("@") != -1) {
         	// @ is present, split it.
@@ -181,9 +186,34 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         	// not present
         	connectionId = parent.getId();
         }
-
-    	// Connection -> Service Folders
+        
+		// Each Connection has a corresponding ObjectFactory instance which is responsible for the core lookup logic.
+		ObjectFactory objectFactory = repository.findObjectFactory(connectionId);
+		log.debug("Factory - ObjectFactory ["+objectFactory.toString()+"] loaded for connection ID ["+connectionId+"]");
+    	
+		// Connection -> Service Folders
     	// Folders are static, so the constructor just needs any ID to be built - so use the Connection ID.
+        
+        // TODO: use the ConnectionAuthorization information to handle enumeration of these service folders.
+        log.debug("Getting authorities on ConnectionAuthorization");
+        // Then call the /me endpoint
+        String[] authorities = null;
+		try {
+			authorities = objectFactory.getConnectionAuthorizedRoles();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        log.debug("Roles found: "+Arrays.toString(authorities));
+        
+        // based on role, if an API call is made to an object they do not have access to, it will be a 400 response.
+        // based on the resulting role, filter this list.
     	if(parent.isOfType("Connection")) {
     		log.debug("findChildrenInRelation - Creating service level folders for Connection ID ["+connectionId+"]");
     		ArrayList<Folder> serviceFolders = new ArrayList<Folder>();
@@ -192,7 +222,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     			serviceFolders.add(new LifecycleOperationsFolder(connectionId) );
     			break;
     		case "LockerFolders":
-    			serviceFolders.add(new LockerFolder(connectionId) );
+       			serviceFolders.add(new LockerFolder(connectionId) );
     			break;
     		case "UserManagementFolders":
     			serviceFolders.add(new UserManagementFolder(connectionId) );
@@ -252,9 +282,6 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     	} else {
     		// These are objects that require an API connection be established and the results returned.
     		// To ensure multiple Connections are supported, each Object is associated with the Connection ID value.
-    		// Each Connection has a corresponding ObjectFactory instance which is responsible for the core lookup logic.
-    		ObjectFactory objectFactory = repository.findObjectFactory(connectionId);
-    		log.debug("Factory - ObjectFactory ["+objectFactory.toString()+"] loaded for connection ID ["+connectionId+"]");
     		
     		// Parent Type: DatacenterFolder -> Relation: Datacenters - defined in ModuleBuilder class.
         	if(parent.isOfType("DatacenterFolder") && relationName.equals("Datacenters")) {
@@ -354,7 +381,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         	
         	// Parent Type: CredentialFolder -> Relation: Credentials - defined in ModuleBuilder class.
         	if(parent.isOfType("CredentialFolder") && relationName.equals("Credentials")) {
-        		log.debug("findChildrenInRelation - Creating CERTS with Reference ID ["+connectionId+"]"); 
+        		log.debug("findChildrenInRelation - Creating CREDS with Reference ID ["+connectionId+"]"); 
         		List<Credential> creds = new ArrayList<Credential>();
         		
         		// Lookup requests in the ObjectFactory.

@@ -48,7 +48,8 @@ public interface APIConstants {
 	public static final String URI_LCOPS_VIRTUALCENTERS_BY_DC = "/lcm/lcops/api/v2/datacenters/{dcId}/vcenters";
 	public static final String URI_LCOPS_VIRTUALCENTERS_BY_DC_AND_VALUE = "/lcm/lcops/api/v2/datacenters/{dcId}/vcenters/{vc}";
 
-
+	// Authorization Endpoints
+	public static final String URI_AUTHZN_WHOAMI = "/lcm/authzn/api/me";
 	/*
 	 * Some ASCII art on the layout of the Inventory.
 	 *

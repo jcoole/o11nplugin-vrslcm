@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -28,7 +29,6 @@ import ch.dunes.vso.sdk.ssl.ISslService;
 
 /**
  * This class is used to generate various Spring Beans needed for plugin usage.
- * Once the ConnectionRepository is initialized, this class is instantiated and creates a RestTemplate that is integrated with Orchestrator's CA Keystore.
  * @author justin
  *
  */
@@ -51,9 +51,8 @@ public class PluginBeanConfiguration {
 	 * @return Customized RestTemplate used for REST API calls.
 	 */
 	@Bean
-	@Lazy
 	public RestTemplate vroRestTemplate() {
-		log.debug("vroRestTemplate bean initializing");
+		log.debug("vroRestTemplate Initializing");
 		
 		// Establish the SSL Context through Orchestrator
 		SSLContext context = null;
@@ -115,7 +114,6 @@ public class PluginBeanConfiguration {
 	 * @return Object Mapper instance
 	 */
 	@Bean
-	@Lazy
 	public ObjectMapper vroObjectMapper() {
 		log.debug("vroObjectMapper bean initializing");
 		ObjectMapper om = new ObjectMapper();

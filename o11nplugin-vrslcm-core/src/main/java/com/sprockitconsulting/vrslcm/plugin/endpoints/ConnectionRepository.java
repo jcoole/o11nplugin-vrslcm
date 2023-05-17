@@ -13,6 +13,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.sprockitconsulting.vrslcm.plugin.component.ObjectFactory;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
@@ -44,17 +46,18 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	private static final Logger log = LoggerFactory.getLogger(ConnectionRepository.class);
 	
 	/**
-	 * Local cache of connections.
-	 * 	String is the ConnectionInfo ID
-	 *  Connection is the object.
+	 * Local cache of connections, factories, authentications
+	 *  
 	 */
 	private final Map<String, Connection> connections;
 	private final Map<String, ObjectFactory> objectFactories;
+	private final Map<String, ConnectionAuthentication> connectionAuthentications;
 	
 	
 	public ConnectionRepository() {
 		connections = new ConcurrentHashMap<>();
 		objectFactories = new ConcurrentHashMap<>();
+		connectionAuthentications = new ConcurrentHashMap<>();
 		log.debug("Constructor initialized");
 	}
 
@@ -77,6 +80,30 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	 */
 	public ObjectFactory findObjectFactory(String id) {
 		return objectFactories.get(id);
+	}
+	
+	/**
+	 * Get Authentication by Connection ID
+	 */
+	public ConnectionAuthentication findConnectionAuthentication(String id) {
+		ConnectionAuthentication auth = connectionAuthentications.get(id);
+		if(auth != null) {
+			if(!auth.isTokenValid()) {
+				log.debug("ConnectionAuthentication isTokenValid() set to false, acquiring token");
+				try {
+					auth.acquireToken();
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				connectionAuthentications.replace(id, auth);
+			}
+		} else {
+			log.debug("ConnectionAuthentication with the given ID ["+id+"] is null, creating a new one.");
+			auth = createAuthentication(connections.get(id).getConnectionInfo() );
+			connectionAuthentications.put(id, auth);
+		}
+		return auth; 
 	}
 
 	/**
@@ -128,7 +155,16 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 		return ofb;
 	}
 	
-	
+	/**
+	 * Creates a ConnectionAuthentication object for the Connection.
+	 * This value contains the token type and value for authorized API requests.
+	 */
+	private ConnectionAuthentication createAuthentication(ConnectionInfo info) {
+		ConnectionAuthentication auth = (ConnectionAuthentication) context.getBean("connectionAuthentication", info);
+		log.debug("Connection Authentication for Connection ID ["+info.getId()+"] was created");
+		return auth;
+	}
+
 	/**
 	 * Interface method from ConfigurationChangeListener
 	 * 
@@ -146,7 +182,7 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 		Connection live = connections.get(info.getId());
 
 		if (live != null) {
-			// The connection exists in the repository, just update it.
+			// The connection exists in the repository, update.
 			live.update(info);
 		} else {
 			// Connection did not previously exist, so create it and add to the repository.
@@ -154,24 +190,43 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 			connections.put(info.getId(), live);
 		}
 		
-		// Now handle the factories
+		// Update ObjectFactory (if neeeded)
 		ObjectFactory factory = objectFactories.get(info.getId());
 		if(factory != null) {
 			// factor is there, replace the connection
 			factory.setConnection(live);
+			objectFactories.replace(info.getId(), factory);
 		} else {
 			// factory not there, add it
 			factory = createObjectFactory(live);
 			objectFactories.put(info.getId(), factory);
-
 		}
 		
+		// Update ConnectionAuth (if needed)
+		ConnectionAuthentication auth = connectionAuthentications.get(info.getId());
+		if(auth != null) {
+			try {
+				auth.setConnectionInfo(info);
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			connectionAuthentications.replace(info.getId(), auth);
+		} else {
+			auth = createAuthentication(info);
+			connectionAuthentications.put(info.getId(), auth);
+		}
 	}
 
 	/**
 	 * Interface method from ConfigurationChangeListener
 	 * 
 	 * Called whenever a vRSLCM Connection is removed.
+	 * 
+	 * If a removed Connection is found in the HashMap, it is removed, along with related components.
 	 * 
 	 * @param info The ConnectionInfo object sent by the ConfigurationChangeListener.
 	 */
@@ -184,6 +239,21 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 			connections.remove(info.getId());
 			log.debug("Repository found and deleted Connection ["+info.getId()+"]");
 		}
+		
+		ObjectFactory factory = objectFactories.get(info.getId());
+		if(factory != null) {
+			// Remove Factory
+			objectFactories.remove(info.getId());
+			log.debug("Repository found and deleted ObjectFactory for ["+info.getId()+"]");
+		}
+		
+		ConnectionAuthentication auth = connectionAuthentications.get(info.getId());
+		if(auth != null) {
+			// Remove Authentication Token
+			connectionAuthentications.remove(info.getId());
+			log.debug("Repository found and deleted ConnectionAuthentication for ["+info.getId()+"]");
+		}
+		
 	}
 
 }

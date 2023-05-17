@@ -15,8 +15,8 @@ public abstract class AbstractService {
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(AbstractService.class);
 	
-	protected ObjectFactory objectFactory;
-	protected Connection connection;
+	public ObjectFactory objectFactory;
+	public Connection connection;
 
 	public AbstractService() {
 		log.debug("No-arg constructor - assign values");
@@ -38,4 +38,9 @@ public abstract class AbstractService {
 		this.connection = connection;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("AbstractService [objectFactory=%s, connection=%s]", objectFactory, connection);
+	}
+	
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionAuthentication;
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
 import com.sprockitconsulting.vrslcm.plugin.services.LifecycleOperationsService;
 import com.sprockitconsulting.vrslcm.plugin.services.LockerService;
@@ -39,14 +40,16 @@ public class Connection {
 	@Autowired
 	private ConnectionRepository repository;
 	
-	private ConnectionInfo connectionInfo;
 	private String name;
 	private String id;
 	private String host;
 	private String userName;
+	private String userDomain;
 	private String identityManagerHost;
 	private String identityManagerClientId;
+	private ConnectionInfo connectionInfo;
 
+	
 	/**
 	 * Note there is no default constructor. It is initialized only with a ConnectionInfo.
 	 * Important to note as this is scoped as prototype.
@@ -71,9 +74,14 @@ public class Connection {
 		return host;
 	}
 
-	@VsoProperty(description="The User Account (USER@DOMAIN.TLD format) used in the vRSLCM Server Connection. For example, admin@local or user@domain.com")
+	@VsoProperty(description="The User Account Name used in the vRSLCM Server Connection.")
 	public String getUserName() {
 		return userName;
+	}
+	
+	@VsoProperty(description="The User Account Domain used in the vRSLCM Server Connection. If unspecified, @local is assumed.")
+	public String getUserDomain() {
+		return userDomain;
 	}
 
 	@VsoProperty(description="The Authentication Host of the vRSLCM Server Connection to VMware Identity Manager. "
@@ -87,6 +95,13 @@ public class Connection {
 	public String getIdentityManagerClientId() {
 		return identityManagerClientId;
 	}
+	
+	
+	public ConnectionAuthentication getConnectionAuthenticationFromRepository() {
+		log.debug("Returning ConnectionAuthentication with ID ["+this.id+"]");
+		return repository.findConnectionAuthentication(this.id);
+	}
+
 
 	/**
 	 * Initializes a new Connection from the ConnectionInfo, and populates the fields.
@@ -97,10 +112,13 @@ public class Connection {
 		this.id = connectionInfo.getId();
 		this.host = connectionInfo.getHost();
 		this.userName = connectionInfo.getUserName();
+		this.userDomain = connectionInfo.getUserDomain();
 		this.identityManagerHost = connectionInfo.getIdentityManagerHost();
 		this.identityManagerClientId = connectionInfo.getIdentityManagerClientId();
+
 		log.debug("Initializing new Connection with info ["+connectionInfo.toString()+"]");
 	}
+	
 
 	/**
 	 * Updates this connection with the provided info.
@@ -118,10 +136,10 @@ public class Connection {
 	 */
 	@VsoMethod(description = "Use this service to perform operations on Lifecycle Operations scoped objects.")
 	public LifecycleOperationsService getLifecycleOperationsService() {
-		log.debug("Setting up LCOPS with connection ["+this.toString()+"]");
+		log.debug("Setting up LCOPS with connection ["+this.getId()+"]");
 		LifecycleOperationsService svc = new LifecycleOperationsService();
-		svc.setConnection(repository.findLiveConnection(id));
-		svc.setObjectFactory(repository.findObjectFactory(id));
+		svc.setConnection(repository.findLiveConnection(this.getId()));
+		svc.setObjectFactory(repository.findObjectFactory(this.getId()));
 		return svc;
 	}
 	
@@ -130,10 +148,13 @@ public class Connection {
 	 */
 	@VsoMethod(description = "Use this service to perform operations on Lifecycle Operations scoped objects.")
 	public LockerService getLockerService() {
-		log.debug("Setting up Locker with connection ["+this.toString()+"]");
+		log.debug("Setting up Locker with connection ["+this.getId()+"]");
 		LockerService svc = new LockerService();
-		svc.setConnection(repository.findLiveConnection(id));
-		svc.setObjectFactory(repository.findObjectFactory(id));
+		log.debug("LockerService connection: "+repository.findLiveConnection(this.getId()) );
+		svc.setConnection(repository.findLiveConnection(this.getId()));
+		log.debug("LockerService factory: "+repository.findObjectFactory(this.getId()) );
+		svc.setObjectFactory(repository.findObjectFactory(this.getId()));
+		log.debug(svc.toString());
 		return svc;
 	}
 	
@@ -144,8 +165,8 @@ public class Connection {
 	@Override
 	public String toString() {
 		return String.format(
-				"Connection [name=%s, id=%s, host=%s, userName=%s, connectionInfo=%s, identityManagerHost=%s, identityManagerClientId=%s]",
-				name, id, host, userName, connectionInfo, identityManagerHost, identityManagerClientId);
+				"Connection [name=%s, id=%s, host=%s, userName=%s, userDomain=%s, identityManagerHost=%s, identityManagerClientId=%s]",
+				name, id, host, userName, userDomain, identityManagerHost, identityManagerClientId);
 	}
 
 
