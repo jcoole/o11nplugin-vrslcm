@@ -1,7 +1,7 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 /**
- * Simple primitive class to assist with mapping necessary values on Certificate Import to a JSON body.
+ * Simple class to assist with mapping necessary values on Certificate Import to a JSON body.
  * @author justin
  *
  */

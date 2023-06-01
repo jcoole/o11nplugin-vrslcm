@@ -1,26 +1,13 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import java.time.Instant;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sprockitconsulting.vrslcm.plugin.component.ObjectFactory;
 import com.vmware.o11n.plugin.sdk.annotation.VsoConstructor;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
-import com.vmware.o11n.plugin.sdk.annotation.VsoGauge;
-import com.vmware.o11n.plugin.sdk.annotation.VsoInventoryTab;
-import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
-import com.vmware.o11n.plugin.sdk.annotation.VsoParam;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
-import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
-import com.vmware.o11n.plugin.sdk.annotation.VsoTrigger;
-import com.vmware.o11n.plugin.sdk.annotation.VsoTriggerProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true) // during deserialization, if a field isn't mapped to a JSON property, skip it
 @JsonInclude(JsonInclude.Include.NON_NULL) // during serialization, ignores fields set to null (helps on inherited fields and fields not needed during creation)
@@ -32,8 +19,6 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoTriggerProperty;
 	image = "images/password.png" // relative path to image in inventory use
 )
 public class Credential extends BaseLifecycleManagerObject {
-	// Enable Logging
-	private static final Logger log = LoggerFactory.getLogger(Credential.class);
 	
 	private String name;
 	private String alias;

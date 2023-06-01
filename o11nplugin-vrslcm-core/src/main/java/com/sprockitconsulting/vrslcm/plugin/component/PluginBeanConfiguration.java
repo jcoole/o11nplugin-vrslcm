@@ -47,12 +47,12 @@ public class PluginBeanConfiguration {
 	
 	/**
 	 * The vroRestTemplate bean is a customized RestTemplate object that is integrated with the Orchestrator keystore and SSL services.
-	 * It is initialized when needed and subsequently is available for any service to use.
+	 * It is initialized once at plugin startup and is available for any service to use.
 	 * @return Customized RestTemplate used for REST API calls.
 	 */
 	@Bean
 	public RestTemplate vroRestTemplate() {
-		log.debug("vroRestTemplate Initializing");
+		log.debug("Initializing Orchestrator RestTemplate implementation");
 		
 		// Establish the SSL Context through Orchestrator
 		SSLContext context = null;
@@ -66,7 +66,7 @@ public class PluginBeanConfiguration {
 		
 		// Next the SSL Connection Socket Factory, implementing the Orchestrator SSL context
 		SSLConnectionSocketFactory sslConnectionFactory = null;
-		log.debug("Attempting SSL Factory with context ["+context.getProvider()+" - "+context.getProtocol()+"]");
+		//log.debug("Attempting SSL Factory with context ["+context.getProvider()+" - "+context.getProtocol()+"]");
 		try {
 			sslConnectionFactory = new SSLConnectionSocketFactory(context);
 			log.debug("SSL Factory created : "+sslConnectionFactory);
@@ -81,7 +81,7 @@ public class PluginBeanConfiguration {
 		
 		// Next create the HTTP Client, using the SSL Socket Factory in the build, alongside the default headers
 		CloseableHttpClient httpClient = null;
-		log.debug("Attempting to create HTTP Client with SSL Factory, Creds, and Headers");
+		//log.debug("Attempting to create HTTP Client with SSL Factory, Creds, and Headers");
 		try {
 			httpClient = HttpClients.custom()
 					.setSSLSocketFactory(sslConnectionFactory)
@@ -104,20 +104,19 @@ public class PluginBeanConfiguration {
 
 		// Create and return the customized RestTemplate.
 		RestTemplate template = new RestTemplate(requestFactory);
-		log.debug("vroRestTemplate bean initialized : "+template.toString());
+		log.debug("Orchestrator RestTemplate initialized : "+template.toString());
 		return template;
 	}
 
 	/**
 	 * The vroObjectMapper bean is just an accessible ObjectMapper, used to convert POJOs into JSON Strings for API calls.
-	 * 
+	 * It is initialized once at plugin startup and is available for any service to use.
 	 * @return Object Mapper instance
 	 */
 	@Bean
 	public ObjectMapper vroObjectMapper() {
-		log.debug("vroObjectMapper bean initializing");
 		ObjectMapper om = new ObjectMapper();
-		log.debug("vroObjectMapper bean instance initialized.");
+		log.debug("ObjectMapper bean instance initialized.");
 		return om;
 	}
 

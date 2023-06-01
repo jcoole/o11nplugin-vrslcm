@@ -4,13 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionAuthentication;
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
+import com.sprockitconsulting.vrslcm.plugin.services.ConfigurationService;
 import com.sprockitconsulting.vrslcm.plugin.services.LifecycleOperationsService;
 import com.sprockitconsulting.vrslcm.plugin.services.LockerService;
+//import com.sprockitconsulting.vrslcm.plugin.services.
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -30,7 +33,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 	name = "Connection", // Type name!!! This value actually translates to 'type' in VSO.XML!!
 	description = "A vRSLCM server connection in the inventory.", // shows up in the 'Types'
 	idAccessor = "getId()", // method in the class to use for specific lookup
-	image = "images/vrslcm-conn.png" // relative path to image in inventory use
+	image = "images/connection.png" // relative path to image in inventory use
 )
 public class Connection {
 
@@ -39,6 +42,8 @@ public class Connection {
 	
 	@Autowired
 	private ConnectionRepository repository;
+	@Autowired
+	private ApplicationContext context;
 	
 	private String name;
 	private String id;
@@ -136,17 +141,33 @@ public class Connection {
 	 */
 	@VsoMethod(description = "Use this service to perform operations on Lifecycle Operations scoped objects.")
 	public LifecycleOperationsService getLifecycleOperationsService() {
-		log.debug("Setting up LCOPS with connection ["+this.getId()+"]");
-		LifecycleOperationsService svc = new LifecycleOperationsService();
-		svc.setConnection(repository.findLiveConnection(this.getId()));
-		svc.setObjectFactory(repository.findObjectFactory(this.getId()));
+		log.debug("Setting up Lifecycle Operations Service with connection ["+this.getId()+"]");
+		// Using the Spring context, get an prototype bean of the LCOPS service, initialized with the connection ID.
+		// This will allow it to get authentication, etc from the Repository
+		LifecycleOperationsService svc = (LifecycleOperationsService) context.getBean("lifecycleOperationsService", repository.findLiveConnection(this.getId()) );
+		return svc;
+	}
+
+	/**
+	 * Retrieve the LockerService object, enabling the Connection to perform operations on those scoped objects.
+	 */
+	@VsoMethod(description = "Use this service to perform operations on Locker scoped objects.")
+	public LockerService getLockerService() {
+		log.debug("Setting up Locker Service with connection ["+this.getId()+"]");
+		LockerService svc = (LockerService) context.getBean("lockerService", repository.findLiveConnection(this.getId()));
 		return svc;
 	}
 	
 	/**
-	 * Retrieve the LockerService object, enabling the Connection to perform operations on those scoped objects.
+	 * Retrieve the ConfigurationService object, enabling the Connection to perform operations on the LCM Server itself.
 	 */
-	@VsoMethod(description = "Use this service to perform operations on Lifecycle Operations scoped objects.")
+	@VsoMethod(description = "Use this service to perform operations on the LCM Server itself.")
+	public ConfigurationService getConfigurationService() {
+		log.debug("Setting up Configuration Service with connection ["+this.getId()+"]");
+		ConfigurationService svc = (ConfigurationService) context.getBean("configurationService", repository.findLiveConnection(this.getId()));
+		return svc;
+	}
+/*
 	public LockerService getLockerService() {
 		log.debug("Setting up Locker with connection ["+this.getId()+"]");
 		LockerService svc = new LockerService();
@@ -157,6 +178,7 @@ public class Connection {
 		log.debug(svc.toString());
 		return svc;
 	}
+*/
 	
 	public synchronized ConnectionInfo getConnectionInfo() {
 		return connectionInfo;

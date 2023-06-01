@@ -17,7 +17,7 @@ import ch.dunes.vso.sdk.endpoints.IEndpointConfiguration;
 import ch.dunes.vso.sdk.endpoints.IEndpointConfigurationService;
 
 /**
- * ConnectionPersister is used to perform CRUD operations on Connections stored in the Orchestrator EndpointConfigurationService.
+ * ConnectionPersister is used to perform CRUD operations on Connections stored in the Orchestrator EndpointConfigurationService, and notify other classes when changes are made..
  * It also performs some validations, such as ensuring ID exists, there aren't duplicate endpoints, etc.
  * This is mostly taken from available VMware docs but with additional info and context.
  * @author justin/VMware SDK
@@ -27,7 +27,7 @@ import ch.dunes.vso.sdk.endpoints.IEndpointConfigurationService;
 @Component
 public class ConnectionPersister implements IEndpointPersister {
 
-	// Injects the service needed to store Connections in the database.
+	// Injects the Orchestrator service needed to store Connections in the database.
 	// The Connection is turned into a Orchestrator ResourceElement you can review yourself.
 	@Autowired
 	private IEndpointConfigurationService endpointConfigurationService;
@@ -205,7 +205,7 @@ public class ConnectionPersister implements IEndpointPersister {
 			// Convert ConnectionInfo into IEndpointConfiguration
 			addConnectionInfoToConfig(endpointConfiguration, info);
 
-			// Use the configuration service to save the endpoint configuration in vRO.
+			// Use the configuration service to save the endpoint configuration in Orchestrator.
 			endpointConfigurationService.saveEndpointConfiguration(endpointConfiguration);
 
 			// Fire an event to all subscribers, that we have updated a configuration.
@@ -219,7 +219,7 @@ public class ConnectionPersister implements IEndpointPersister {
 	}
 
 	/**
-	 * This method will delete the specified Connection from vRO.
+	 * This method will delete the specified Connection from Orchestrator.
 	 * @param info The Connection Info, containing the ID to delete.
 	 */
 	@Override
@@ -239,6 +239,7 @@ public class ConnectionPersister implements IEndpointPersister {
 
 	/**
 	 * This method checks for duplicates in the EndpointConfiguration service.
+	 * If an existing connection is found by name with a *different* ID, an exception is thrown.
 	 * @param info The Connection Info to check.
 	 * @see String#toLowerCase() getConfigurationByName
 	 */
@@ -251,7 +252,7 @@ public class ConnectionPersister implements IEndpointPersister {
 
 	/**
 	 * This method retrieves the ConnectionInfo based on input name.
-	 * @param name The name of the configuration in vRO.
+	 * @param name The name of the configuration in Orchestrator.
 	 * @return The ConnectionInfo
 	 * @see String#toLowerCase() validateConnectionName
 	 */
@@ -272,6 +273,8 @@ public class ConnectionPersister implements IEndpointPersister {
 
 	/**
 	 * Load the configuration of the plugins' connections, and fires an event to anything listening.
+	 * This is called by the ConnectionRepository during startup so that any Connections are ready to go at startup.
+	 * @see ConnectionRepository#afterPropertiesSet()
 	 */
 	@Override
 	public void load() {

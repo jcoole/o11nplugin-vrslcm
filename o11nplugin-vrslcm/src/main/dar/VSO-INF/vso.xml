@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<module name="vRSLCM" version="${project.version}" build-number="${build.number}" image="images/vrslcm-root.png">
-    <description>vRealize Suite Lifecycle Manager plug-in for vRealize Orchestrator</description>
+<module name="vRSLCM" version="${project.version}" build-number="${build.number}" image="images/vrslcm-conn.png">
+    <description>vRealize/Aria Lifecycle Manager plug-in for Orchestrator</description>
     <installation mode="${installation.mode}">
         <action resource="packages/${project.artifactId}-package-${project.version}.package" type="install-package"/>
     </installation>
@@ -18,17 +18,17 @@
                 <relation name="Connections" type="Connection" cardinality="to-many"/>
             </relations>
         </finder>
-        <finder type="Connection" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-conn.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Connection" script-object="vRSLCMConnection">
+        <finder type="Connection" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/connection.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Connection" script-object="vRSLCMConnection">
             <id accessor="getId()"/>
             <description>A vRSLCM server connection in the inventory.</description>
             <properties>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Display Name of the vRSLCM Connection in Orchestrator.</property>
                 <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">Unique ID of the vRSLCM Connection in Orchestrator.</property>
                 <property name="host" display-name="host" bean-property="host" show-in-column="true" show-in-description="true" hidden="false">The Hostname of the vRSLCM Server.</property>
+                <property name="userName" display-name="userName" bean-property="userName" show-in-column="true" show-in-description="true" hidden="false">The User Account Name used in the vRSLCM Server Connection.</property>
                 <property name="userDomain" display-name="userDomain" bean-property="userDomain" show-in-column="true" show-in-description="true" hidden="false">The User Account Domain used in the vRSLCM Server Connection. If unspecified, @local is assumed.</property>
                 <property name="identityManagerHost" display-name="identityManagerHost" bean-property="identityManagerHost" show-in-column="true" show-in-description="true" hidden="false">The Authentication Host of the vRSLCM Server Connection to VMware Identity Manager. If set, authentication requests are redirected here with a Client ID and Secret for authorization.Users in the @local scope do not use this field for authentication.</property>
                 <property name="identityManagerClientId" display-name="identityManagerClientId" bean-property="identityManagerClientId" show-in-column="true" show-in-description="true" hidden="false">The Required OAuth2.0 Client ID to use in authentication requests to VMware Identity Manager.</property>
-                <property name="userName" display-name="userName" bean-property="userName" show-in-column="true" show-in-description="true" hidden="false">The User Account Name used in the vRSLCM Server Connection.</property>
             </properties>
             <inventory-children>
                 <relation-link name="LifecycleOperationsFolders"/>
@@ -49,9 +49,8 @@
             <id accessor="getId()"/>
             <description>Lifecycle Operations Content</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
                 <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
             </properties>
@@ -68,104 +67,55 @@
             <inventory-tabs/>
             <events/>
         </finder>
-        <finder type="Datacenter" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-dc.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter" script-object="vRSLCMDatacenter">
+        <finder type="ProductNode" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/connection.png" java-class="com.sprockitconsulting.vrslcm.plugin.products.ProductNode" script-object="vRSLCMProductNode">
             <id accessor="getInternalId()"/>
-            <description>A vRSLCM Datacenter configuration.</description>
+            <description>Represents a Product Node in LCM.</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the Datacenter.</property>
-                <property name="location" display-name="location" bean-property="location" show-in-column="true" show-in-description="true" hidden="false">Location of the Datacenter.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">The VM name of the node.</property>
+                <property name="type" display-name="type" bean-property="type" show-in-column="true" show-in-description="true" hidden="false">The type of node. Examples are 'vidm-connector' or 'vrava-primary' - this value differs per product.</property>
+                <property name="productNodeSpec" display-name="productNodeSpec" bean-property="productNodeSpec" show-in-column="true" show-in-description="true" hidden="false">Specifications of the Node. Use the attached methods to get specific information about the node.</property>
+                <property name="vc" display-name="vc" bean-property="vc" show-in-column="true" show-in-description="true" hidden="false">The vCenter Host of the VM</property>
             </properties>
-            <inventory-children>
-                <relation-link name="VirtualCenters"/>
-            </inventory-children>
-            <relations>
-                <relation name="VirtualCenters" type="VirtualCenter" cardinality="to-many"/>
-            </relations>
-            <inventory-tabs/>
-            <events/>
-        </finder>
-        <finder type="EnvironmentFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.EnvironmentFolder" script-object="vRSLCMEnvironmentFolder">
-            <id accessor="getId()"/>
-            <description>Folder containing vRSLCM Environments in the Inventory Tab.</description>
-            <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
-                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
-            </properties>
-            <inventory-children>
-                <relation-link name="Environments"/>
-            </inventory-children>
-            <relations>
-                <relation name="Environments" type="Environment"/>
-            </relations>
-            <inventory-tabs/>
-            <events/>
-        </finder>
-        <finder type="RequestFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.RequestFolder" script-object="vRSLCMRequestFolder">
-            <id accessor="getId()"/>
-            <description>Folder containing vRSLCM Requests in the Inventory Tab.</description>
-            <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
-                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
-            </properties>
-            <inventory-children>
-                <relation-link name="Requests"/>
-            </inventory-children>
-            <relations>
-                <relation name="Requests" type="Request"/>
-            </relations>
-            <inventory-tabs/>
-            <events/>
-        </finder>
-        <finder type="InventoryError" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/error.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.InventoryError" script-object="vRSLCMInventoryError">
-            <id accessor="getId()"/>
-            <description>A vRSLCM Inventory error.</description>
             <relations/>
             <inventory-tabs/>
             <events/>
         </finder>
-        <finder type="DatacenterFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.DatacenterFolder" script-object="vRSLCMDatacenterFolder">
+        <finder type="UserManagementFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/um32.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.UserManagementFolder" script-object="vRSLCMUserManagementFolder">
             <id accessor="getId()"/>
-            <description>Folder containing vRSLCM Datacenters in the Inventory Tab.</description>
+            <description>User Management Content</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
                 <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
             </properties>
-            <inventory-children>
-                <relation-link name="Datacenters"/>
-            </inventory-children>
-            <relations>
-                <relation name="Datacenters" type="Datacenter" cardinality="to-many"/>
-            </relations>
+            <relations/>
             <inventory-tabs/>
             <events/>
         </finder>
-        <finder type="Credential" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/password.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Credential" script-object="vRSLCMCredential">
+        <finder type="Certificate" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/certificate.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate" script-object="vRSLCMCertificate">
             <id accessor="getInternalId()"/>
-            <description>Represents a Credential (Password) in LCM.</description>
+            <description>A LCM Certificate, either self-signed or signed by a trusted CA.</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name/Alias of the credential.</property>
-                <property name="passwordDescription" display-name="passwordDescription" bean-property="passwordDescription" show-in-column="true" show-in-description="true" hidden="false">Description of the credential's intended use</property>
-                <property name="createdOn" display-name="createdOn" bean-property="createdOn" show-in-column="true" show-in-description="true" hidden="false">Date/Time when the object was created.</property>
-                <property name="lastUpdatedOn" display-name="lastUpdatedOn" bean-property="lastUpdatedOn" show-in-column="true" show-in-description="true" hidden="false">Date/Time when the object was last updated.</property>
-                <property name="referenced" display-name="referenced" bean-property="referenced" show-in-column="true" show-in-description="true" hidden="false">Whether or not the credential is currently in use by LCM-managed resource. If true, the item cannot be deleted.</property>
-                <property name="userName" display-name="userName" bean-property="userName" show-in-column="true" show-in-description="true" hidden="false">User name associated to the credential.</property>
-                <property name="alias" display-name="alias" bean-property="alias" show-in-column="true" show-in-description="true" hidden="false">Alias of the Credential</property>
-                <property name="tenant" display-name="tenant" bean-property="tenant" show-in-column="true" show-in-description="true" hidden="false">The tenant associated with the credential</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">An alias...for the Alias(!) of the Certificate.</property>
+                <property name="algorithm" display-name="algorithm" bean-property="algorithm" show-in-column="true" show-in-description="true" hidden="false">The encryption algorithm used in creating the Certificate.</property>
+                <property name="alias" display-name="alias" bean-property="alias" show-in-column="true" show-in-description="true" hidden="false">The Alias aka Friendly Name of the Certificate.</property>
+                <property name="sha1" display-name="sha1" bean-property="sha1" show-in-column="true" show-in-description="true" hidden="false">The SHA-1 hash value of the Certificate.</property>
+                <property name="referenced" display-name="referenced" bean-property="referenced" show-in-column="true" show-in-description="true" hidden="false">Indicates whether the Certificate is actively in use by a resource in LCM.</property>
+                <property name="keyLength" display-name="keyLength" bean-property="keyLength" show-in-column="true" show-in-description="true" hidden="false">The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.</property>
+                <property name="expirationDate" display-name="expirationDate" bean-property="expirationDate" show-in-column="true" show-in-description="true" hidden="false">The date that the Certificate Expires.</property>
+                <property name="issueDate" display-name="issueDate" bean-property="issueDate" show-in-column="true" show-in-description="true" hidden="false">The date that the Certificate was issued.</property>
+                <property name="certChain" display-name="certChain" bean-property="certChain" show-in-column="true" show-in-description="true" hidden="false">The Certificate Chain associated to the Certificate, base64 encoded.</property>
+                <property name="leafCert" display-name="leafCert" bean-property="leafCert" show-in-column="true" show-in-description="true" hidden="false">The Certificate, base64 encoded.</property>
+                <property name="healthy" display-name="healthy" bean-property="healthy" show-in-column="true" show-in-description="true" hidden="false">Certificate Health is whether or not its expired or close to it.</property>
+                <property name="sha256" display-name="sha256" bean-property="sha256" show-in-column="true" show-in-description="true" hidden="false">The SHA-256 hash value of the Certificate.</property>
+                <property name="sans" display-name="sans" bean-property="sans" show-in-column="true" show-in-description="true" hidden="false">The Subject Alternative Name(s) in the Certificate.</property>
+                <property name="issuer" display-name="issuer" bean-property="issuer" show-in-column="true" show-in-description="true" hidden="false">The Issuer of the Certificate.</property>
+                <property name="subject" display-name="subject" bean-property="subject" show-in-column="true" show-in-description="true" hidden="false">The Subject Name of the Certificate.</property>
             </properties>
             <relations/>
             <inventory-tabs/>
@@ -175,9 +125,8 @@
             <id accessor="getId()"/>
             <description>Locker Content</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
                 <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
             </properties>
@@ -194,47 +143,138 @@
             </inventory-tabs>
             <events/>
         </finder>
-        <finder type="Certificate" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/certificate.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate" script-object="vRSLCMCertificate">
-            <id accessor="getInternalId()"/>
-            <description>A LCM Certificate, either self-signed or signed by a trusted CA.</description>
+        <finder type="RequestFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.RequestFolder" script-object="vRSLCMRequestFolder">
+            <id accessor="getId()"/>
+            <description>Folder containing vRSLCM Requests in the Inventory Tab.</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">An alias...for the Alias(!) of the Certificate.</property>
-                <property name="algorithm" display-name="algorithm" bean-property="algorithm" show-in-column="true" show-in-description="true" hidden="false">The encryption algorithm used in creating the Certificate.</property>
-                <property name="expirationDate" display-name="expirationDate" bean-property="expirationDate" show-in-column="true" show-in-description="true" hidden="false">The date that the Certificate Expires.</property>
-                <property name="issueDate" display-name="issueDate" bean-property="issueDate" show-in-column="true" show-in-description="true" hidden="false">The date that the Certificate was issued.</property>
-                <property name="certChain" display-name="certChain" bean-property="certChain" show-in-column="true" show-in-description="true" hidden="false">The Certificate Chain associated to the Certificate, base64 encoded.</property>
-                <property name="leafCert" display-name="leafCert" bean-property="leafCert" show-in-column="true" show-in-description="true" hidden="false">The Certificate, base64 encoded.</property>
-                <property name="referenced" display-name="referenced" bean-property="referenced" show-in-column="true" show-in-description="true" hidden="false">Indicates whether the Certificate is actively in use by a resource in LCM.</property>
-                <property name="keyLength" display-name="keyLength" bean-property="keyLength" show-in-column="true" show-in-description="true" hidden="false">The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.</property>
-                <property name="alias" display-name="alias" bean-property="alias" show-in-column="true" show-in-description="true" hidden="false">The Alias aka Friendly Name of the Certificate.</property>
-                <property name="sha1" display-name="sha1" bean-property="sha1" show-in-column="true" show-in-description="true" hidden="false">The SHA-1 hash value of the Certificate.</property>
-                <property name="healthy" display-name="healthy" bean-property="healthy" show-in-column="true" show-in-description="true" hidden="false">Certificate Health is whether or not its expired or close to it.</property>
-                <property name="sha256" display-name="sha256" bean-property="sha256" show-in-column="true" show-in-description="true" hidden="false">The SHA-256 hash value of the Certificate.</property>
-                <property name="sans" display-name="sans" bean-property="sans" show-in-column="true" show-in-description="true" hidden="false">The Subject Alternative Name(s) in the Certificate.</property>
-                <property name="issuer" display-name="issuer" bean-property="issuer" show-in-column="true" show-in-description="true" hidden="false">The Issuer of the Certificate.</property>
-                <property name="subject" display-name="subject" bean-property="subject" show-in-column="true" show-in-description="true" hidden="false">The Subject Name of the Certificate.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
+                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="Requests"/>
+            </inventory-children>
+            <relations>
+                <relation name="Requests" type="Request" cardinality="to-many"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="AutomationProduct" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vra32.png" java-class="com.sprockitconsulting.vrslcm.plugin.products.AutomationProduct" script-object="vRSLCMAutomationProduct">
+            <id accessor="getInternalId()"/>
+            <description>Represents a vRealize/Aria Automation Product object in LCM.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Friendly name of the Product</property>
+                <property name="productId" display-name="productId" bean-property="productId" show-in-column="true" show-in-description="true" hidden="false">The Product ID</property>
+                <property name="productVersion" display-name="productVersion" bean-property="productVersion" show-in-column="true" show-in-description="true" hidden="false">Version of the Product, usually MAJOR.MINOR.PATCH</property>
+                <property name="environmentId" display-name="environmentId" bean-property="environmentId" show-in-column="true" show-in-description="true" hidden="false">Environment ID where the Product is deployed</property>
+                <property name="productSpec" display-name="productSpec" bean-property="productSpec" show-in-column="true" show-in-description="true" hidden="false">Specifications used in the deployment of the Product.</property>
+                <property name="productNodes" display-name="productNodes" bean-property="productNodes" show-in-column="true" show-in-description="true" hidden="false">The server nodes associated with this Product deployment.</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="ProductNodes"/>
+            </inventory-children>
+            <relations>
+                <relation name="ProductNodes" type="ProductNode" cardinality="to-many"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="CertificateFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateFolder" script-object="vRSLCMCertificateFolder">
+            <id accessor="getId()"/>
+            <description>Folder containing LCM Certificates in the Inventory Tab.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
+                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="Certificates"/>
+            </inventory-children>
+            <relations>
+                <relation name="Certificates" type="Certificate" cardinality="to-many"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="EnvironmentFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.EnvironmentFolder" script-object="vRSLCMEnvironmentFolder">
+            <id accessor="getId()"/>
+            <description>Folder containing vRSLCM Environments in the Inventory Tab.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
+                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="Environments"/>
+            </inventory-children>
+            <relations>
+                <relation name="Environments" type="Environment" cardinality="to-many"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="Credential" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/password.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Credential" script-object="vRSLCMCredential">
+            <id accessor="getInternalId()"/>
+            <description>Represents a Credential (Password) in LCM.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name/Alias of the credential.</property>
+                <property name="alias" display-name="alias" bean-property="alias" show-in-column="true" show-in-description="true" hidden="false">Alias of the Credential</property>
+                <property name="tenant" display-name="tenant" bean-property="tenant" show-in-column="true" show-in-description="true" hidden="false">The tenant associated with the credential</property>
+                <property name="userName" display-name="userName" bean-property="userName" show-in-column="true" show-in-description="true" hidden="false">User name associated to the credential.</property>
+                <property name="referenced" display-name="referenced" bean-property="referenced" show-in-column="true" show-in-description="true" hidden="false">Whether or not the credential is currently in use by LCM-managed resource. If true, the item cannot be deleted.</property>
+                <property name="passwordDescription" display-name="passwordDescription" bean-property="passwordDescription" show-in-column="true" show-in-description="true" hidden="false">Description of the credential's intended use</property>
+                <property name="createdOn" display-name="createdOn" bean-property="createdOn" show-in-column="true" show-in-description="true" hidden="false">Date/Time when the object was created.</property>
+                <property name="lastUpdatedOn" display-name="lastUpdatedOn" bean-property="lastUpdatedOn" show-in-column="true" show-in-description="true" hidden="false">Date/Time when the object was last updated.</property>
             </properties>
             <relations/>
             <inventory-tabs/>
             <events/>
         </finder>
-        <finder type="Environment" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-env.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Environment" script-object="vRSLCMEnvironment">
+        <finder type="Request" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-request.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Request" script-object="vRSLCMRequest">
             <id accessor="getInternalId()"/>
-            <description>A vRSLCM Environment configuration.</description>
+            <description>A vRSLCM Request, made by an admin or automated server task.</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the Environment</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the Environment</property>
-                <property name="description" display-name="description" bean-property="description" show-in-column="true" show-in-description="true" hidden="false">Environment Description field</property>
-                <property name="status" display-name="status" bean-property="status" show-in-column="true" show-in-description="true" hidden="false">Environment status</property>
-                <property name="tenant" display-name="tenant" bean-property="tenant" show-in-column="true" show-in-description="true" hidden="false">Environment tenant</property>
-                <property name="health" display-name="health" bean-property="health" show-in-column="true" show-in-description="true" hidden="false">Environment health</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Request Name and Reason</property>
+                <property name="state" display-name="state" bean-property="state" show-in-column="true" show-in-description="true" hidden="false">The state of the request as of the last updated time.</property>
+                <property name="source" display-name="source" bean-property="source" show-in-column="true" show-in-description="true" hidden="false">The source of the request - can be a regular scheduled task or user generated.</property>
+                <property name="tenant" display-name="tenant" bean-property="tenant" show-in-column="true" show-in-description="true" hidden="false">The tenant where the Request originated from.</property>
+                <property name="lastUpdated" display-name="lastUpdated" bean-property="lastUpdated" show-in-column="true" show-in-description="true" hidden="false">The time the request was last updated, in seconds since the Unix epoch.</property>
+                <property name="requestor" display-name="requestor" bean-property="requestor" show-in-column="true" show-in-description="true" hidden="false">User account that made the request.</property>
+                <property name="lastUpdatedOnDateTime" display-name="lastUpdatedOnDateTime" bean-property="lastUpdatedOnDateTime" show-in-column="true" show-in-description="true" hidden="false">The time the request was last updated, as a readable date.</property>
             </properties>
             <relations/>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="IdentityManagerProduct" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vidm32.png" java-class="com.sprockitconsulting.vrslcm.plugin.products.IdentityManagerProduct" script-object="vRSLCMIdentityManagerProduct">
+            <id accessor="getInternalId()"/>
+            <description>Represents a VMware Identity Manager Product object in LCM.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Friendly name of the Product</property>
+                <property name="productId" display-name="productId" bean-property="productId" show-in-column="true" show-in-description="true" hidden="false">The Product ID</property>
+                <property name="productVersion" display-name="productVersion" bean-property="productVersion" show-in-column="true" show-in-description="true" hidden="false">Version of the Product, usually MAJOR.MINOR.PATCH</property>
+                <property name="environmentId" display-name="environmentId" bean-property="environmentId" show-in-column="true" show-in-description="true" hidden="false">Environment ID where the Product is deployed</property>
+                <property name="productSpec" display-name="productSpec" bean-property="productSpec" show-in-column="true" show-in-description="true" hidden="false">Specifications used in the deployment of the Product.</property>
+                <property name="productNodes" display-name="productNodes" bean-property="productNodes" show-in-column="true" show-in-description="true" hidden="false">The server nodes associated with this Product deployment.</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="ProductNodes"/>
+            </inventory-children>
+            <relations>
+                <relation name="ProductNodes" type="ProductNode" cardinality="to-many"/>
+            </relations>
             <inventory-tabs/>
             <events/>
         </finder>
@@ -242,9 +282,8 @@
             <id accessor="getInternalId()"/>
             <description>A vRSLCM vCenter configuration.</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">The vCenter Display Name in vRSLCM</property>
                 <property name="host" display-name="host" bean-property="host" show-in-column="true" show-in-description="true" hidden="false">The vCenter Host DNS address</property>
                 <property name="lockerPassword" display-name="lockerPassword" bean-property="lockerPassword" show-in-column="true" show-in-description="true" hidden="false">The Locker Password being used for vCenter Host access</property>
@@ -256,13 +295,72 @@
             <inventory-tabs/>
             <events/>
         </finder>
+        <finder type="Environment" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-env.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Environment" script-object="vRSLCMEnvironment">
+            <id accessor="getInternalId()"/>
+            <description>A vRSLCM Environment configuration.</description>
+            <properties>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the Environment</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the Environment</property>
+                <property name="products" display-name="products" bean-property="products" show-in-column="true" show-in-description="true" hidden="false">The Products that are deployed in the specified environment.</property>
+                <property name="datacenter" display-name="datacenter" bean-property="datacenter" show-in-column="true" show-in-description="true" hidden="false">The Datacenter that the Environment is deployed in.</property>
+                <property name="infrastructure" display-name="infrastructure" bean-property="infrastructure" show-in-column="false" show-in-description="true" hidden="false">Infrastructure-related properties for the Environment.</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="IdentityManagerProduct"/>
+                <relation-link name="AutomationProduct"/>
+            </inventory-children>
+            <relations>
+                <relation name="IdentityManagerProduct" type="IdentityManagerProduct" cardinality="to-one"/>
+                <relation name="AutomationProduct" type="AutomationProduct" cardinality="to-one"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="Datacenter" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-dc.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter" script-object="vRSLCMDatacenter">
+            <id accessor="getInternalId()"/>
+            <description>A vRSLCM Datacenter configuration.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the Datacenter.</property>
+                <property name="location" display-name="location" bean-property="location" show-in-column="true" show-in-description="true" hidden="false">Location of the Datacenter.</property>
+                <property name="environments" display-name="environments" bean-property="environments" show-in-column="true" show-in-description="true" hidden="false">Environments associated with the Datacenter.</property>
+                <property name="virtualCenters" display-name="virtualCenters" bean-property="virtualCenters" show-in-column="false" show-in-description="false" hidden="false">vCenter Instances associated with the Datacenter.</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="VirtualCenters"/>
+            </inventory-children>
+            <relations>
+                <relation name="VirtualCenters" type="VirtualCenter" cardinality="to-many"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
+        <finder type="DatacenterFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.DatacenterFolder" script-object="vRSLCMDatacenterFolder">
+            <id accessor="getId()"/>
+            <description>Folder containing vRSLCM Datacenters in the Inventory Tab.</description>
+            <properties>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
+                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
+                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
+            </properties>
+            <inventory-children>
+                <relation-link name="Datacenters"/>
+            </inventory-children>
+            <relations>
+                <relation name="Datacenters" type="Datacenter" cardinality="to-many"/>
+            </relations>
+            <inventory-tabs/>
+            <events/>
+        </finder>
         <finder type="ContentManagementFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/cm32.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.ContentManagementFolder" script-object="vRSLCMContentManagementFolder">
             <id accessor="getId()"/>
             <description>CM Content</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
                 <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
             </properties>
@@ -274,9 +372,8 @@
             <id accessor="getId()"/>
             <description>Folder containing LCM Credentials in the Inventory Tab.</description>
             <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="true" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
+                <property name="connection" display-name="connection" bean-property="connection" show-in-column="true" show-in-description="true" hidden="false">Connection associated with the resource.</property>
                 <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
                 <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
             </properties>
@@ -285,58 +382,6 @@
             </inventory-children>
             <relations>
                 <relation name="Credentials" type="Credential" cardinality="to-many"/>
-            </relations>
-            <inventory-tabs/>
-            <events/>
-        </finder>
-        <finder type="Request" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/vrslcm-request.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Request" script-object="vRSLCMRequest">
-            <id accessor="getInternalId()"/>
-            <description>A vRSLCM Request, made by an admin or automated server task.</description>
-            <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Request Name and Reason</property>
-                <property name="state" display-name="state" bean-property="state" show-in-column="true" show-in-description="true" hidden="false">The state of the request as of the last updated time.</property>
-                <property name="source" display-name="source" bean-property="source" show-in-column="true" show-in-description="true" hidden="false">The source of the request - can be a regular scheduled task or user generated.</property>
-                <property name="requestor" display-name="requestor" bean-property="requestor" show-in-column="true" show-in-description="true" hidden="false">User account that made the request.</property>
-                <property name="lastUpdatedOnDateTime" display-name="lastUpdatedOnDateTime" bean-property="lastUpdatedOnDateTime" show-in-column="true" show-in-description="true" hidden="false">The time the request was last updated, as a readable date.</property>
-                <property name="lastUpdated" display-name="lastUpdated" bean-property="lastUpdated" show-in-column="true" show-in-description="true" hidden="false">The time the request was last updated, in seconds since the Unix epoch.</property>
-                <property name="tenant" display-name="tenant" bean-property="tenant" show-in-column="true" show-in-description="true" hidden="false">The tenant where the Request originated from.</property>
-            </properties>
-            <relations/>
-            <inventory-tabs/>
-            <events/>
-        </finder>
-        <finder type="UserManagementFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="true" image="images/um32.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.UserManagementFolder" script-object="vRSLCMUserManagementFolder">
-            <id accessor="getId()"/>
-            <description>User Management Content</description>
-            <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
-                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
-            </properties>
-            <relations/>
-            <inventory-tabs/>
-            <events/>
-        </finder>
-        <finder type="CertificateFolder" dynamic-finder="false" dynamic-types="false" datasource="main-datasource" hidden="false" image="images/folder.png" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateFolder" script-object="vRSLCMCertificateFolder">
-            <id accessor="getId()"/>
-            <description>Folder containing LCM Certificates in the Inventory Tab.</description>
-            <properties>
-                <property name="connectionId" display-name="connectionId" bean-property="connectionId" show-in-column="false" show-in-description="true" hidden="false">Connection ID of the resource. Can be used to support lookup functionality.</property>
-                <property name="internalId" display-name="internalId" bean-property="internalId" show-in-column="true" show-in-description="true" hidden="false">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</property>
-                <property name="resourceId" display-name="resourceId" bean-property="resourceId" show-in-column="false" show-in-description="true" hidden="false">ID of the resource in the remote system.</property>
-                <property name="name" display-name="name" bean-property="name" show-in-column="true" show-in-description="true" hidden="false">Name of the folder</property>
-                <property name="id" display-name="id" bean-property="id" show-in-column="true" show-in-description="true" hidden="false">ID of the folder</property>
-            </properties>
-            <inventory-children>
-                <relation-link name="Certificates"/>
-            </inventory-children>
-            <relations>
-                <relation name="Certificates" type="Certificate" cardinality="to-many"/>
             </relations>
             <inventory-tabs/>
             <events/>
@@ -361,6 +406,12 @@
                         <parameter type="vRSLCMConnectionInfo" name="info">vRSLCM Server ConnectionInfo object to use in creation. Construct this object in your script before calling the method.</parameter>
                     </parameters>
                 </method>
+                <method script-name="updateConnection" java-name="updateConnection" return-type="vRSLCMConnection" show-in-api="true" is-deprecated="false">
+                    <description>Updates a vRSLCM Connection in the Orchestrator inventory with the given information.</description>
+                    <parameters>
+                        <parameter type="vRSLCMConnectionInfo" name="info">vRSLCM Server ConnectionInfo object to use in update. Construct this object in your script before calling the method.</parameter>
+                    </parameters>
+                </method>
                 <method script-name="deleteConnection" java-name="deleteConnection" return-type="void" show-in-api="true" is-deprecated="false">
                     <description>Deletes a vRSLCM Connection from the Orchestrator inventory by the given ID.</description>
                     <parameters>
@@ -370,23 +421,36 @@
             </methods>
             <singleton script-name="vRSLCMConnectionManager" datasource="main-datasource"/>
         </object>
+        <object script-name="vRSLCMAutomationProduct" java-class="com.sprockitconsulting.vrslcm.plugin.products.AutomationProduct" strict="false" is-deprecated="false">
+            <description>Represents a vRealize/Aria Automation Product object in LCM.</description>
+            <constructors/>
+            <attributes>
+                <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
+                <attribute script-name="name" java-name="name" return-type="String" read-only="true" show-in-api="true">Friendly name of the Product</attribute>
+                <attribute script-name="productId" java-name="productId" return-type="String" read-only="true" show-in-api="true">The Product ID</attribute>
+                <attribute script-name="productVersion" java-name="productVersion" return-type="String" read-only="true" show-in-api="true">Version of the Product, usually MAJOR.MINOR.PATCH</attribute>
+                <attribute script-name="environmentId" java-name="environmentId" return-type="String" read-only="true" show-in-api="true">Environment ID where the Product is deployed</attribute>
+                <attribute script-name="productSpec" java-name="productSpec" return-type="vRSLCMProductSpec" read-only="true" show-in-api="true">Specifications used in the deployment of the Product.</attribute>
+                <attribute script-name="productNodes" java-name="productNodes" return-type="[vRSLCMProductNode" read-only="true" show-in-api="true">The server nodes associated with this Product deployment.</attribute>
+            </attributes>
+        </object>
         <object script-name="vRSLCMCertificate" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate" strict="false" is-deprecated="false">
             <description>Represents a Locker Certificate in LCM.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">An alias...for the Alias(!) of the Certificate.</attribute>
                 <attribute script-name="algorithm" java-name="algorithm" return-type="String" read-only="false" show-in-api="true">The encryption algorithm used in creating the Certificate.</attribute>
+                <attribute script-name="alias" java-name="alias" return-type="String" read-only="false" show-in-api="true">The Alias aka Friendly Name of the Certificate.</attribute>
+                <attribute script-name="sha1" java-name="sha1" return-type="String" read-only="false" show-in-api="true">The SHA-1 hash value of the Certificate.</attribute>
+                <attribute script-name="referenced" java-name="referenced" return-type="boolean" read-only="false" show-in-api="true">Indicates whether the Certificate is actively in use by a resource in LCM.</attribute>
+                <attribute script-name="keyLength" java-name="keyLength" return-type="java.lang.Number" read-only="false" show-in-api="true">The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.</attribute>
                 <attribute script-name="expirationDate" java-name="expirationDate" return-type="String" read-only="false" show-in-api="true">The date that the Certificate Expires.</attribute>
                 <attribute script-name="issueDate" java-name="issueDate" return-type="String" read-only="false" show-in-api="true">The date that the Certificate was issued.</attribute>
                 <attribute script-name="certChain" java-name="certChain" return-type="String" read-only="false" show-in-api="true">The Certificate Chain associated to the Certificate, base64 encoded.</attribute>
                 <attribute script-name="leafCert" java-name="leafCert" return-type="String" read-only="false" show-in-api="true">The Certificate, base64 encoded.</attribute>
-                <attribute script-name="referenced" java-name="referenced" return-type="boolean" read-only="false" show-in-api="true">Indicates whether the Certificate is actively in use by a resource in LCM.</attribute>
-                <attribute script-name="keyLength" java-name="keyLength" return-type="int" read-only="false" show-in-api="true">The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.</attribute>
-                <attribute script-name="alias" java-name="alias" return-type="String" read-only="false" show-in-api="true">The Alias aka Friendly Name of the Certificate.</attribute>
-                <attribute script-name="sha1" java-name="sha1" return-type="String" read-only="false" show-in-api="true">The SHA-1 hash value of the Certificate.</attribute>
                 <attribute script-name="healthy" java-name="healthy" return-type="boolean" read-only="false" show-in-api="true">Certificate Health is whether or not its expired or close to it.</attribute>
                 <attribute script-name="sha256" java-name="sha256" return-type="String" read-only="false" show-in-api="true">The SHA-256 hash value of the Certificate.</attribute>
                 <attribute script-name="sans" java-name="sans" return-type="String" read-only="false" show-in-api="true">The Subject Alternative Name(s) in the Certificate.</attribute>
@@ -398,9 +462,8 @@
             <description>Folder containing Certificates in the Inventory Tab.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -430,9 +493,9 @@
             <attributes>
                 <attribute script-name="state" java-name="state" return-type="String" read-only="false" show-in-api="true">State field used on the Certificate.</attribute>
                 <attribute script-name="country" java-name="country" return-type="String" read-only="false" show-in-api="true">Country (US, JP, CN) used on the Certificate.</attribute>
-                <attribute script-name="nameOrAlias" java-name="nameOrAlias" return-type="String" read-only="false" show-in-api="true">Name/Alias of the Certificate.</attribute>
-                <attribute script-name="keyLength" java-name="keyLength" return-type="int" read-only="false" show-in-api="true">Encryption key size used on the Certificate, default is 2048.</attribute>
                 <attribute script-name="tenant" java-name="tenant" return-type="String" read-only="false" show-in-api="true">Tenant Name</attribute>
+                <attribute script-name="keyLength" java-name="keyLength" return-type="int" read-only="false" show-in-api="true">Encryption key size used on the Certificate, default is 2048.</attribute>
+                <attribute script-name="nameOrAlias" java-name="nameOrAlias" return-type="String" read-only="false" show-in-api="true">Name/Alias of the Certificate.</attribute>
                 <attribute script-name="sans" java-name="sans" return-type="[String" read-only="false" show-in-api="true">List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.</attribute>
                 <attribute script-name="org" java-name="org" return-type="String" read-only="false" show-in-api="true">Organization field used on the Certificate.</attribute>
                 <attribute script-name="orgUnit" java-name="orgUnit" return-type="String" read-only="false" show-in-api="true">Organizational Unit field used on the Certificate.</attribute>
@@ -452,17 +515,20 @@
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Display Name of the vRSLCM Connection in Orchestrator.</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">Unique ID of the vRSLCM Connection in Orchestrator.</attribute>
                 <attribute script-name="host" java-name="host" return-type="String" read-only="false" show-in-api="true">The Hostname of the vRSLCM Server.</attribute>
+                <attribute script-name="userName" java-name="userName" return-type="String" read-only="false" show-in-api="true">The User Account Name used in the vRSLCM Server Connection.</attribute>
                 <attribute script-name="userDomain" java-name="userDomain" return-type="String" read-only="false" show-in-api="true">The User Account Domain used in the vRSLCM Server Connection. If unspecified, @local is assumed.</attribute>
                 <attribute script-name="identityManagerHost" java-name="identityManagerHost" return-type="String" read-only="false" show-in-api="true">The Authentication Host of the vRSLCM Server Connection to VMware Identity Manager. If set, authentication requests are redirected here with a Client ID and Secret for authorization.Users in the @local scope do not use this field for authentication.</attribute>
                 <attribute script-name="identityManagerClientId" java-name="identityManagerClientId" return-type="String" read-only="false" show-in-api="true">The Required OAuth2.0 Client ID to use in authentication requests to VMware Identity Manager.</attribute>
-                <attribute script-name="userName" java-name="userName" return-type="String" read-only="false" show-in-api="true">The User Account Name used in the vRSLCM Server Connection.</attribute>
             </attributes>
             <methods>
-                <method script-name="getLockerService" java-name="getLockerService" return-type="vRSLCMLockerService" show-in-api="true" is-deprecated="false">
-                    <description>Use this service to perform operations on Lifecycle Operations scoped objects.</description>
-                </method>
                 <method script-name="getLifecycleOperationsService" java-name="getLifecycleOperationsService" return-type="vRSLCMLifecycleOperationsService" show-in-api="true" is-deprecated="false">
                     <description>Use this service to perform operations on Lifecycle Operations scoped objects.</description>
+                </method>
+                <method script-name="getLockerService" java-name="getLockerService" return-type="vRSLCMLockerService" show-in-api="true" is-deprecated="false">
+                    <description>Use this service to perform operations on Locker scoped objects.</description>
+                </method>
+                <method script-name="getConfigurationService" java-name="getConfigurationService" return-type="com.sprockitconsulting.vrslcm.plugin.services.ConfigurationService" show-in-api="true" is-deprecated="false">
+                    <description>Use this service to perform operations on the LCM Server itself.</description>
                 </method>
             </methods>
         </object>
@@ -477,21 +543,20 @@
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">The Friendly Name of the vRSLCM Server Connection.</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="true" show-in-api="true">The ID of the vRSLCM Server Connection inside of Orchestrator.</attribute>
                 <attribute script-name="host" java-name="host" return-type="String" read-only="false" show-in-api="true">The Hostname of the vRSLCM Server Connection.</attribute>
+                <attribute script-name="identityManagerClientSecret" java-name="identityManagerClientSecret" return-type="String" read-only="false" show-in-api="true">The Required OAuth2.0 Client Secret to use in authentication requests to VMware Identity Manager. Encrypted by the platform.</attribute>
+                <attribute script-name="userName" java-name="userName" return-type="String" read-only="false" show-in-api="true">The User Account used in the vRSLCM Server Connection.</attribute>
                 <attribute script-name="userDomain" java-name="userDomain" return-type="String" read-only="false" show-in-api="true">The User Domain. If unspecified, @local is assumed.</attribute>
                 <attribute script-name="identityManagerHost" java-name="identityManagerHost" return-type="String" read-only="false" show-in-api="true">The Authentication Host of the vRSLCM Server Connection to VMware Identity Manager. If set, authentication requests are redirected here with a Client ID and Secret for authorization.Users in the @local scope do not use this field for authentication.</attribute>
                 <attribute script-name="identityManagerClientId" java-name="identityManagerClientId" return-type="String" read-only="false" show-in-api="true">The Required OAuth2.0 Client ID to use in authentication requests to VMware Identity Manager.</attribute>
                 <attribute script-name="userPassword" java-name="userPassword" return-type="String" read-only="false" show-in-api="true">The User Password used in the vRSLCM Server Connection. Encrypted by the platform.</attribute>
-                <attribute script-name="userName" java-name="userName" return-type="String" read-only="false" show-in-api="true">The User Account used in the vRSLCM Server Connection.</attribute>
-                <attribute script-name="identityManagerClientSecret" java-name="identityManagerClientSecret" return-type="String" read-only="false" show-in-api="true">The Required OAuth2.0 Client Secret to use in authentication requests to VMware Identity Manager. Encrypted by the platform.</attribute>
             </attributes>
         </object>
         <object script-name="vRSLCMContentManagementFolder" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.ContentManagementFolder" strict="false" is-deprecated="false">
             <description>CM Content</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -513,26 +578,24 @@
                 </constructor>
             </constructors>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name/Alias of the credential.</attribute>
+                <attribute script-name="alias" java-name="alias" return-type="String" read-only="false" show-in-api="true">Alias of the Credential</attribute>
+                <attribute script-name="tenant" java-name="tenant" return-type="String" read-only="false" show-in-api="true">The tenant associated with the credential</attribute>
+                <attribute script-name="userName" java-name="userName" return-type="String" read-only="false" show-in-api="true">User name associated to the credential.</attribute>
+                <attribute script-name="referenced" java-name="referenced" return-type="boolean" read-only="false" show-in-api="true">Whether or not the credential is currently in use by LCM-managed resource. If true, the item cannot be deleted.</attribute>
                 <attribute script-name="passwordDescription" java-name="passwordDescription" return-type="String" read-only="false" show-in-api="true">Description of the credential's intended use</attribute>
                 <attribute script-name="createdOn" java-name="createdOn" return-type="String" read-only="false" show-in-api="true">Date/Time when the object was created.</attribute>
                 <attribute script-name="lastUpdatedOn" java-name="lastUpdatedOn" return-type="String" read-only="false" show-in-api="true">Date/Time when the object was last updated.</attribute>
-                <attribute script-name="referenced" java-name="referenced" return-type="boolean" read-only="false" show-in-api="true">Whether or not the credential is currently in use by LCM-managed resource. If true, the item cannot be deleted.</attribute>
-                <attribute script-name="userName" java-name="userName" return-type="String" read-only="false" show-in-api="true">User name associated to the credential.</attribute>
-                <attribute script-name="alias" java-name="alias" return-type="String" read-only="false" show-in-api="true">Alias of the Credential</attribute>
-                <attribute script-name="tenant" java-name="tenant" return-type="String" read-only="false" show-in-api="true">The tenant associated with the credential</attribute>
             </attributes>
         </object>
         <object script-name="vRSLCMCredentialFolder" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.CredentialFolder" strict="false" is-deprecated="false">
             <description>Folder containing LCM Credentials in the Inventory Tab.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -541,31 +604,20 @@
             <description>Represents a Datacenter object in vRSLCM.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the Datacenter.</attribute>
                 <attribute script-name="location" java-name="location" return-type="String" read-only="false" show-in-api="true">Location of the Datacenter.</attribute>
+                <attribute script-name="environments" java-name="environments" return-type="[vRSLCMEnvironment" read-only="false" show-in-api="true">Environments associated with the Datacenter.</attribute>
+                <attribute script-name="virtualCenters" java-name="virtualCenters" return-type="[vRSLCMVirtualCenter" read-only="false" show-in-api="true">vCenter Instances associated with the Datacenter.</attribute>
             </attributes>
-            <methods>
-                <method script-name="update" java-name="update" return-type="void" show-in-api="true" is-deprecated="false">
-                    <description>Updates a Datacenter's name/location.</description>
-                </method>
-                <method script-name="getEnvironments" java-name="getEnvironments" return-type="[vRSLCMEnvironment" show-in-api="true" is-deprecated="false">
-                    <description>Environments associated with the Datacenter.</description>
-                </method>
-                <method script-name="getVirtualCenters" java-name="getVirtualCenters" return-type="[vRSLCMVirtualCenter" show-in-api="true" is-deprecated="false">
-                    <description>vCenter Instances associated with the Datacenter.</description>
-                </method>
-            </methods>
         </object>
         <object script-name="vRSLCMDatacenterFolder" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.DatacenterFolder" strict="false" is-deprecated="false">
             <description>Folder containing vRSLCM Datacenters in the Inventory Tab.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -574,14 +626,12 @@
             <description>Represents a vRSLCM Environment, containing Products and their Nodes/Servers.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the Environment</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the Environment</attribute>
-                <attribute script-name="description" java-name="description" return-type="String" read-only="false" show-in-api="true">Environment Description field</attribute>
-                <attribute script-name="status" java-name="status" return-type="String" read-only="true" show-in-api="true">Environment status</attribute>
-                <attribute script-name="tenant" java-name="tenant" return-type="String" read-only="true" show-in-api="true">Environment tenant</attribute>
-                <attribute script-name="health" java-name="health" return-type="String" read-only="true" show-in-api="true">Environment health</attribute>
+                <attribute script-name="products" java-name="products" return-type="[com.sprockitconsulting.vrslcm.plugin.products.BaseProduct" read-only="false" show-in-api="true">The Products that are deployed in the specified environment.</attribute>
+                <attribute script-name="datacenter" java-name="datacenter" return-type="vRSLCMDatacenter" read-only="false" show-in-api="true">The Datacenter that the Environment is deployed in.</attribute>
+                <attribute script-name="infrastructure" java-name="infrastructure" return-type="vRSLCMEnvironmentInfrastructure" read-only="false" show-in-api="true">Infrastructure-related properties for the Environment.</attribute>
             </attributes>
             <methods>
                 <method script-name="triggerInventorySync" java-name="triggerInventorySync" return-type="void" show-in-api="true" is-deprecated="false">
@@ -593,24 +643,44 @@
             <description>Folder containing vRSLCM Environments in the Inventory Tab.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
         </object>
-        <object script-name="vRSLCMInventoryError" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.InventoryError" strict="false" is-deprecated="false">
-            <description>In case of an error when browsing inventory, this object will be presented.</description>
+        <object script-name="vRSLCMEnvironmentInfrastructure" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.EnvironmentInfrastructure" strict="false" is-deprecated="false">
+            <description>Represents a vRSLCM Environment's Infrastructure properties, such as vSphere Cluster, Datastore, Network, and DNS settings.</description>
             <constructors/>
+            <methods>
+                <method script-name="getProperty" java-name="getProperty" return-type="Any" show-in-api="true" is-deprecated="false">
+                    <description>Retrieve an infrastructure property value by name.</description>
+                    <parameters>
+                        <parameter type="String" name="key">Name of the property to retrieve. The return value could be anything so make sure to add some checks in your script.</parameter>
+                    </parameters>
+                </method>
+            </methods>
+        </object>
+        <object script-name="vRSLCMIdentityManagerProduct" java-class="com.sprockitconsulting.vrslcm.plugin.products.IdentityManagerProduct" strict="false" is-deprecated="false">
+            <description>Represents a VMware Identity Manager Product object in LCM.</description>
+            <constructors/>
+            <attributes>
+                <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
+                <attribute script-name="name" java-name="name" return-type="String" read-only="true" show-in-api="true">Friendly name of the Product</attribute>
+                <attribute script-name="productId" java-name="productId" return-type="String" read-only="true" show-in-api="true">The Product ID</attribute>
+                <attribute script-name="productVersion" java-name="productVersion" return-type="String" read-only="true" show-in-api="true">Version of the Product, usually MAJOR.MINOR.PATCH</attribute>
+                <attribute script-name="environmentId" java-name="environmentId" return-type="String" read-only="true" show-in-api="true">Environment ID where the Product is deployed</attribute>
+                <attribute script-name="productSpec" java-name="productSpec" return-type="vRSLCMProductSpec" read-only="true" show-in-api="true">Specifications used in the deployment of the Product.</attribute>
+                <attribute script-name="productNodes" java-name="productNodes" return-type="[vRSLCMProductNode" read-only="true" show-in-api="true">The server nodes associated with this Product deployment.</attribute>
+            </attributes>
         </object>
         <object script-name="vRSLCMLifecycleOperationsFolder" java-class="com.sprockitconsulting.vrslcm.plugin.scriptable.LifecycleOperationsFolder" strict="false" is-deprecated="false">
             <description>Lifecycle Operations Content</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -618,9 +688,6 @@
         <object script-name="vRSLCMLifecycleOperationsService" java-class="com.sprockitconsulting.vrslcm.plugin.services.LifecycleOperationsService" strict="false" is-deprecated="false">
             <description>Enables access to Lifecycle Operations specific methods for the server connection.</description>
             <constructors/>
-            <attributes>
-                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="false" show-in-api="true">The connection associated to the service.</attribute>
-            </attributes>
             <methods>
                 <method script-name="createDatacenter" java-name="createDatacenter" return-type="vRSLCMDatacenter" show-in-api="true" is-deprecated="false">
                     <description>Creates a new Datacenter with the given name and location.</description>
@@ -640,7 +707,13 @@
                 <method script-name="getAllDatacenters" java-name="getAllDatacenters" return-type="[vRSLCMDatacenter" show-in-api="true" is-deprecated="false">
                     <description>Retrieves all Datacenters for this server.</description>
                 </method>
-                <method script-name="deleteDatacenter" java-name="deleteDatacenter" return-type="vRSLCMRequest" show-in-api="true" is-deprecated="false">
+                <method script-name="getDatacenterByValue" java-name="getDatacenterByValue" return-type="vRSLCMDatacenter" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves a Datacenter by name or resource ID on this server.</description>
+                    <parameters>
+                        <parameter type="String" name="nameOrId"/>
+                    </parameters>
+                </method>
+                <method script-name="deleteDatacenter" java-name="deleteDatacenter" return-type="void" show-in-api="true" is-deprecated="false">
                     <description>Deletes a Datacenter on the server. Returns a request to monitor for completion.</description>
                     <parameters>
                         <parameter type="vRSLCMDatacenter" name="dc"/>
@@ -649,20 +722,14 @@
                 <method script-name="getAllEnvironments" java-name="getAllEnvironments" return-type="[vRSLCMEnvironment" show-in-api="true" is-deprecated="false">
                     <description>Retrieves all Environments for this server.</description>
                 </method>
-                <method script-name="getAllRequests" java-name="getAllRequests" return-type="[vRSLCMRequest" show-in-api="true" is-deprecated="false">
-                    <description>Retrieves all Requests for this server.</description>
-                </method>
-                <method script-name="getDatacenterByValue" java-name="getDatacenterByValue" return-type="vRSLCMDatacenter" show-in-api="true" is-deprecated="false">
-                    <description>Retrieves a Datacenter by name or resource ID on this server.</description>
-                    <parameters>
-                        <parameter type="String" name="nameOrId"/>
-                    </parameters>
-                </method>
                 <method script-name="getEnvironmentByValue" java-name="getEnvironmentByValue" return-type="vRSLCMEnvironment" show-in-api="true" is-deprecated="false">
                     <description>Retrieves an Environment by name or resource ID on this server.</description>
                     <parameters>
                         <parameter type="String" name="nameOrId"/>
                     </parameters>
+                </method>
+                <method script-name="getAllRequests" java-name="getAllRequests" return-type="[vRSLCMRequest" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves all Requests for this server.</description>
                 </method>
                 <method script-name="getRequestById" java-name="getRequestById" return-type="vRSLCMRequest" show-in-api="true" is-deprecated="false">
                     <description>Retrieves a Request by resource ID on this server.</description>
@@ -676,9 +743,8 @@
             <description>Locker Content</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -686,10 +752,19 @@
         <object script-name="vRSLCMLockerService" java-class="com.sprockitconsulting.vrslcm.plugin.services.LockerService" strict="false" is-deprecated="false">
             <description>Enables access to Locker specific methods for the server connection.</description>
             <constructors/>
-            <attributes>
-                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="false" show-in-api="true">The connection associated to the service.</attribute>
-            </attributes>
             <methods>
+                <method script-name="createCertificateSigningRequest" java-name="createCertificateSigningRequest" return-type="String" show-in-api="true" is-deprecated="false">
+                    <description>Creates a Certificate Signing Request based on inputs. Once you have signed the certificate, you can import it using the @importCertificate method.</description>
+                    <parameters>
+                        <parameter type="vRSLCMCertificateInfo" name="info">The specifications of the certificate to request.</parameter>
+                    </parameters>
+                </method>
+                <method script-name="getAllCertificatesMatchingAliases" java-name="getAllCertificatesMatchingAliases" return-type="[vRSLCMCertificate" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves all Certificates for this server matching the list of aliases.</description>
+                    <parameters>
+                        <parameter type="[String" name="aliases">One more values to query for in the list. All matches will be returned.</parameter>
+                    </parameters>
+                </method>
                 <method script-name="createCertificate" java-name="createCertificate" return-type="vRSLCMCertificate" show-in-api="true" is-deprecated="false">
                     <description>Creates a new Locker-signed certificate based on inputs.</description>
                     <parameters>
@@ -699,20 +774,35 @@
                 <method script-name="getAllCertificates" java-name="getAllCertificates" return-type="[vRSLCMCertificate" show-in-api="true" is-deprecated="false">
                     <description>Retrieves all Certificates for this server.</description>
                 </method>
+                <method script-name="deleteCertificate" java-name="deleteCertificate" return-type="void" show-in-api="true" is-deprecated="false">
+                    <description>Deletes a Certificate from the server. Must not be referenced by other managed entities.</description>
+                    <parameters>
+                        <parameter type="vRSLCMCertificate" name="cert">The Certificate object to delete</parameter>
+                    </parameters>
+                </method>
                 <method script-name="getCertificateById" java-name="getCertificateById" return-type="vRSLCMCertificate" show-in-api="true" is-deprecated="false">
                     <description>Retrieves a Certificate via ID on this server.</description>
                     <parameters>
                         <parameter type="String" name="id">The ID to search for - also known in LCM as the 'vmid' value</parameter>
                     </parameters>
                 </method>
-                <method script-name="deleteCertificate" java-name="deleteCertificate" return-type="String" show-in-api="true" is-deprecated="false">
-                    <description>Deletes a Certificate from the server. Must not be referenced by other managed entities.</description>
+                <method script-name="importTrustedCertificate" java-name="importTrustedCertificate" return-type="vRSLCMCertificate" show-in-api="true" is-deprecated="false">
+                    <description>Imports a signed Certificate chain and private key to the server.</description>
                     <parameters>
-                        <parameter type="vRSLCMCertificate" name="cert">The Certificate object to delete</parameter>
+                        <parameter type="String" name="name">Display name of the Certificate being imported.</parameter>
+                        <parameter type="String" name="certificateChain">The full certificate chain as a Base64-encoded string. The order from top to bottom should be the Leaf certificate, Intermediate CA(s), then Root CA</parameter>
+                        <parameter type="String" name="privateKey">Private key</parameter>
+                        <parameter type="String" name="passphrase">Passphrase used to decrypt the private key if used</parameter>
                     </parameters>
                 </method>
                 <method script-name="getAllCredentials" java-name="getAllCredentials" return-type="[vRSLCMCredential" show-in-api="true" is-deprecated="false">
                     <description>Retrieves all Credentials for this server.</description>
+                </method>
+                <method script-name="getCredentialByValue" java-name="getCredentialByValue" return-type="vRSLCMCredential" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves a Credential by name or resource ID on this server.</description>
+                    <parameters>
+                        <parameter type="String" name="nameOrId">The Name or ID to search in the credential list.</parameter>
+                    </parameters>
                 </method>
                 <method script-name="createCredential" java-name="createCredential" return-type="vRSLCMCredential" show-in-api="true" is-deprecated="false">
                     <description>Creates a new Credential with the specified values.</description>
@@ -733,28 +823,52 @@
                         <parameter type="String" name="userName">The associated username for this credential, for example root or sshuser.</parameter>
                     </parameters>
                 </method>
-                <method script-name="deleteCredential" java-name="deleteCredential" return-type="String" show-in-api="true" is-deprecated="false">
+                <method script-name="deleteCredential" java-name="deleteCredential" return-type="void" show-in-api="true" is-deprecated="false">
                     <description>Deletes an existing Credential. If the credential is in use, this will fail!</description>
                     <parameters>
                         <parameter type="vRSLCMCredential" name="credential">The credential to delete.</parameter>
                     </parameters>
                 </method>
-                <method script-name="getCredentialByValue" java-name="getCredentialByValue" return-type="vRSLCMCredential" show-in-api="true" is-deprecated="false">
-                    <description>Retrieves a Credential by name or resource ID on this server.</description>
+            </methods>
+        </object>
+        <object script-name="vRSLCMProductNode" java-class="com.sprockitconsulting.vrslcm.plugin.products.ProductNode" strict="false" is-deprecated="false">
+            <description>Represents a node/server used in a particular Product in LCM. Typically, this is a VM.</description>
+            <constructors/>
+            <attributes>
+                <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
+                <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">The VM name of the node.</attribute>
+                <attribute script-name="type" java-name="type" return-type="String" read-only="false" show-in-api="true">The type of node. Examples are 'vidm-connector' or 'vrava-primary' - this value differs per product.</attribute>
+                <attribute script-name="productNodeSpec" java-name="productNodeSpec" return-type="vRSLCMProductNodeSpec" read-only="false" show-in-api="true">Specifications of the Node. Use the attached methods to get specific information about the node.</attribute>
+                <attribute script-name="vc" java-name="vc" return-type="String" read-only="false" show-in-api="true">The vCenter Host of the VM</attribute>
+            </attributes>
+        </object>
+        <object script-name="vRSLCMProductNodeSpec" java-class="com.sprockitconsulting.vrslcm.plugin.products.ProductNodeSpec" strict="false" is-deprecated="false">
+            <description>Specifications of the Product Node.  The specifications differ for each Product and Node type, so use the methods attached to find what you're looking for.</description>
+            <constructors/>
+            <methods>
+                <method script-name="getNodeProperty" java-name="getNodeProperty" return-type="Any" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves a Product Node property by name.</description>
                     <parameters>
-                        <parameter type="String" name="nameOrId">The Name or ID to search in the credential list.</parameter>
+                        <parameter type="String" name="name">Name of the property to get the value of from the Product Node specifications.</parameter>
                     </parameters>
                 </method>
-                <method script-name="getAllCertificatesMatchingAliases" java-name="getAllCertificatesMatchingAliases" return-type="[vRSLCMCertificate" show-in-api="true" is-deprecated="false">
-                    <description>Retrieves all Certificates for this server matching the list of aliases.</description>
-                    <parameters>
-                        <parameter type="[String" name="aliases">One more values to query for in the list. All matches will be returned.</parameter>
-                    </parameters>
+                <method script-name="getNodePropertyNames" java-name="getNodePropertyNames" return-type="[String" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves a list of Property names for the Product Node. Use this to discover what properties are available for you to key off of, using the @{getNodeProperty} method.</description>
                 </method>
-                <method script-name="createCertificateSigningRequest" java-name="createCertificateSigningRequest" return-type="String" show-in-api="true" is-deprecated="false">
-                    <description>Creates a Certificate Signing Request based on inputs. Once you have signed the certificate, you can import it using the [importCertificate] method.</description>
+            </methods>
+        </object>
+        <object script-name="vRSLCMProductSpec" java-class="com.sprockitconsulting.vrslcm.plugin.products.ProductSpec" strict="false" is-deprecated="false">
+            <description>Specifications used in the deployment of the Product. The specifications differ for each Product, so use the methods attached to find what you're looking for.</description>
+            <constructors/>
+            <methods>
+                <method script-name="getProductPropertyNames" java-name="getProductPropertyNames" return-type="[String" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves a list of Property names for the Product. Use this to discover what properties are available for you to key off of, using the @{getProductProperty} method.</description>
+                </method>
+                <method script-name="getProductProperty" java-name="getProductProperty" return-type="Any" show-in-api="true" is-deprecated="false">
+                    <description>Retrieves a Product property by name.</description>
                     <parameters>
-                        <parameter type="vRSLCMCertificateInfo" name="info">The specifications of the certificate to request.</parameter>
+                        <parameter type="String" name="name">Name of the property to retrieve, such as 'nodeSize'</parameter>
                     </parameters>
                 </method>
             </methods>
@@ -763,16 +877,15 @@
             <description>Represents a Request in vRSLCM.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="true" show-in-api="true">Request Name and Reason</attribute>
                 <attribute script-name="state" java-name="state" return-type="String" read-only="true" show-in-api="true">The state of the request as of the last updated time.</attribute>
                 <attribute script-name="source" java-name="source" return-type="String" read-only="true" show-in-api="true">The source of the request - can be a regular scheduled task or user generated.</attribute>
+                <attribute script-name="tenant" java-name="tenant" return-type="String" read-only="true" show-in-api="true">The tenant where the Request originated from.</attribute>
+                <attribute script-name="lastUpdated" java-name="lastUpdated" return-type="long" read-only="true" show-in-api="true">The time the request was last updated, in seconds since the Unix epoch.</attribute>
                 <attribute script-name="requestor" java-name="requestor" return-type="String" read-only="true" show-in-api="true">User account that made the request.</attribute>
                 <attribute script-name="lastUpdatedOnDateTime" java-name="lastUpdatedOnDateTime" return-type="String" read-only="true" show-in-api="true">The time the request was last updated, as a readable date.</attribute>
-                <attribute script-name="lastUpdated" java-name="lastUpdated" return-type="long" read-only="true" show-in-api="true">The time the request was last updated, in seconds since the Unix epoch.</attribute>
-                <attribute script-name="tenant" java-name="tenant" return-type="String" read-only="true" show-in-api="true">The tenant where the Request originated from.</attribute>
             </attributes>
             <methods>
                 <method script-name="retry" java-name="retry" return-type="void" show-in-api="true" is-deprecated="false">
@@ -790,9 +903,8 @@
             <description>Folder containing vRSLCM Requests in the Inventory Tab.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -801,9 +913,8 @@
             <description>User Management Content</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">Name of the folder</attribute>
                 <attribute script-name="id" java-name="id" return-type="String" read-only="false" show-in-api="true">ID of the folder</attribute>
             </attributes>
@@ -812,9 +923,8 @@
             <description>Represents a vCenter Server in vRSLCM.</description>
             <constructors/>
             <attributes>
-                <attribute script-name="connectionId" java-name="connectionId" return-type="String" read-only="true" show-in-api="true">Connection ID of the resource. Can be used to support lookup functionality.</attribute>
-                <attribute script-name="internalId" java-name="internalId" return-type="String" read-only="true" show-in-api="true">Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.</attribute>
                 <attribute script-name="resourceId" java-name="resourceId" return-type="String" read-only="true" show-in-api="true">ID of the resource in the remote system.</attribute>
+                <attribute script-name="connection" java-name="connection" return-type="vRSLCMConnection" read-only="true" show-in-api="true">Connection associated with the resource.</attribute>
                 <attribute script-name="name" java-name="name" return-type="String" read-only="false" show-in-api="true">The vCenter Display Name in vRSLCM</attribute>
                 <attribute script-name="host" java-name="host" return-type="String" read-only="false" show-in-api="true">The vCenter Host DNS address</attribute>
                 <attribute script-name="lockerPassword" java-name="lockerPassword" return-type="String" read-only="false" show-in-api="true">The Locker Password being used for vCenter Host access</attribute>

@@ -1,49 +1,52 @@
 package com.sprockitconsulting.vrslcm.plugin.services;
 
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+import com.sprockitconsulting.vrslcm.plugin.dao.DaoRequest;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
-
-public class RequestService implements IServiceBase<Request> {
-
-	@Override
-	public Request getByNameOrId(String nameOrId) {
-		// TODO Auto-generated method stub
-		return null;
+/**
+ * This service governs access to LCM Requests.
+ * It is autowired into the LifecycleOperationsService, used in Orchestrator for users to manage objects.
+ * @author justin
+ */
+@Service
+public class RequestService extends AbstractService {
+	// Enable Logging
+	private static final Logger log = LoggerFactory.getLogger(RequestService.class);
+	
+	@Autowired
+	private DaoRequest dao;
+	
+	public RequestService() {}
+	
+	@Deprecated
+	public RequestService(Connection connection) {
+		super(connection);
+		log.debug("Initialized with Connection ["+connection.getId()+"]");
+	}
+/*
+	@PostConstruct
+	public void init() {
+		log.debug("RequestService @PostConstruct Begin");
+		this.dao = (DaoRequest) context.getBean("daoRequest", this.connection);
+		log.debug("RequestService @PostConstruct Success - DaoRequest service bean created");
+	}
+*/	
+	public Request getByValue(Connection connection, String value) {
+		return dao.findById(connection, value);
 	}
 
-	@Override
-	public Request[] getAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Request create() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Request delete() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Request update() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getServiceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getBaseUriTemplate() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Request> getAll(Connection connection) {
+		return dao.findAll(connection);
 	}
 
 }

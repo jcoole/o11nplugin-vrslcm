@@ -15,7 +15,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
  * Represents a Request object in LCM.
  * @author justin
  */
-@JsonIgnoreProperties(value = {"lastUpdatedOnDateTime"} )
+@JsonIgnoreProperties(ignoreUnknown = true)
 @VsoObject(description = "Represents a Request in vRSLCM.", create = false)
 @VsoFinder( //Creating the VsoFinder exposes this in the 'Types' section of API Explorer.
 	name = "Request", // Type name!!! This value actually translates to 'type' in VSO.XML!!
@@ -39,7 +39,19 @@ public class Request extends BaseLifecycleManagerObject implements Comparable<Re
 	public Request() {
 		
 	}
-	
+
+	public Request(String name, String source, String requestor, long lastUpdated, String tenant, String state,
+			String lastUpdatedOnDateTime) {
+		this.name = name;
+		this.source = source;
+		this.requestor = requestor;
+		this.lastUpdated = lastUpdated;
+		this.tenant = tenant;
+		this.state = state;
+		this.lastUpdatedOnDateTime = lastUpdatedOnDateTime;
+	}
+
+
 	@VsoProperty(description = "Request Name and Reason", readOnly = true)
 	public String getName() {
 		return name;
@@ -88,7 +100,7 @@ public class Request extends BaseLifecycleManagerObject implements Comparable<Re
 	public String getState() {
 		return state;
 	}
-	
+	@JsonProperty("state")
 	public void setState(String state) {
 		this.state = state;
 	}
@@ -101,8 +113,7 @@ public class Request extends BaseLifecycleManagerObject implements Comparable<Re
 	@JsonProperty("lastUpdatedOn")
 	public void setLastUpdated(long lastUpdated) {
 		this.lastUpdated = lastUpdated;
-		// use this value to populate the datetime field.
-		// TODO: investigate timezone conversion based on appliance properties?
+		// Use this value to populate the datetime field.
 		this.lastUpdatedOnDateTime = Instant.ofEpochMilli(lastUpdated).toString();
 	}
 	

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.sprockitconsulting.vrslcm.plugin.component.ObjectFactory;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
 
@@ -46,19 +45,19 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	private static final Logger log = LoggerFactory.getLogger(ConnectionRepository.class);
 	
 	/**
-	 * Local cache of connections, factories, authentications
+	 * Local cache of connections, authentications
 	 *  
 	 */
 	private final Map<String, Connection> connections;
-	private final Map<String, ObjectFactory> objectFactories;
+
 	private final Map<String, ConnectionAuthentication> connectionAuthentications;
 	
 	
 	public ConnectionRepository() {
 		connections = new ConcurrentHashMap<>();
-		objectFactories = new ConcurrentHashMap<>();
+
 		connectionAuthentications = new ConcurrentHashMap<>();
-		log.debug("Constructor initialized");
+		log.debug("vRSLCM Plugin Connection Repository initialized");
 	}
 
 	/**
@@ -73,13 +72,6 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	 */
 	public Collection<Connection> findAll() {
 		return connections.values();
-	}
-	
-	/**
-	 * Get Factory by Connection ID
-	 */
-	public ObjectFactory findObjectFactory(String id) {
-		return objectFactories.get(id);
 	}
 	
 	/**
@@ -146,16 +138,6 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	}
 	
 	/**
-	 * Creates an ObjectFactory for the particular Connection.
-	 * Similar to 'createConnection' this is used to create a prototype scoped bean with a constructor argument.
-	 */
-	private ObjectFactory createObjectFactory(Connection connection) {
-		ObjectFactory ofb = (ObjectFactory) context.getBean("objectFactory", connection);
-		log.debug("ObjectFactory created for Connection ID ["+connection.getId()+"]");
-		return ofb;
-	}
-	
-	/**
 	 * Creates a ConnectionAuthentication object for the Connection.
 	 * This value contains the token type and value for authorized API requests.
 	 */
@@ -188,18 +170,6 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 			// Connection did not previously exist, so create it and add to the repository.
 			live = createConnection(info);
 			connections.put(info.getId(), live);
-		}
-		
-		// Update ObjectFactory (if neeeded)
-		ObjectFactory factory = objectFactories.get(info.getId());
-		if(factory != null) {
-			// factor is there, replace the connection
-			factory.setConnection(live);
-			objectFactories.replace(info.getId(), factory);
-		} else {
-			// factory not there, add it
-			factory = createObjectFactory(live);
-			objectFactories.put(info.getId(), factory);
 		}
 		
 		// Update ConnectionAuth (if needed)
@@ -238,13 +208,6 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 			// Remove Connection
 			connections.remove(info.getId());
 			log.debug("Repository found and deleted Connection ["+info.getId()+"]");
-		}
-		
-		ObjectFactory factory = objectFactories.get(info.getId());
-		if(factory != null) {
-			// Remove Factory
-			objectFactories.remove(info.getId());
-			log.debug("Repository found and deleted ObjectFactory for ["+info.getId()+"]");
 		}
 		
 		ConnectionAuthentication auth = connectionAuthentications.get(info.getId());

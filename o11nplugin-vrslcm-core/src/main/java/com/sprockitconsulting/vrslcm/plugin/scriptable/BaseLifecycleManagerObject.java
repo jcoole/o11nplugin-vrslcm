@@ -3,10 +3,12 @@ package com.sprockitconsulting.vrslcm.plugin.scriptable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
-import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
+import com.sprockitconsulting.vrslcm.plugin.services.*;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
@@ -15,6 +17,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
  * @author justin
  * @see ObjectFactory
  */
+@Component
+@Scope(value = "prototype")
 public abstract class BaseLifecycleManagerObject {
 
 	// Enable Logging
@@ -22,8 +26,10 @@ public abstract class BaseLifecycleManagerObject {
 	
 	@Autowired
 	protected ConnectionRepository repository;
+	@Autowired
+	protected ApplicationContext context;
 	
-	protected String connectionId;
+	protected Connection connection;
 	protected String internalId;
 	protected String resourceId;
 
@@ -31,16 +37,6 @@ public abstract class BaseLifecycleManagerObject {
 		
 	}
 
-	@VsoProperty(description = "Connection ID of the resource. Can be used to support lookup functionality.", readOnly = true, showInColumn = false)
-	public String getConnectionId() {
-		return connectionId;
-	}
-	
-	public void setConnectionId(String connectionId) {
-		this.connectionId = connectionId;
-	}
-	
-	@VsoProperty(description = "Internal Plugin ID of the resource. This value is [Resource ID]@[Connection ID] and can be used in relating objects.", readOnly=true)
 	public String getInternalId() {
 		return internalId;
 	}
@@ -49,7 +45,7 @@ public abstract class BaseLifecycleManagerObject {
 		this.internalId = internalId;
 	}
 	
-	@VsoProperty(description = "ID of the resource in the remote system.", readOnly=true, showInColumn = false)
+	@VsoProperty(description = "ID of the resource in the remote system.", readOnly=true)
 	public String getResourceId() {
 		return resourceId;
 	}
@@ -58,15 +54,23 @@ public abstract class BaseLifecycleManagerObject {
 		this.resourceId = resourceId;
 	}
 	
-/*
-	// Revisit this method until it works. Any object should be able to use this, or do lookup by id in ConnectionManager.
-	@VsoMethod(description = "The connection associated to this object.")
-	public Connection getServerConnection() {
-		String id = this.getConnectionId();
-		log.debug("Attempting to query repository for Connection ID ["+id+"] from repo ["+repository.toString()+"]");
-		
-		Connection conn = repository.findLiveConnection(id); // this lookup fails. Autowire failure?
-		return conn;
+    @VsoProperty(description = "Connection associated with the resource.", readOnly=true)
+	public Connection getConnection() {
+		return connection;
 	}
-*/
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+    
+	// Helper methods for subclasses to extract services they need on demand
+	protected EnvironmentService getEnvironmentService() {
+		return (EnvironmentService) context.getBean("environmentService", this.connection);
+	}
+	protected DatacenterService getDatacenterService() {
+		return (DatacenterService) context.getBean("datacenterService", this.connection);
+	}
+	protected RequestService getRequestService() {
+		return (RequestService) context.getBean("RequestService", this.connection);
+	}
 }

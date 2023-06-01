@@ -21,7 +21,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 	description = "A LCM Certificate, either self-signed or signed by a trusted CA.", // shows up in the 'Types'
 	idAccessor = "getInternalId()", // method in the class to use for specific lookup
 	image = "images/certificate.png", // relative path to image in inventory use
-	properties = {}
+	properties = {} // allows you to declare properties here rather than in the class
 )
 public class Certificate extends BaseLifecycleManagerObject {
 
@@ -35,7 +35,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 	private String issuer;
 	private String sha1;
 	private String sha256;
-	private int keyLength;
+	private Number keyLength;
 	private String sans;
 	private String expirationDate;
 	private String issueDate;
@@ -79,9 +79,10 @@ public class Certificate extends BaseLifecycleManagerObject {
 	public String getSha256() {
 		return sha256;
 	}
-	//TODO: the finder shows a '0' for this for some reason, even though the logs show the proper value
+	//TODO: the finder shows a '0' for this for some reason, even though the logs show the proper value. 
+	// setting the return to long shows zero, setting to Integer shows null, setting to int shows 0
 	@VsoProperty(description = "The number of bits used to encrypt of the Certificate. Supported values are 2048/4096.")
-	public int getKeyLength() {
+	public Number getKeyLength() {
 		return keyLength;
 	}
 	@VsoProperty(description = "The Subject Alternative Name(s) in the Certificate.")
@@ -165,7 +166,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 		this.sha256 = sha256;
 	}
 
-	public void setKeyLength(int keyLength) {
+	public void setKeyLength(Number keyLength) {
 		this.keyLength = keyLength;
 	}
 
@@ -197,7 +198,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 	 */
 	@JsonProperty("certInfo") 
 	private void getCertInfo(Map<String, Object> certInfo) {
-		this.keyLength = (int)certInfo.get("keyLength");
+		this.keyLength = (Number)certInfo.get("keyLength");
 		this.sans = (String)certInfo.get("san");
 		this.sha256 = (String)certInfo.get("sha256");
 	}

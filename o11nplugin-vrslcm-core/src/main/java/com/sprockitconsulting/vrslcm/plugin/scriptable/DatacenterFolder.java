@@ -18,6 +18,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 	description = "Folder containing vRSLCM Datacenters in the Inventory Tab.", // shows up in the 'Types'
 	idAccessor = "getId()", // method in the class to use for specific lookup
 	image = "images/folder.png", // relative path to image in inventory use
+	hidden = true,
 	relations = {
 		@VsoRelation(name = "Datacenters", type = "Datacenter", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}

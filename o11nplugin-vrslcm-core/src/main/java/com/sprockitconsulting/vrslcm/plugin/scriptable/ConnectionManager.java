@@ -90,6 +90,13 @@ public class ConnectionManager {
 	{
 		return new Connection(persister.save(info));
 	}
+	
+	@VsoMethod(description = "Updates a vRSLCM Connection in the Orchestrator inventory with the given information.")
+	public Connection updateConnection(
+		@VsoParam(description = "vRSLCM Server ConnectionInfo object to use in update. Construct this object in your script before calling the method.")ConnectionInfo info)
+	{
+		return new Connection(persister.save(info));
+	}
 
 	@VsoMethod(description = "Deletes a vRSLCM Connection from the Orchestrator inventory by the given ID.")
 	public void deleteConnection(

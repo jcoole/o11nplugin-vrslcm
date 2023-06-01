@@ -11,20 +11,20 @@ import com.vmware.o11n.plugin.sdk.module.ModuleBuilder;
  */
 public final class vRSLCMModuleBuilder extends ModuleBuilder {
 	private static final String MODULE_NAME = "vRSLCM";
-    private static final String DESCRIPTION = "vRealize Suite Lifecycle Manager plug-in for vRealize Orchestrator";
+    private static final String DESCRIPTION = "vRealize/Aria Lifecycle Manager plug-in for Orchestrator";
     private static final String DATASOURCE = "main-datasource";
 
     @Override
     public void configure() {
         module(MODULE_NAME) // Name of the plugin for type prefix. This is prepended onto Scriptable Objects for uniqueness.
         .withDescription(DESCRIPTION) // See the definition above.
-        .withImage("images/vrslcm-root.png") // The relative path to the plugin Icon seen in ControlCenter as well as the root of the Plugin Inventory.
+        .withImage("images/vrslcm-conn.png") // The relative path to the plugin Icon seen in ControlCenter as well as the root of the Plugin Inventory.
         .basePackages(vRSLCMModuleBuilder.class.getPackage().getName()).version(
             "${project.version}")
             .classpath("common", null
         );
 
-        // Specify installation parameters when plugin is uploaded to vRO.
+        // Specify installation parameters when plugin is uploaded to Orchestrator.
         // You can install workflow packages, execute a script, or a workflow upon install.
         installation(InstallationMode.BUILD).action(ActionType.INSTALL_PACKAGE,
             "packages/${project.artifactId}-package-${project.version}.package" // workflow package
@@ -36,12 +36,24 @@ public final class vRSLCMModuleBuilder extends ModuleBuilder {
         // Create an inventory with a default finder. This can be called whatever, like 'Root' or 'Plugin' or 'Bababouie'
         inventory("Plugin");
         
-        //TODO: replace these finders with annotations in their respective classes!
+        /*
+         * For expanding the inventory tree, you can proceed in one of two ways:
+         * 
+         *   - Use the below template to create additional relationships between classes using the builder.
+         *     You can just keep invoking the following in this class:
+         *     	'this.finder(<ParentTypeClassName>, DATASOURCE).addRelation(<ChildTypeClassName>, <RelationName>, Show in Inventory, Cardinality)'
+         *     And when Maven builds the plugin, it will create the necessary annotations.
+         *     
+         *   - Add the VsoFinder annotation to the parent classes, and define one or more relations there.
+         *   
+         *   In this plugin, I opted to annotate the classes that require API use, but I left the folders in the builder here as an example of how to potentially use it.
+         *   If both are utilized for one class, the ModuleBuilder wins out!
+         */
 
-        // Create relation for Plugin --> Connections
+        // Create relation for Plugin (Root Level) --> Connections
         this.finder("Plugin", DATASOURCE)
         	.addRelation("Connection", "Connections", true, Cardinality.TO_MANY); // Type, Finder Name, Show in Inventory, and cardinality enum
-        
+    
         // Create relation for Connections -> Service Folders
         this.finder("Connection", DATASOURCE)
         	.addRelation("LifecycleOperationsFolder","LifecycleOperationsFolders", true,Cardinality.TO_MANY)
@@ -54,35 +66,7 @@ public final class vRSLCMModuleBuilder extends ModuleBuilder {
         	.addRelation("DatacenterFolder", "DatacenterFolders", true)
         	.addRelation("EnvironmentFolder", "EnvironmentFolders", true)
         	.addRelation("RequestFolder", "RequestFolders", true);
-/*     
-        // Create relation for the Locker -> Cert/Cred Folders.
-        this.finder("LockerFolder", DATASOURCE)
-        	.addRelation("CertificateFolder", "CertificateFolders", true)
-        	.addRelation("CredentialFolder", "CredentialFolders", true);
-*/
-/*        
-        // Create relation for the CertificateFolder -> Certificates.
-        this.finder("CertificateFolder", DATASOURCE)
-        	.addRelation("Certificate", "Certificates", true, Cardinality.TO_MANY);
-*/
-        
-/*
-        // Create relation for the DatacenterFolder -> Datacenters.
-        this.finder("DatacenterFolder", DATASOURCE)
-        	.addRelation("Datacenter", "Datacenters", true, Cardinality.TO_MANY);
-*/
-        
-        // Create relation for the Datacenter objects to vCenter Servers.
-        this.finder("Datacenter", DATASOURCE)
-        	.addRelation("VirtualCenter", "VirtualCenters", true, Cardinality.TO_MANY);
 
-        // Create relation for the EnvironmentFolder -> Environments.
-        this.finder("EnvironmentFolder", DATASOURCE)
-        	.addRelation("Environment", "Environments", true);
-
-        // Create relation for the RequestFolder -> Requests.
-        this.finder("RequestFolder", DATASOURCE)
-        	.addRelation("Request", "Requests", true);
-        
+        // And so on...
     }
 }
