@@ -27,7 +27,7 @@ public final class vRSLCMModuleBuilder extends ModuleBuilder {
         // Specify installation parameters when plugin is uploaded to Orchestrator.
         // You can install workflow packages, execute a script, or a workflow upon install.
         installation(InstallationMode.BUILD).action(ActionType.INSTALL_PACKAGE,
-            "packages/${project.artifactId}-package-${project.version}.package" // workflow package
+            "packages/${project.artifactId}-package-${project.version}.package" // default workflow package
 		);
 
         // Declares the class(es) containing the finders, which by default is the PluginAdaptor

@@ -24,16 +24,6 @@ public final class vRSLCMPluginAdaptor extends AbstractSpringPluginAdaptor {
 	// A Reference Document (page 8-9) : https://communities.vmware.com/wbsdv95928/attachments/wbsdv95928/4527/14/1/vCO%20Plug-in%20Dev%20Tools%20-%201.0.0%20Documentation.pdf
     private static final String DEFAULT_CONFIG = "com/sprockitconsulting/vrslcm/plugin/pluginConfig.xml";
 
-/*
-    // This value is obvious, but unused here. The ModuleBuilder class actually does the work.
-    public static final String PLUGIN_NAME = "vRealize Suite Lifecycle Manager";
-
-    // This value by default contains "${rootElement}" which is an archetype parameter.
-    // For the 'o11n-archetype-spring' you can pass it, but it won't properly replace it.
-    // Update it to point to your root object (such as, "Connection" in most other docs)
-    static final String ROOT = "ConnectionFinder";
-    static final String REL_ROOTS = "roots";
-*/
     /**
      * Creates the plugin Spring ApplicationContext during server startup.
      * The ApplicationContext is used to hold singleton and prototype "beans" ie Classes that can be injected throughout the framework.

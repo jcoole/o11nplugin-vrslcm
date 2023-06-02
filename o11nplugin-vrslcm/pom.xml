@@ -19,12 +19,14 @@
 			<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
 			<artifactId>o11nplugin-vrslcm-core</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
 			<artifactId>o11nplugin-vrslcm-package</artifactId>
 			<type>package</type>
+			<version>${project.version}</version>
 		</dependency>
-
+		
 		<!-- Other dependencies -->
 		<dependency>
 			<groupId>com.vmware.o11n</groupId>
@@ -51,10 +53,12 @@
 							<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
 							<artifactId>o11nplugin-vrslcm-core</artifactId>
 						</jarModule>
+						
 						<packageModule>
 							<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
 							<artifactId>o11nplugin-vrslcm-package</artifactId>
 						</packageModule>
+						
 					</modules>
 				</configuration>
 			</plugin>
@@ -99,6 +103,7 @@
 						</goals>
 						<configuration>
 							<target>
+								<!-- Modify logic to copy the exported package instead of the generated one. -->
 								<copy
 									tofile="${basedir}/target/${project.artifactId}.${project.packaging}"
 									flatten="true" overwrite="true"
@@ -114,8 +119,7 @@
 								<jar
 									destfile="${basedir}/target/${project.build.finalName}.vmoapp">
 									<fileset dir="${basedir}/target/">
-										<include
-											name="${project.artifactId}.${project.packaging}" />
+										<include name="${project.artifactId}.${project.packaging}" />
 										<include name="VSO-INF/*" />
 									</fileset>
 								</jar>
@@ -145,6 +149,7 @@
 							</artifacts>
 						</configuration>
 					</execution>
+					
 					<execution>
 						<id>ExtractVSOPluginVersion</id>
 						<phase>validate</phase>
