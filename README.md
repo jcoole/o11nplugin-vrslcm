@@ -4,6 +4,18 @@ This plugin provides an interface to interact with Lifecycle Manager and its rel
 
 Features a fully functional plugin inventory for review and executing actions upon.
 
+# Installation
+
+See the [Releases](releases/) folder for the built VMOAPP and accompanying Workflow Package.
+
+To install the VMOAPP file, login to your Orchestrator appliance Control Center (https://orchestrator.local/vco-controlcenter/config) as root.
+
+Select *Manage Plugins* and upload the VMOAPP to install it. This will restart Orchestrator services in 2 minutes.
+
+Once Orchestrator is back up, login and using the client, go to Packages and Import the .package file from the release.
+
+For some reason the SDK Mojo Maven plugin will not import workflows directly into the VMOAPP, so until I get that resolved, it's a two-step process.
+
 # Specific Features and Workflows Supported
 
 The ability to deploy/scale products and nodes may come later.
@@ -14,7 +26,7 @@ For now, this is what it can do:
 - Environments : Get
 - Certificates : Get, Create, Import, Update, Delete
 - Credentials : Get, Create, Update, Delete
-- Products: Get
+- Products: Get (Identity Manager and vRA only. Others added when I build a couple of test environments)
 - Product Nodes: Get
 
 # Roadmap
@@ -77,7 +89,7 @@ Authorization:HZN {sessionToken}
   "tokenType": "Bearer",                      // Must be Bearer
   "accessTokenTTL": 3600,                     // Number of MINUTES the issued Access Token will be valid in the Identity Manager database
   "scope": "user admin",
-  "displayUserGrant": true,
+  "displayUserGrant": true
 }
 ```
 
