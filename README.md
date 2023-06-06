@@ -1,4 +1,4 @@
-Lifecycle Manager plugin for vRealize/Aria Orchestrator
+# Lifecycle Manager plugin for vRealize/Aria Orchestrator
 
 This plugin provides an interface to interact with Lifecycle Manager and its related components.
 
