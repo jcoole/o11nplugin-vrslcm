@@ -29,6 +29,8 @@ import ch.dunes.vso.sdk.ssl.ISslService;
 
 /**
  * This class is used to generate various Spring Beans needed for plugin usage.
+ * Specifically, the 'vroRestTemplate' bean requires that the ApplicationContext is initialized so that the ISslService can be injected.
+ * This is critical since it is the means for API calls to go out using the Orchestrator CA Keystore.
  * @author justin
  *
  */
@@ -109,7 +111,7 @@ public class PluginBeanConfiguration {
 	}
 
 	/**
-	 * The vroObjectMapper bean is just an accessible ObjectMapper, used to convert POJOs into JSON Strings for API calls.
+	 * The vroObjectMapper bean is just an accessible ObjectMapper, used to convert between POJOs and JSON Strings for API calls.
 	 * It is initialized once at plugin startup and is available for any service to use.
 	 * @return Object Mapper instance
 	 */

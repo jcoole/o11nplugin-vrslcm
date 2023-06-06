@@ -49,7 +49,6 @@ public class ConnectionManager {
 	 * var myVar = new vRSLCMConnectionManager()
 	 * myVar.doSomething(someVar)
 	 */
-	// makes the type *directly* referenceable in scripts
     public static ConnectionManager createScriptingSingleton(IPluginFactory factory) {
         return ((AbstractSpringPluginFactory) factory).createScriptingObject(ConnectionManager.class);
     }

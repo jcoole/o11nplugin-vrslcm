@@ -20,8 +20,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 	name = "Certificate", // Type name!!! This value actually translates to 'type' in VSO.XML!!
 	description = "A LCM Certificate, either self-signed or signed by a trusted CA.", // shows up in the 'Types'
 	idAccessor = "getInternalId()", // method in the class to use for specific lookup
-	image = "images/certificate.png", // relative path to image in inventory use
-	properties = {} // allows you to declare properties here rather than in the class
+	image = "images/certificate.png" // relative path to image in inventory use
 )
 public class Certificate extends BaseLifecycleManagerObject {
 
@@ -44,9 +43,7 @@ public class Certificate extends BaseLifecycleManagerObject {
 	private boolean isReferenced;
 	private boolean isHealthy;
 	
-	public Certificate() {
-		
-	}
+	public Certificate() {}
 	
 	// Getters
 

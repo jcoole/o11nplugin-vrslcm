@@ -12,29 +12,6 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoParam;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
-/**
- * 
- * 
-{
-  "alias": "certificate1",
-  "c": "IN",
-  "cN": "cert1",
-  "host": [
-    "<host>"
-  ],
-  "ip": [
-    "<ip>"
-  ],
-  "l": "IN",
-  "o": "vmware",
-  "oU": "vmware",
-  "sT": "IN",
-  "size": 2048,
-  "tenant": "string",
-  "validity": 729
-}
- */
-
 
 /**
  * This class is a helper for Certificate requests, either for self-signed or CSRs.
@@ -61,9 +38,7 @@ public class CertificateInfo {
 	private String tenant = "default";
 	
 	@VsoConstructor(description = "Empty Default Constructor. Assign the required values in your scripts.")
-	public CertificateInfo() {
-		log.debug("Empty Constructor for SSL Cert used");
-	}
+	public CertificateInfo() {}
 	
 	@VsoConstructor(description = "Default Constructor with all required fields.")
 	public CertificateInfo(
@@ -87,51 +62,49 @@ public class CertificateInfo {
 		this.keyLength = keyLength;
 		this.sans = sans;
 		this.tenant = tenant;
-		log.debug("Full Constructor for SSL Cert used");
 	}
 
 	@VsoProperty(description = "Name/Alias of the Certificate.", required = true)
-	@JsonProperty("alias")
 	public String getNameOrAlias() {
 		return nameOrAlias;
 	}
+	
 	@VsoProperty(description = "Common Name (CN) used on the Certificate.", required = true)
-	@JsonProperty("cN")
 	public String getCommonName() {
 		return commonName;
 	}
+
 	@VsoProperty(description = "Organization field used on the Certificate.", required = true)
-	@JsonProperty("o")
 	public String getOrg() {
 		return org;
 	}
+	
 	@VsoProperty(description = "Organizational Unit field used on the Certificate.", required = true)
-	@JsonProperty("oU")
 	public String getOrgUnit() {
 		return orgUnit;
 	}
+	
 	@VsoProperty(description = "Country (US, JP, CN) used on the Certificate.", required = true)
-	@JsonProperty("c")
 	public String getCountry() {
 		return country;
 	}
+	
 	@VsoProperty(description = "Locality/City field used on the Certificate.", required = true)
-	@JsonProperty("l")
 	public String getLocality() {
 		return locality;
 	}
+	
 	@VsoProperty(description = "State field used on the Certificate.", required = true)
-	@JsonProperty("sT")
 	public String getState() {
 		return state;
 	}
+	
 	@VsoProperty(description = "Encryption key size used on the Certificate, default is 2048.")
-	@JsonProperty("size")
 	public int getKeyLength() {
 		return keyLength;
 	}
+	
 	@VsoProperty(description = "List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.")
-	@JsonProperty("host")
 	public String[] getSans() {
 		return sans;
 	}
@@ -152,35 +125,43 @@ public class CertificateInfo {
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
 	}
-
+	
+	@JsonProperty("alias")
 	public void setNameOrAlias(String nameOrAlias) {
 		this.nameOrAlias = nameOrAlias;
 	}
-
+	
+	@JsonProperty("cN")
 	public void setCommonName(String commonName) {
 		this.commonName = commonName;
 	}
-
+	
+	@JsonProperty("o")
 	public void setOrg(String org) {
 		this.org = org;
 	}
 
+	@JsonProperty("oU")
 	public void setOrgUnit(String orgUnit) {
 		this.orgUnit = orgUnit;
 	}
 
+	@JsonProperty("c")
 	public void setCountry(String country) {
 		this.country = country;
 	}
 
+	@JsonProperty("l")
 	public void setLocality(String locality) {
 		this.locality = locality;
 	}
 
+	@JsonProperty("sT")
 	public void setState(String state) {
 		this.state = state;
 	}
 
+	@JsonProperty("size")
 	public void setKeyLength(int keyLength) {
 		if(keyLength != 2048 || keyLength != 4096) {
 			keyLength = 2048;
@@ -188,8 +169,8 @@ public class CertificateInfo {
 		this.keyLength = keyLength;
 	}
 
+	@JsonProperty("host")
 	public void setSans(String[] sans) {
-		// check to see if the commonName is in the sans list. if not, add it for convenience
 		this.sans = sans;
 	}
 

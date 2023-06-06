@@ -13,7 +13,10 @@ import org.springframework.stereotype.Repository;
 
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
-
+/**
+ * This class contains the data access and manipulation methods for the Request Service.
+ * @author justin
+ */
 @Repository
 public class DaoRequest extends DaoAbstract<Request> {
 	// Enable Logging
@@ -42,7 +45,9 @@ public class DaoRequest extends DaoAbstract<Request> {
 		// Assign Connection object
 		assignConnectionToList(connection, reqs);
 		
-		// Convert java array to ArrayList for manipulation and eventual output
+		// By default, the API does not perform any sorting of requests, so using the 'lastUpdated' field the Request objects are returned in descending order.
+		
+		// Convert java array to ArrayList so it can be manipulated.
 		List<Request> output = new ArrayList<Request>();
 		output.addAll(Arrays.asList(reqs));
 		
@@ -52,16 +57,12 @@ public class DaoRequest extends DaoAbstract<Request> {
 		// Reverses the list to show in descending order.
 		Collections.reverse(output);
 		
-		// Go through the ArrayList and select only those of source type 'user' - system requests are usually generic and just clutter things.
+		// Filter the sorted list by 'source' of value 'user'
+		// 'system' requests are usually generic and just clutter things.
 		try {
-			log.debug("trying user filtered request logic");
-			log.debug("converted to list - total of ["+output.size()+"] entries in the list");
 			output.removeIf(r -> r.getSource().equals("system") );
-			log.debug("removed system requests - now ["+output.size()+"] entries in the list");
-			log.debug("user requests :: "+output.toString());
-			
 		} catch (RuntimeException e) {
-			log.debug("Couldn't extract user Requests from the array, error was: "+e);
+			log.debug("Couldn't remove system Requests from the array, error was: "+e);
 		}
 		return output;
 	}

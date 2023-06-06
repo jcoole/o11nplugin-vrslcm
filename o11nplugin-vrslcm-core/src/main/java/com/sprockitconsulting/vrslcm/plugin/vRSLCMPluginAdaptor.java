@@ -20,7 +20,7 @@ public final class vRSLCMPluginAdaptor extends AbstractSpringPluginAdaptor {
 	private static final Logger log = LoggerFactory.getLogger(vRSLCMPluginAdaptor.class);
 	
 	// This file can be used to configure your Spring beans at startup, and is an optional parameter to the 'createApplicationContext()' method.
-	// It seems easier to use annotations such as @Component, etc in the classes directly.
+	// Generally speaking, use Spring annotations for most cases, this is just here as a reference.
 	// A Reference Document (page 8-9) : https://communities.vmware.com/wbsdv95928/attachments/wbsdv95928/4527/14/1/vCO%20Plug-in%20Dev%20Tools%20-%201.0.0%20Documentation.pdf
     private static final String DEFAULT_CONFIG = "com/sprockitconsulting/vrslcm/plugin/pluginConfig.xml";
 
@@ -38,7 +38,7 @@ public final class vRSLCMPluginAdaptor extends AbstractSpringPluginAdaptor {
         applicationContext.setClassLoader(getClass().getClassLoader());
         applicationContext.refresh();
  
-        // Just for fun - try listing all beans/singletons
+        // Lists all beans/singletons, useful for debugging.
         log.debug("Looking up registered Singletons at startup");
         String[] singletonNames = applicationContext.getBeanFactory().getSingletonNames();
         log.debug("Found ["+applicationContext.getBeanFactory().getSingletonCount()+"] singletons :: "+Arrays.toString(singletonNames));

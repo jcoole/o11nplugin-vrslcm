@@ -3,8 +3,6 @@ package com.sprockitconsulting.vrslcm.plugin.dao;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,21 +10,18 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.VirtualCenter;
-import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
-
+/**
+ * This class contains the data access and manipulation methods for the Datacenter Service.
+ * @author justin
+ */
 @Repository
 public class DaoDatacenter 
 	extends DaoAbstract<Datacenter> 
@@ -72,14 +67,7 @@ public class DaoDatacenter
 		Datacenter[] dcs = doApiRequest(connection, "GET", URL_GET_ALL, "{}", Datacenter[].class, null);
 		
 		if(dcs != null && dcs.length > 0) {
-			log.debug("findAll() found ["+dcs.length+"] objects");
-			// Assign additional Properties
 			for (Datacenter dc : dcs) {
-				// Commenting out these objects to test findAll in the Factory. 
-				// since limited accounts can't see these pieces, they return 400, causing errors later.
-				// TODO: look at moving these properties to the getter methods for VsoProperty usage
-				//dc.setEnvironments(getEnvironments(connection, dc.getResourceId()));
-				//dc.setVirtualCenters(getVirtualCenters(connection, dc.getResourceId()));
 				assignConnectionToObject(connection, dc);
 				findings.add(dc);
 			}
@@ -111,7 +99,7 @@ public class DaoDatacenter
 		try {
 			body = vroObjectMapper.writeValueAsString(replacement);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing the JSON in the Datacenter update payload: "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -121,7 +109,7 @@ public class DaoDatacenter
 		return doApiRequest(connection, "PUT", URL_GET_BY_VALUE, body, Datacenter.class, uriVariables);
 	}
 
-	// Deletes turn into a requestID but sometimes not, so revisit.
+	// TODO: Deletes turn into a requestID but sometimes not, so revisit.
 	@Override
 	public Object delete(Connection connection, Datacenter entity) {
 		Map<String, Object> uriVariables = new HashMap<>();
@@ -132,7 +120,7 @@ public class DaoDatacenter
 		try {
 			deleteRequestObject = vroObjectMapper.readerFor(Request.class).readValue(deleteRequest);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error retrieving the Request for deleting the Datacenter ["+entity.getResourceId()+"] : "+e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -177,7 +165,7 @@ public class DaoDatacenter
 		try {
 			vcs = vroObjectMapper.readerFor(VirtualCenter[].class).readValue(vcRequest);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error retrieving the vCenter servers in the JSON response: "+e.getMessage());
 			e.printStackTrace();
 		}
 		assignConnectionToList(connection, vcs);

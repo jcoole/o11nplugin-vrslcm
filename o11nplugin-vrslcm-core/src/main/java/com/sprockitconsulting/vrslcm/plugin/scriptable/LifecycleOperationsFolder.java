@@ -15,6 +15,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 	name = "LifecycleOperationsFolder", // Type name!!! This value actually translates to 'type' in VSO.XML!!
 	description = "Lifecycle Operations Content", // shows up in the 'Types'
 	idAccessor = "getId()", // method in the class to use for specific lookup
+	hidden = true, // hides from the 'types' section
 	image = "images/lcops32.png" // relative path to image in inventory use
 )
 public class LifecycleOperationsFolder extends Folder {

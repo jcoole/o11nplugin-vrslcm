@@ -14,7 +14,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Credential;
-
+/**
+ * This class contains the data access and manipulation methods for the Credential service.
+ * @author justin
+ */
 @Repository
 public class DaoCredential extends DaoAbstract<Credential>
 		implements IDaoCreate<Credential>, IDaoDelete<Credential>, IDaoGeneric<Credential>, IDaoUpdate<Credential> {
@@ -66,7 +69,7 @@ public class DaoCredential extends DaoAbstract<Credential>
 		try {
 			allCredsObject = vroObjectMapper.readTree(allCredsBody).path("passwords");
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error retrieving the Passwords in the JSON response: "+e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -75,7 +78,7 @@ public class DaoCredential extends DaoAbstract<Credential>
 		try {
 			creds = vroObjectMapper.readerFor(Credential[].class).readValue(allCredsObject);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error converting the JSON into a List of Certificates: "+e.getMessage());
 			e.printStackTrace();
 		}
 		assignConnectionToList(connection, creds);
@@ -88,7 +91,7 @@ public class DaoCredential extends DaoAbstract<Credential>
 		try {
 			updatedCredBody = vroObjectMapper.writeValueAsString(replacement);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing the update Credential payload: "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -117,7 +120,7 @@ public class DaoCredential extends DaoAbstract<Credential>
 		try {
 			newCredBody = vroObjectMapper.writeValueAsString(entity);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing the JSON for Credential creation: "+e.getMessage());
 			e.printStackTrace();
 		}
 		
