@@ -101,13 +101,25 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 	    	case "IdentityManagerProduct":
 	    		return environmentService.getSpecificProduct(connection, resourceId, "vidm");
 	    	case "LogInsightProduct":
-	    		log.error("Find() not implemented");
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vrli");
 	    	case "NetworkInsightProduct":
-	    		log.error("Find() not implemented");
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vrni");
 	    	case "OperationsProduct":
-	    		log.error("Find() not implemented");
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vrops");
+	    	case "NetworkInsightProxyProduct":
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vrnicloudproxy");
+	    	case "OperationsProxyProduct":
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vropscloudproxy");
 	    	case "OrchestratorProduct":
-	    		log.error("Find() not implemented");
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vro");
+	    	case "SaltStackProduct":
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vssc");
+	    	case "BusinessCloudProduct":
+	    		return environmentService.getSpecificProduct(connection, resourceId, "vrb");
+	    	case "CloudProxyProduct":
+	    		return environmentService.getSpecificProduct(connection, resourceId, "cloudproxy");
+	    	case "ExtensibilityProxyProduct":
+	    		return environmentService.getSpecificProduct(connection, resourceId, "abxcloudproxy");
 	    	case "ProductNode":
 	    		// Product Nodes and their values are several depths down in the JSON, so to support lookups, split by the ":"
 	    		// Resource ID is - [vmName]:[type]:[product]:[environmentId]
@@ -328,7 +340,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         	
         	// Parent Type: Environment -> Relation: ProductX
         	if(parent.isOfType("Environment")) {
-        		log.debug("findChildrenInRelation - Getting Products of type ["+parent.getType()+"] for Environment ["+parent.getId()+"]");
+        		log.debug("findChildrenInRelation - Getting Products for Environment ["+parent.getId()+"]");
         		
         		// Get the environment object.
         		Environment env = environmentService.getByValue(connection, parent.getId().split("@")[0]);
@@ -336,7 +348,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
            		List<BaseProduct> products = new ArrayList<BaseProduct>();
         		// Get products from environment, see if they match the type in the relation
         		for (BaseProduct product: env.getProducts()) {
-        			log.debug("Checking Product ["+product.getInternalId()+"]"); // vra@uuid
+        			log.debug("Checking for Product ["+product.getClass().getSimpleName()+"] in ["+product.getInternalId()+"]"); // vra@uuid
         			if(product.getClass().getSimpleName().equals(relationName)) {
         				log.debug("Found product ["+product.getInternalId()+"] of type ["+product.getClass().getSimpleName()+"] in the environment matching type ["+relationName+"], adding it");
         				products.add(product);
@@ -350,14 +362,32 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         	
         	// Parent Type: Product -> Relation: ProductNode
         	// Product nodes are generic objects but specific to their implementation.
-        	// findChildrenInRelation - Starting - InventoryRef [AutomationProduct] [9115a957-a5e5-4b8c-af8c-6e5162746b86@34354d91-5a5a-4d9b-b638-36bd2accb8f9] Relation Name [ProductNodes]
-        	// findChildrenInRelation - Starting - InventoryRef [IdentityManagerProduct] [globalenvironment@34354d91-5a5a-4d9b-b638-36bd2accb8f9] Relation Name [ProductNodes]
         	if(relationName.equals("ProductNodes")) {
         		switch(parent.getType()) {
         		case "AutomationProduct":
         			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vra").getProductNodes());
         		case "IdentityManagerProduct":
 	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vidm").getProductNodes());
+        		case "LogInsightProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vrli").getProductNodes());
+        		case "NetworkInsightProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vrni").getProductNodes());
+        		case "OperationsProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vrops").getProductNodes());
+        		case "NetworkInsightProxyProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vrnicloudproxy").getProductNodes());
+        		case "OperationsProxyProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vropscloudproxy").getProductNodes());
+        		case "OrchestratorProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vro").getProductNodes());
+        		case "SaltStackProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vssc").getProductNodes());
+        		case "BusinessCloudProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "vrb").getProductNodes());
+        		case "CloudProxyProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "cloudproxy").getProductNodes());
+        		case "ExtensibilityProxyProduct":
+	    			return Arrays.asList(environmentService.getSpecificProduct(connection, parent.getId().split("@")[0], "abxcloudproxy").getProductNodes());
 	    		default:
 	    			log.error("Product Node findChildren not implemented for "+parent.getType());
 	    			break;

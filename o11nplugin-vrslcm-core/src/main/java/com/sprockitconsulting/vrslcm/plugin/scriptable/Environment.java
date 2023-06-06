@@ -1,7 +1,5 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
-import java.util.Arrays;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -37,14 +35,17 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 	image = "images/vrslcm-env.png", // relative path to image in inventory use
 	relations = {
 		@VsoRelation(name = "IdentityManagerProduct", type = "IdentityManagerProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
-		@VsoRelation(name = "AutomationProduct", type = "AutomationProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE)
-		/*
+		@VsoRelation(name = "AutomationProduct", type = "AutomationProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
 		@VsoRelation(name = "LogInsightProduct", type = "LogInsightProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
 		@VsoRelation(name = "OperationsProduct", type = "OperationsProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
 		@VsoRelation(name = "NetworkInsightProduct", type = "NetworkInsightProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
+		@VsoRelation(name = "OperationsProxyProduct", type = "OperationsProxyProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
+		@VsoRelation(name = "NetworkInsightProxyProduct", type = "NetworkInsightProxyProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
 		@VsoRelation(name = "OrchestratorProduct", type = "OrchestratorProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
-		@VsoRelation(name = "SaltStackProduct", type = "SaltStackProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE)
-		*/
+		@VsoRelation(name = "SaltStackProduct", type = "SaltStackProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
+		@VsoRelation(name = "BusinessCloudProduct", type = "BusinessCloudProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
+		@VsoRelation(name = "CloudProxyProduct", type = "CloudProxyProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE),
+		@VsoRelation(name = "ExtensibilityProxyProduct", type = "ExtensibilityProxyProduct", inventoryChildren = true, cardinality = Cardinality.TO_ONE)
 	}
 )
 public class Environment extends BaseLifecycleManagerObject {

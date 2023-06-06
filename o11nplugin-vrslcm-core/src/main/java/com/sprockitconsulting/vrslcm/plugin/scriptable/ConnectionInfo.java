@@ -34,7 +34,6 @@ public class ConnectionInfo {
 	
 	@VsoConstructor(description="Default constructor of the vRSLCM Server Connection Info object. The 'id' field is default populated.")
 	public ConnectionInfo() {
-		log.debug("Calling default constructor");
 		this.id = UUID.randomUUID().toString();
 	}
 
