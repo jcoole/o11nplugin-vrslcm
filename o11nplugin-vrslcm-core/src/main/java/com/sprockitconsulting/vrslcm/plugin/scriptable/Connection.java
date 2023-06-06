@@ -167,18 +167,6 @@ public class Connection {
 		ConfigurationService svc = (ConfigurationService) context.getBean("configurationService", repository.findLiveConnection(this.getId()));
 		return svc;
 	}
-/*
-	public LockerService getLockerService() {
-		log.debug("Setting up Locker with connection ["+this.getId()+"]");
-		LockerService svc = new LockerService();
-		log.debug("LockerService connection: "+repository.findLiveConnection(this.getId()) );
-		svc.setConnection(repository.findLiveConnection(this.getId()));
-		log.debug("LockerService factory: "+repository.findObjectFactory(this.getId()) );
-		svc.setObjectFactory(repository.findObjectFactory(this.getId()));
-		log.debug(svc.toString());
-		return svc;
-	}
-*/
 	
 	public synchronized ConnectionInfo getConnectionInfo() {
 		return connectionInfo;

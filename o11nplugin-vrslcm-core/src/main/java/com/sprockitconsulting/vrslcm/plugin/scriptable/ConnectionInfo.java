@@ -2,10 +2,6 @@ package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionPersister;
 import com.vmware.o11n.plugin.sdk.annotation.VsoConstructor;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
@@ -13,12 +9,10 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 /**
  * @author justin
  * Represents the configuration for a vRSLCM Server connection.
- * Used by the vRO Platform EndpointConfigurationService to store values for future use.
+ * Used by the Orchestrator EndpointConfigurationService to store values for future use.
  */
 @VsoObject(description = "Represents the configuration for a vRSLCM Server connection. This object is constructed for Create/Update workflow calls.")
 public class ConnectionInfo {
-	// Enable Logging
-	private static final Logger log = LoggerFactory.getLogger(ConnectionInfo.class);
 	
 	private String id;
 	private String name;

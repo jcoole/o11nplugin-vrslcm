@@ -13,7 +13,10 @@ import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
-
+/**
+ * This class contains the data access and manipulation methods for the Environment Service.
+ * @author justin
+ */
 @Repository
 public class DaoEnvironment extends DaoAbstract<Environment> {
 	
@@ -56,7 +59,7 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		// Assign additional properties prior to return.
 		assignConnectionToObject(connection, env);
 		
-		// Update Product and node IDs
+		// Update Product and Product Node IDs
 		env.assignFinderIdValuesToProductsAndNodes();
 		
 		return env;

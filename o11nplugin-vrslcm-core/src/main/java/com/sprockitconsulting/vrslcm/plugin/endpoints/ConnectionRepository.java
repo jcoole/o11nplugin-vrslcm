@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ConnectionInfo;
 
@@ -55,7 +54,6 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 	
 	public ConnectionRepository() {
 		connections = new ConcurrentHashMap<>();
-
 		connectionAuthentications = new ConcurrentHashMap<>();
 		log.debug("vRSLCM Plugin Connection Repository initialized");
 	}
@@ -177,11 +175,8 @@ public class ConnectionRepository implements ApplicationContextAware, Initializi
 		if(auth != null) {
 			try {
 				auth.setConnectionInfo(info);
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
+				log.error("There was an error assigning the updated info to the Authentication object: "+e.getMessage());
 				e.printStackTrace();
 			}
 			connectionAuthentications.replace(info.getId(), auth);

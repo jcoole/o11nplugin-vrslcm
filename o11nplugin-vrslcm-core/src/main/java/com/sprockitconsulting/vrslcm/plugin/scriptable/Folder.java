@@ -6,28 +6,6 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
  * This class is a generic class used in creation of folders in the vRO Inventory.
- * It is extended to different classes, such as:
- * 		InventoryFolderDatacenter
- * 		InventoryFolderEnvironment
- *
- * Each subclass should be annotated following these guidelines:
- * 		VsoObject - create: false, description - whatever
- * 		VsoFinder
- * 			description - Object representing the XX folder
- * 			name - <ClassName>
- * 			idAccessor = "getId()"
- * 			image = <path>
- * 			relations = {
- * 				VsoRelation(
- * 					inventoryChildren = true
- * 					name = PluralizedType
- * 					type = Class Type that are children.
- *
- * This class will communicate using its 'service', such as DatacenterService class to perform checks.
- * It is assumed that *all* folders can have child objects by design.
- *
- * When the inventory folder is expanded:
- * 		* a finder will be called for whatever the 'findAll' method is in the PluginFactory.
  * @author justin
  *
  */

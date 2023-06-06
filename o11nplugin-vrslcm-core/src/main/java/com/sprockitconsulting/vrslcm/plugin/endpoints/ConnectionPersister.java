@@ -165,8 +165,6 @@ public class ConnectionPersister implements IEndpointPersister {
 				config.setString("identityManagerClientId", info.getIdentityManagerClientId());
 				config.setPassword("identityManagerClientSecret", info.getIdentityManagerClientSecret());				
 			} 
-
-
 		} catch (Exception e) {
 			log.error("Error converting ConnectionInfo to IEndpointConfiguration :: ", e);
 			throw new RuntimeException(e);
