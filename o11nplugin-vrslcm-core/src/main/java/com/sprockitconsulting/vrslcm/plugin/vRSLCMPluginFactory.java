@@ -31,7 +31,7 @@ import ch.dunes.vso.sdk.api.QueryResult;
 /**
  * This class is responsible for the core lookup logic of all Findable types in the Inventory.
  * The key methods used are:
- * 		* find() - called anytime a VsoFinder annotated class needs to be deserialized
+ * 		* find() - called anytime a VsoFinder annotated class needs to be serialized
  * 		* findRootChildrenInRelation() - called when the Inventory 'root' finder is invoked
  * 		* findChildrenInRelation() - called anytime a VsoFinder annotated class has a relation, so as to return a list of objects.
  * 
@@ -60,7 +60,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 	 * This method is called when the Finder is invoked to serialize the object for the specified type.
 	 * You can reproduce this by expanding a variable of the type to show the properties in a Orchestrator variable.
 	 * In this plugin for remote objects, the Id inside of InventoryRef follows this format:
-	 * 		[Resource Type]:[Resource ID]@[Connection ID]
+	 * 		[Resource ID]@[Connection ID]
 	 * This structure is to support lookups based on server, type, and value.
 	 */
     @Override
@@ -73,14 +73,12 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 			log.debug("Factory found Connection ["+connection.getId()+"] in repository");
     		return connection;
         } else {
-    		// For these find requests, you will use the ObjectFactory associated to the Connection ID.
-        	// The 'internalId' of resources contains this information.
+    		// For these find requests, you will extract the Connection ID and Resource ID passed in.
         	String resourceId = ref.getId().split("@")[0]; // Should be the resource ID.
         	String connectionId = ref.getId().split("@")[1]; // Should be connection
         	
-        	// Now that you know the connectionId, you can get the ObjectFactory from the repository.
+        	// Now that you know the connectionId, you can get the Connection of the associated resource.
         	Connection connection = repository.findLiveConnection(connectionId);
-        	
         	
         	// Now, based on the InventoryRef 'type' - run the appropriate service method to get what you need.
 	    	switch(ref.getType()) {
@@ -138,6 +136,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     /**
      * Looks up all of the resources based on the specified type and optional query.
      * This is used in workflow fields leveraging an input that is set to "Value Picker"
+     * To support looking up resources in all Connections, all registered Connections are looped through and services called.
      */
     @Override
     public QueryResult findAll(String type, String query) {
@@ -161,7 +160,6 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     			results.addElements(certificateService.getAllCertificates(connection));
     			break;
     		default:
-    			// Put some warning in the log just in case.
     			log.warn("findAll() could not handle a search for the type ["+type+"] in the factory, a case should be added for it");
 			}
 		}
@@ -183,7 +181,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     /**
      * This method is called for any Inventory items configured to have relationships in the tree.
      * These are created in the class as a VsoFinder (thus creating a Findable Type)
-     * The relationships are managed in the vRSLCMModuleBuilder class.
+     * The relationships are managed in the vRSLCMModuleBuilder class, or @VsoRelation annotations in the parent class.
      */
 	@Override
     public List<?> findChildrenInRelation(InventoryRef parent, String relationName) {
@@ -304,7 +302,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 				}
         	}
 
-        	// RequestFolder -> Requests
+        	// Parent Type: RequestFolder -> Requests
         	if(parent.isOfType("RequestFolder") && relationName.equals("Requests")) {
         		log.debug("findChildrenInRelation - Creating REQUESTS for Connection ID ["+connectionId+"]"); 
         		try {
@@ -326,7 +324,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 				}
         	}
         	
-        	// Parent Type: CredentialFolder -> Relation: Credentials - defined in ModuleBuilder class.
+        	// Parent Type: CredentialFolder -> Credentials
         	if(parent.isOfType("CredentialFolder") && relationName.equals("Credentials")) {
         		log.debug("findChildrenInRelation - Creating CREDS for Connection ID ["+connectionId+"]"); 
 
@@ -346,9 +344,11 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         		Environment env = environmentService.getByValue(connection, parent.getId().split("@")[0]);
         		
            		List<BaseProduct> products = new ArrayList<BaseProduct>();
-        		// Get products from environment, see if they match the type in the relation
+        		
+           		// Get products from environment, see if they match the type in the relation
+           		// Each Environment can only have one instance of the Product, so the ResourceID@ConnectionID will always be the same - the only difference is the relationName, which in this case we use the same value as the Product class names.
         		for (BaseProduct product: env.getProducts()) {
-        			log.debug("Checking for Product ["+product.getClass().getSimpleName()+"] in ["+product.getInternalId()+"]"); // vra@uuid
+        			log.debug("Checking for Product ["+product.getClass().getSimpleName()+"] in ["+product.getInternalId()+"]");
         			if(product.getClass().getSimpleName().equals(relationName)) {
         				log.debug("Found product ["+product.getInternalId()+"] of type ["+product.getClass().getSimpleName()+"] in the environment matching type ["+relationName+"], adding it");
         				products.add(product);

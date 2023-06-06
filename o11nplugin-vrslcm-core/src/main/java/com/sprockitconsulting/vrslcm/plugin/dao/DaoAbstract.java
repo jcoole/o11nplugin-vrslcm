@@ -7,11 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -19,10 +17,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionAuthentication;
-import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
-import com.sprockitconsulting.vrslcm.plugin.services.LockerService;
 
 /**
  * This class is the basis for all Data Access Object functionality across all types.
@@ -68,6 +64,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 	 * @param resource The resource to assign the connection to. This is generic, and the input must inherit from the BaseLifecycleManagerObject class.
 	 * @see BaseLifecycleManagerObject
 	 */
+	@SuppressWarnings("hiding")
 	protected <T extends BaseLifecycleManagerObject> void assignConnectionToObject(Connection connection, Object resource) {
 		// First, extract the type and resourceId, used to generate the internalId.
 		// Set the necessary object values. The internalId is used by the Finder accessor to do lookups in Plugin Factory.
@@ -82,6 +79,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 	 * @param resourceList The resource list object to assign the connection to. This is generic, and the objects in the list must inherit from the BaseLifecycleManagerObject class.
 	 * @see BaseLifecycleManagerObject
 	 */
+	@SuppressWarnings("hiding")
 	protected <T extends BaseLifecycleManagerObject> void assignConnectionToList(Connection connection, T[] resourceList) {
 		for(Object resource: resourceList) {
 			assignConnectionToObject(connection, resource);
@@ -91,7 +89,8 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 	 * This is the core method that performs the exchange of requests and responses for objects in the LCM API.
 	 * 
 	 * @param <R> Generic that represents the Request Body for the API call, as this will differ based on the resource.
-	 * @param <X> Generic that represents the Response Body for the API call as this will differ based on the resource.
+	 * @param <T> Generic that represents the Response Body for the API call as this will differ based on the resource.
+	 * @param connection The Connection to use in the API call.
 	 * @param method GET, POST, PUT, PATCH, DELETE
 	 * @param urlTemplate The path to the endpoint that is being called, for example /myapi/v1/type/something.
 	 * @param body The request body (JSON String) for the API call.
@@ -118,7 +117,8 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", "application/json");
 		headers.set("Content-Type", "application/json");
-
+		
+		// Get the Authentication Token data.
 		ConnectionAuthentication auth = connection.getConnectionAuthenticationFromRepository();
 		// Validate the token isn't empty/missing/error state
 		if(auth.isTokenValid()) {
@@ -132,7 +132,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 		// Create the request entity using the body input and headers.
 		HttpEntity<R> requestEntity = new HttpEntity<>(body, headers);
 
-		// Using the Orchestrator Custom RestTemplate (auto-wired), execute the call and return based on 'responseType'
+		// Using the Orchestrator Custom RestTemplate, execute the call and return based on 'responseType'
 		try {
 			ResponseEntity<T> responseEntity = null;
 			
@@ -148,7 +148,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 			// Check the status code
 			if(responseEntity.getStatusCodeValue() >= 200 && responseEntity.getStatusCodeValue() < 400) {
 				response = responseEntity.getBody();
-				log.debug("doApiRequest("+method+", "+urlTemplate+", "+body+") request completed, response : "+responseEntity.toString());
+				log.debug("doApiRequest("+method+", "+urlTemplate+", "+body+") request completed, response : "+responseEntity.getStatusCode().getReasonPhrase());
 			} else if(responseEntity.getStatusCodeValue() == 401) {
 				// 401 is Unauthorized.
 				log.error("ERROR! Unauthorized request to the API!");
@@ -157,7 +157,6 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 				// For this we log an error and allow it to continue.
 				log.error("HTTP Status Code 400 (Bad Request) returned. Either the data submitted in this request isn't valid, or the user performing the request does not have rights to make it.");
 			} else {
-				//throw new RuntimeException(this.getClass().getEnclosingMethod().getName()+" error, status code ["+responseEntity.getStatusCodeValue()+"], body ["+responseEntity.getBody()+"]");
 				log.error("Unhandled API Error - "+this.getClass().getEnclosingMethod().getName()+" error, status code ["+responseEntity.getStatusCodeValue()+"], body ["+responseEntity.getBody()+"]");
 			}
 		} catch (ResourceAccessException rae) {

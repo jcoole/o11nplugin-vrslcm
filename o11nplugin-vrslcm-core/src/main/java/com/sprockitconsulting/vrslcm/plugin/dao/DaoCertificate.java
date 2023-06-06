@@ -19,7 +19,6 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 /**
  * This class contains the data access and manipulation methods for the Certificate service.
  * @author justin
- *
  */
 @Repository
 public class DaoCertificate extends DaoAbstract<Certificate>
@@ -61,7 +60,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			allCertsObject = vroObjectMapper.readTree(allCertsBody).path("certificates");
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error retrieving the Certificates in the JSON response: "+e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -70,7 +69,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			certs = vroObjectMapper.readerFor(Certificate[].class).readValue(allCertsObject);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error converting the response into a List of Certificates: "+e.getMessage());
 			e.printStackTrace();
 		}
 		assignConnectionToList(connection, certs);
@@ -105,7 +104,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			body = vroObjectMapper.writeValueAsString(certificateInfo);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing out the inputs for the Certificate creation: "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -134,7 +133,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			body = vroObjectMapper.writeValueAsString(certificateInfo);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing out the inputs for the Certificate request: "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -153,7 +152,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			importDataBody = vroObjectMapper.writeValueAsString(importData);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing out the inputs for the Certificate import: "+e.getMessage());
 			e.printStackTrace();
 		}
 		Certificate cert = doApiRequest(connection, "POST", URL_GET_ALL+"/import", importDataBody, Certificate.class, null);
@@ -185,7 +184,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			allCertsObject = vroObjectMapper.readTree(allCertsBody).path("certificates");
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error parsing out the response for the Certificates lookup by alias: "+e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -193,7 +192,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 		try {
 			certs = vroObjectMapper.readerFor(Certificate[].class).readValue(allCertsObject);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error converting the JSON to a Certificate list: "+e.getMessage());
 			e.printStackTrace();
 		}
 		

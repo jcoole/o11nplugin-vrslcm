@@ -52,7 +52,7 @@ public final class vRSLCMModuleBuilder extends ModuleBuilder {
 
         // Create relation for Plugin (Root Level) --> Connections
         this.finder("Plugin", DATASOURCE)
-        	.addRelation("Connection", "Connections", true, Cardinality.TO_MANY); // Type, Finder Name, Show in Inventory, and cardinality enum
+        	.addRelation("Connection", "Connections", true, Cardinality.TO_MANY);
     
         // Create relation for Connections -> Service Folders
         this.finder("Connection", DATASOURCE)
