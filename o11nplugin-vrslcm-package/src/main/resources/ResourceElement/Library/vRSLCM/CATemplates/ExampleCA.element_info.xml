@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRSLCM.CATemplates</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJTTENN.Q0FUZW1wbGF0ZXM=</entry>
+<entry key="name">ExampleCA</entry>
+<entry key="description">Created at [Thu, 08 Jun 2023 17:47:10 GMT]</entry>
+<entry key="mimetype">text/json</entry>
+<entry key="id">61799eef-00b3-43a3-8925-0990f424ee32</entry>
+<entry key="type">ResourceElement</entry>
+<entry key="version">0.0.0</entry>
+</properties>

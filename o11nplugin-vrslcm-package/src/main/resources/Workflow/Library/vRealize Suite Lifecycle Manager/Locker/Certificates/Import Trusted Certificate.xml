@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="1081aa4f-c9fb-4ff6-b7cd-4c0cd54fa83d" version="1.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Import Trusted Certificate]]></display-name>
+  <description><![CDATA[Imports a Trusted Certificate Chain and Key into Locker.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The server connection]]></description>
+    </param>
+    <param name="alias" type="string">
+      <description><![CDATA[Alias/Name of the Certificate]]></description>
+    </param>
+    <param name="key" type="string">
+      <description><![CDATA[Private Key]]></description>
+    </param>
+    <param name="chain" type="string">
+      <description><![CDATA[Signed Certificate and Chain]]></description>
+    </param>
+    <param name="passphrase" type="SecureString">
+      <description><![CDATA[Private Key passphrase if needed]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="certificate" type="vRSLCM:Certificate">
+      <description><![CDATA[The SSL Certificate]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="290.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/importCertificate">
+    <display-name><![CDATA[importCertificate]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").importCertificate(connection,alias,key,chain,passphrase);
+]]></script>
+    <in-binding>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The server connection]]></description>
+      </bind>
+      <bind name="alias" type="string" export-name="alias">
+        <description><![CDATA[Alias/Name of the Certificate]]></description>
+      </bind>
+      <bind name="key" type="string" export-name="key">
+        <description><![CDATA[Private Key]]></description>
+      </bind>
+      <bind name="chain" type="string" export-name="chain">
+        <description><![CDATA[CA Certificate Chain]]></description>
+      </bind>
+      <bind name="passphrase" type="SecureString" export-name="passphrase">
+        <description><![CDATA[Private Key passphrase if required]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="vRSLCM:Certificate" export-name="certificate"/>
+    </out-binding>
+    <description><![CDATA[Import a trusted Certificate]]></description>
+    <position y="140.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

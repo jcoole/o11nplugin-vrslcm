@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getCATemplateDataFromResourceElementByName" result-type="Properties" api-version="6.0.0" id="395f16d4-cb5c-48de-a468-001572a0a80b" version="0.0.0" allowed-operations="vef">
+  <description><![CDATA[Gets a CA Template Resource Element by Name and converts the content into a Properties object for parsing]]></description>
+  <param n="name" t="string"><![CDATA[Name of the CA Template]]></param>
+  <script encoded="false"><![CDATA[if (name == null) {
+  System.log("Name is null or empty - must be specified!");
+  return null;
+}
+
+// Locate the ResourceElementCategory [Library/vRSLCM/CATemplates]
+var templatePath = "Library/vRSLCM/CATemplates"
+var category = Server.getResourceElementCategoryWithPath(templatePath)
+
+var elements = category.resourceElements;
+for (var i in elements) {
+  var resource = elements[i];
+  if (resource.name == name) {
+    return JSON.parse(resource.getContentAsMimeAttachment().content);
+  }
+}
+
+System.log("CA Template resource not found: " + name);
+
+return null;]]></script>
+</dunes-script-module>

@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item0" object-name="workflow:name=generic" id="ce47ee96-7324-444d-9a6b-0d62e8391c4c" version="1.0.1" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Create CA Template]]></display-name>
+  <description><![CDATA[Creates a CSR Request from Locker based on inputs. This does not store any information on the LCM Server until you import the signed Certificate.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="commonName" type="string">
+      <description><![CDATA[Common Name (CN) used on the Certificate.]]></description>
+    </param>
+    <param name="org" type="string">
+      <description><![CDATA[Organization field used on the Certificate.]]></description>
+    </param>
+    <param name="orgUnit" type="string">
+      <description><![CDATA[Organizational Unit field used on the Certificate.]]></description>
+    </param>
+    <param name="country" type="string">
+      <description><![CDATA[Country (US, JP, CN) used on the Certificate.]]></description>
+    </param>
+    <param name="locality" type="string">
+      <description><![CDATA[Locality/City field used on the Certificate.]]></description>
+    </param>
+    <param name="state" type="string">
+      <description><![CDATA[State field used on the Certificate.]]></description>
+    </param>
+    <param name="keyLength" type="number">
+      <description><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></description>
+    </param>
+    <param name="sans" type="Array/string">
+      <description><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></description>
+    </param>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="230.0" x="100.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

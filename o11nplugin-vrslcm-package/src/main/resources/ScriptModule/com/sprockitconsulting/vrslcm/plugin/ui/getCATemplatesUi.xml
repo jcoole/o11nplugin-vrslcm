@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getCATemplatesUi" result-type="Array/string" api-version="6.0.0" id="07362c56-0285-4c71-ade9-28afaed0f568" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Gets the CA Templates and presents them to the UI as an array of Strings]]></description>
+  <script encoded="false"><![CDATA[var elements = System.getModule("com.sprockitconsulting.vrslcm.plugin.configuration").getCATemplates()
+var output = new Array()
+for each(e in elements) {
+    output.push(e.name)
+}
+return output]]></script>
+</dunes-script-module>

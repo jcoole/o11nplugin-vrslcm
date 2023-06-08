@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">com.sprockitconsulting.vrslcm.plugin.configuration</entry>
+<entry key="categoryPathEscaped">Y29t.c3Byb2NraXRjb25zdWx0aW5n.dnJzbGNt.cGx1Z2lu.Y29uZmlndXJhdGlvbg==</entry>
+<entry key="name">getCATemplates</entry>
+<entry key="id">9ed525cb-4d1a-45b6-9a13-cdeaa38d9c7c</entry>
+<entry key="type">ScriptModule</entry>
+</properties>

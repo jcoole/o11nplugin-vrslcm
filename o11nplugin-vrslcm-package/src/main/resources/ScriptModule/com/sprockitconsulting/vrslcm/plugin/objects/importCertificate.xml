@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="importCertificate" result-type="vRSLCM:Certificate" api-version="6.0.0" id="851992aa-e8b5-41d1-85eb-d806a4cbc787" version="0.0.0" allowed-operations="vef">
+  <description><![CDATA[Imports a CA signed Certificate to Locker]]></description>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The server connection]]></param>
+  <param n="alias" t="string"><![CDATA[Alias/Name of the Certificate]]></param>
+  <param n="key" t="string"><![CDATA[Private Key]]></param>
+  <param n="chain" t="string"><![CDATA[CA Certificate Chain]]></param>
+  <param n="passphrase" t="SecureString"><![CDATA[Private Key passphrase if required]]></param>
+  <script encoded="false"><![CDATA[var certRequest = null;
+// Make the request
+try {
+    certRequest = connection.getLockerService().importTrustedCertificate(alias, chain, key, passphrase)
+    System.log("Certificate imported, response: "+certRequest)
+} catch(e) {
+    throw("Error during Certificate import : "+e)
+}
+
+// Return the certificate object
+return certRequest;]]></script>
+</dunes-script-module>

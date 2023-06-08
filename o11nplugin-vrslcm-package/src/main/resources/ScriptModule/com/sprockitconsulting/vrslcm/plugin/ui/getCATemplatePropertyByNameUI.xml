@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getCATemplatePropertyByNameUI" result-type="string" api-version="6.0.0" id="69068fe2-5edc-4897-a13b-ab5e2265c483" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[UI Action to retrieve properties from an existing CA Template]]></description>
+  <param n="caTemplateData" t="Properties"><![CDATA[The CA Template Data]]></param>
+  <param n="key" t="string"><![CDATA[The key of the property to get]]></param>
+  <script encoded="false"><![CDATA[return caTemplateData.get(key)]]></script>
+</dunes-script-module>

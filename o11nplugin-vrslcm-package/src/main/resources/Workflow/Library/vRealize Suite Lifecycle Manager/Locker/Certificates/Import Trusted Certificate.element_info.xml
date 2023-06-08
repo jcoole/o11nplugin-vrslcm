@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Locker.Certificates</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TG9ja2Vy.Q2VydGlmaWNhdGVz</entry>
+<entry key="name">Import Trusted Certificate</entry>
+<entry key="id">1081aa4f-c9fb-4ff6-b7cd-4c0cd54fa83d</entry>
+<entry key="type">Workflow</entry>
+</properties>
