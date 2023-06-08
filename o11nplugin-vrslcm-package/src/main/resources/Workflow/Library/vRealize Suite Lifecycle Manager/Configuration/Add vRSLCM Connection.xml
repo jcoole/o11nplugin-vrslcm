@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item3" object-name="workflow:name=generic" id="f44e3ac9-c3a9-43a6-8cbb-886b529dd8f0" version="1.0.2" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item3" object-name="workflow:name=generic" id="f44e3ac9-c3a9-43a6-8cbb-886b529dd8f0" version="1.0.4" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
   <display-name><![CDATA[Add vRSLCM Connection]]></display-name>
   <description><![CDATA[Adds a new vRSLCM Connection to the inventory, and imports the SSL Certificates required.]]></description>
   <position y="40.0" x="100.0"/>
@@ -144,42 +144,5 @@ actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.configurat
     <description><![CDATA[Add a note to the workflow schema.]]></description>
     <position y="320.0" x="60.0"/>
   </workflow-item>
-  <presentation>
-    <p-param name="name">
-      <desc><![CDATA[Name of the connection]]></desc>
-    </p-param>
-    <p-param name="host">
-      <desc><![CDATA[Hostname of the connection]]></desc>
-    </p-param>
-    <p-param name="userName">
-      <desc><![CDATA[User Account (user@domain)]]></desc>
-    </p-param>
-    <p-param name="userPassword">
-      <desc><![CDATA[Account Password]]></desc>
-    </p-param>
-    <p-param name="identityManagerHost">
-      <desc><![CDATA[Identity Manager Host for OAUTH2.0 logins]]></desc>
-    </p-param>
-    <p-param name="identityManagerClientId">
-      <desc><![CDATA[The Client ID to use when contacting Identity Manager]]></desc>
-    </p-param>
-    <p-param name="identityManagerClientSecret">
-      <desc><![CDATA[The Client Secret to use when contacting IdentityManager]]></desc>
-    </p-param>
-    <p-param name="authType">
-      <desc><![CDATA[Choose authentication type]]></desc>
-    </p-param>
-    <p-param name="identityManagerUser">
-      <desc><![CDATA[User Account to use when authenticating to Identity Manager]]></desc>
-    </p-param>
-    <p-param name="identityManagerUserPassword">
-      <desc><![CDATA[The user password]]></desc>
-    </p-param>
-    <p-param name="userDomain">
-      <desc><![CDATA[Domain of the user]]></desc>
-    </p-param>
-    <p-param name="ignoreCertErrors">
-      <desc><![CDATA[Whether to ignore SSL certificate warnings on import]]></desc>
-    </p-param>
-  </presentation>
+  <presentation/>
 </workflow>
