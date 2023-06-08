@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="6ef8cb62-b796-4519-a5f8-0f33b6f3d2c5" version="1.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Update Datacenter]]></display-name>
+  <description><![CDATA[Updates a given Datacenter's name and/or location.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="datacenter" type="vRSLCM:Datacenter">
+      <description><![CDATA[The datacenter to update]]></description>
+    </param>
+    <param name="name" type="string">
+      <description><![CDATA[Name of the datacenter]]></description>
+    </param>
+    <param name="location" type="string">
+      <description><![CDATA[Location of the datacenter]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="updatedDatacenter" type="vRSLCM:Datacenter">
+      <description><![CDATA[The updated Datacenter object]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="230.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/updateDatacenter">
+    <display-name><![CDATA[updateDatacenter]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").updateDatacenter(datacenter,name,location);
+]]></script>
+    <in-binding>
+      <bind name="datacenter" type="vRSLCM:Datacenter" export-name="datacenter">
+        <description><![CDATA[The datacenter to update]]></description>
+      </bind>
+      <bind name="name" type="string" export-name="name">
+        <description><![CDATA[Name of the datacenter]]></description>
+      </bind>
+      <bind name="location" type="string" export-name="location">
+        <description><![CDATA[Location of the datacenter]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="vRSLCM:Datacenter" export-name="updatedDatacenter"/>
+    </out-binding>
+    <description><![CDATA[Updates the datacenter.]]></description>
+    <position y="140.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

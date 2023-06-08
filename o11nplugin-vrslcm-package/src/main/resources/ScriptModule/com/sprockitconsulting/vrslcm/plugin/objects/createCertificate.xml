@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createCertificate" result-type="vRSLCM:Certificate" api-version="6.0.0" id="285fe0c3-d01a-4b46-bbc1-14fcdcd471e9" version="0.0.0" allowed-operations="vef">
+  <description><![CDATA[Creates a Locker-signed Certificate.]]></description>
+  <param n="commonName" t="string"><![CDATA[Common Name (CN) used on the Certificate.]]></param>
+  <param n="org" t="string"><![CDATA[Organization field used on the Certificate.]]></param>
+  <param n="orgUnit" t="string"><![CDATA[Organizational Unit field used on the Certificate.]]></param>
+  <param n="country" t="string"><![CDATA[Country (US, JP, CN) used on the Certificate.]]></param>
+  <param n="locality" t="string"><![CDATA[Locality/City field used on the Certificate.]]></param>
+  <param n="state" t="string"><![CDATA[State field used on the Certificate.]]></param>
+  <param n="keyLength" t="number"><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></param>
+  <param n="sans" t="Array/string"><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></param>
+  <param n="tenant" t="string"><![CDATA[Tenant Name]]></param>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The server connection]]></param>
+  <param n="alias" t="string"><![CDATA[Alias/Name of the Certificate]]></param>
+  <script encoded="false"><![CDATA[// Setup the Certificate Info payload
+var certInfo = new vRSLCMCertificateInfo(
+    alias,
+    commonName,
+    org,
+    orgUnit,
+    country,
+    locality,
+    state,
+    keyLength,
+    sans,
+    tenant
+)
+
+var certRequest = null;
+// Make the request
+try {
+    certRequest = connection.getLockerService().createCertificate(certInfo)
+    System.log("Certificate created, response: "+certRequest)
+} catch(e) {
+    throw("Error during Certificate creation : "+e)
+}
+
+// Return the certificate object
+return certRequest;]]></script>
+</dunes-script-module>

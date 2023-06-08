@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="updateConnection" result-type="vRSLCM:Connection" api-version="6.0.0" id="0004b3a5-4218-49c8-bda4-b33120e7ace5" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Updates a LCM Server connection in the Orchestrator inventory]]></description>
+  <param n="name" t="string"><![CDATA[Name of the connection]]></param>
+  <param n="host" t="string"><![CDATA[Hostname of the connection]]></param>
+  <param n="authType" t="string"><![CDATA[local / vidm]]></param>
+  <param n="userName" t="string"><![CDATA[Local User Account]]></param>
+  <param n="userPassword" t="SecureString"><![CDATA[Local User Password]]></param>
+  <param n="userDomain" t="string"><![CDATA[AD Domain of the user (VIDM only)]]></param>
+  <param n="identityManagerUser" t="string"><![CDATA[User Account to use when authenticating to Identity Manager]]></param>
+  <param n="identityManagerClientId" t="string"><![CDATA[The Client ID to use when contacting Identity Manager]]></param>
+  <param n="identityManagerClientSecret" t="SecureString"><![CDATA[The Client Secret to use when contacting IdentityManager]]></param>
+  <param n="identityManagerUserPassword" t="SecureString"><![CDATA[The user password when authenticating to Identity Manager]]></param>
+  <param n="identityManagerHost" t="string"><![CDATA[Identity Manager Host for OAUTH2.0 logins]]></param>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The current LCM Connection]]></param>
+  <script encoded="false"><![CDATA[// Setup the ConnectionInfo
+var info = new vRSLCMConnectionInfo()
+info.name = name
+info.host = host
+
+// Based on authentication type, set the necessary values.
+switch(authType) {
+    case "vidm":
+        System.log("Using Identity Manager Authentication for this Connection.")
+        info.userName = identityManagerUser
+        info.userDomain = userDomain
+        info.userPassword = identityManagerUserPassword
+        info.identityManagerHost = identityManagerHost
+        info.identityManagerClientId = identityManagerClientId
+        info.identityManagerClientSecret = identityManagerClientSecret
+        break;
+    default:
+        System.log("Defaulting to Local Authentication for this Connection.")
+        info.userName = userName
+        info.userPassword = userPassword
+        info.userDomain = "local"
+        break;    
+}
+
+var updatedConnection;
+try {
+    updatedConnection = vRSLCMConnectionManager.updateConnection(info)
+} catch(e) {
+    throw("Error during vRSLCM connection update :: "+e)
+}
+
+if(updatedConnection) {
+    System.log("Successfully updated vRSLCM connection ("+authType+") in inventory : ["+updatedConnection.name+" - "+updatedConnection.id)
+}
+
+return updatedConnection
+
+]]></script>
+</dunes-script-module>

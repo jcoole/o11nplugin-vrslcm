@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="6c3650d3-bb68-44eb-ab17-01ceda07210d" version="1.0.1" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Remove vRSLCM Connection]]></display-name>
+  <description><![CDATA[Removes a vRSLCM Connection from inventory.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The vRSLCM Connection to remove]]></description>
+    </param>
+  </input>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="240.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.configuration/removeConnection">
+    <display-name><![CDATA[removeConnection]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+System.getModule("com.sprockitconsulting.vrslcm.plugin.configuration").removeConnection(connection);
+]]></script>
+    <in-binding>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The vRSLCM Connection to remove]]></description>
+      </bind>
+    </in-binding>
+    <out-binding/>
+    <description><![CDATA[Removes a vRSLCM Connection from inventory.]]></description>
+    <position y="150.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

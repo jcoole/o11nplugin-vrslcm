@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">com.sprockitconsulting.vrslcm.plugin.objects</entry>
+<entry key="categoryPathEscaped">Y29t.c3Byb2NraXRjb25zdWx0aW5n.dnJzbGNt.cGx1Z2lu.b2JqZWN0cw==</entry>
+<entry key="name">createDatacenter</entry>
+<entry key="id">95eb1dec-f763-4972-9534-7bd36e38fdac</entry>
+<entry key="type">ScriptModule</entry>
+</properties>

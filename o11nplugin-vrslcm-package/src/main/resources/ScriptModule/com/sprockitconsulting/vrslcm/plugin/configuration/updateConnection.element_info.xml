@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">com.sprockitconsulting.vrslcm.plugin.configuration</entry>
+<entry key="categoryPathEscaped">Y29t.c3Byb2NraXRjb25zdWx0aW5n.dnJzbGNt.cGx1Z2lu.Y29uZmlndXJhdGlvbg==</entry>
+<entry key="name">updateConnection</entry>
+<entry key="id">0004b3a5-4218-49c8-bda4-b33120e7ace5</entry>
+<entry key="type">ScriptModule</entry>
+</properties>

@@ -2,3 +2,7 @@ To update orchestrator objects in src folder from the vCO database, use the impo
 
 Example:
 mvn o11n-package:import-package -DserverUrl=user:pass@localhost:8281
+
+Alternative if the import-package goal won't work for you:
+
+https://communities.vmware.com/t5/vCenter-Orchestrator-Plug-in-SDK/o11n-package-import-package-unable-to-sync-workflows-from-vRO-8/m-p/2967047

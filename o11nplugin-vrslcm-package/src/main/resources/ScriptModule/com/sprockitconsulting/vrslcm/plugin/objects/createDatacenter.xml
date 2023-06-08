@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createDatacenter" result-type="vRSLCM:Datacenter" api-version="6.0.0" id="95eb1dec-f763-4972-9534-7bd36e38fdac" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Creates a Datacenter with the given name and location.]]></description>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The LCM Server]]></param>
+  <param n="name" t="string"><![CDATA[Name of the datacenter]]></param>
+  <param n="location" t="string"><![CDATA[Location of the datacenter]]></param>
+  <script encoded="false"><![CDATA[return connection.getLifecycleOperationsService().createDatacenter(name, location)]]></script>
+</dunes-script-module>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Configuration</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.Q29uZmlndXJhdGlvbg==</entry>
+<entry key="name">Get vRSLCM Connection(s)</entry>
+<entry key="id">12a26adc-9f31-40e1-a1d5-39b7189d88c6</entry>
+<entry key="type">Workflow</entry>
+</properties>

@@ -53,7 +53,6 @@ public class LifecycleOperationsService extends AbstractService {
 	@VsoMethod(description = "Updates an existing Datacenter's name and/or location.")
 	public Datacenter updateDatacenter(Datacenter dc, String name, String location) {
 		return datacenterService.update(connection, dc, new Datacenter(name,location) );
-
 	}
 	
 	@VsoMethod(description = "Retrieves all Datacenters for this server.")

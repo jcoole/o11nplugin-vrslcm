@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getDatacenters" result-type="Array/vRSLCM:Datacenter" api-version="6.0.0" id="4d168336-5068-4e56-934a-53ff8415f966" version="1.0.1" allowed-operations="vef">
+  <description><![CDATA[Retrieves a Datacenter by name or ID. If not specified, all Datacenters are returned.]]></description>
+  <param n="nameOrId" t="string"><![CDATA[(Optional) Name or ID of the Datacenter]]></param>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The vRSLCM Server Connection]]></param>
+  <script encoded="false"><![CDATA[var dcs = new Array()
+var service = connection.getLifecycleOperationsService()
+
+if(!nameOrId || nameOrId == "") {
+    System.log("Retrieving all Datacenters in Connection ["+connection.host+"]")
+    dcs = service.getAllDatacenters();
+
+} else {
+    System.log("Searching for Datacenter with value ["+nameOrId+"] in Connection ["+connection.host+"]")
+    dcs.push(service.getDatacenterByValue(nameOrId))
+
+}
+for each(dc in dcs) {
+    System.log("Found datacenter : "+dc)
+}
+
+return dcs]]></script>
+</dunes-script-module>

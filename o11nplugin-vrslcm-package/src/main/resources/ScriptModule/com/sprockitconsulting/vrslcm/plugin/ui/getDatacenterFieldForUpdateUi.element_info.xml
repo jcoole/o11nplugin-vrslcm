@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">com.sprockitconsulting.vrslcm.plugin.ui</entry>
+<entry key="categoryPathEscaped">Y29t.c3Byb2NraXRjb25zdWx0aW5n.dnJzbGNt.cGx1Z2lu.dWk=</entry>
+<entry key="name">getDatacenterFieldForUpdateUi</entry>
+<entry key="id">c9557c91-d5a3-4f29-8289-b394935e2063</entry>
+<entry key="type">ScriptModule</entry>
+</properties>

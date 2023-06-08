@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="e63fcc89-ef6d-4f9e-8d50-807e0cef40d0" version="1.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Generate Certificate Signing Request]]></display-name>
+  <description><![CDATA[Creates a CSR Request from Locker based on inputs. This does not store any information on the LCM Server until you import the signed Certificate.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="commonName" type="string">
+      <description><![CDATA[Common Name (CN) used on the Certificate.]]></description>
+    </param>
+    <param name="org" type="string">
+      <description><![CDATA[Organization field used on the Certificate.]]></description>
+    </param>
+    <param name="orgUnit" type="string">
+      <description><![CDATA[Organizational Unit field used on the Certificate.]]></description>
+    </param>
+    <param name="country" type="string">
+      <description><![CDATA[Country (US, JP, CN) used on the Certificate.]]></description>
+    </param>
+    <param name="locality" type="string">
+      <description><![CDATA[Locality/City field used on the Certificate.]]></description>
+    </param>
+    <param name="state" type="string">
+      <description><![CDATA[State field used on the Certificate.]]></description>
+    </param>
+    <param name="keyLength" type="number">
+      <description><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></description>
+    </param>
+    <param name="sans" type="Array/string">
+      <description><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></description>
+    </param>
+    <param name="tenant" type="string">
+      <description><![CDATA[Tenant Name]]></description>
+    </param>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The server connection]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="certificateSigningRequest" type="string">
+      <description><![CDATA[The base64-encoded request and Private Key.]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="230.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/createCertificateSigningRequest">
+    <display-name><![CDATA[createCertificateSigningRequest]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").createCertificateSigningRequest(commonName,org,orgUnit,country,locality,state,keyLength,sans,tenant,connection);
+]]></script>
+    <in-binding>
+      <bind name="commonName" type="string" export-name="commonName">
+        <description><![CDATA[Common Name (CN) used on the Certificate.]]></description>
+      </bind>
+      <bind name="org" type="string" export-name="org">
+        <description><![CDATA[Organization field used on the Certificate.]]></description>
+      </bind>
+      <bind name="orgUnit" type="string" export-name="orgUnit">
+        <description><![CDATA[Organizational Unit field used on the Certificate.]]></description>
+      </bind>
+      <bind name="country" type="string" export-name="country">
+        <description><![CDATA[Country (US, JP, CN) used on the Certificate.]]></description>
+      </bind>
+      <bind name="locality" type="string" export-name="locality">
+        <description><![CDATA[Locality/City field used on the Certificate.]]></description>
+      </bind>
+      <bind name="state" type="string" export-name="state">
+        <description><![CDATA[State field used on the Certificate.]]></description>
+      </bind>
+      <bind name="keyLength" type="number" export-name="keyLength">
+        <description><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></description>
+      </bind>
+      <bind name="sans" type="Array/string" export-name="sans">
+        <description><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></description>
+      </bind>
+      <bind name="tenant" type="string" export-name="tenant">
+        <description><![CDATA[Tenant Name]]></description>
+      </bind>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The server connection]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="string" export-name="certificateSigningRequest"/>
+    </out-binding>
+    <description><![CDATA[Requests a CSR from Locker.]]></description>
+    <position y="140.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

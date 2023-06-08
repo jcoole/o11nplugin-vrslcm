@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="ea0799c6-c5b1-4c3c-ac05-59f9cbbb9222" version="1.0.1" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Get Datacenter(s)]]></display-name>
+  <description><![CDATA[Retrieves a Datacenter by name or ID. If not specified, all Datacenters are returned.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="nameOrId" type="string">
+      <description><![CDATA[(Optional) Name or ID of the Datacenter]]></description>
+    </param>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The vRSLCM Server Connection]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="datacenters" type="Array/vRSLCM:Datacenter">
+      <description><![CDATA[Resulting Datacenter(s)]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="260.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/getDatacenters">
+    <display-name><![CDATA[getDatacenters]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").getDatacenters(nameOrId,connection);
+]]></script>
+    <in-binding>
+      <bind name="nameOrId" type="string" export-name="nameOrId">
+        <description><![CDATA[(Optional) Name or ID of the Datacenter]]></description>
+      </bind>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The vRSLCM Server Connection]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="Array/vRSLCM:Datacenter" export-name="datacenters"/>
+    </out-binding>
+    <description><![CDATA[Searches for Datacenters.]]></description>
+    <position y="160.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

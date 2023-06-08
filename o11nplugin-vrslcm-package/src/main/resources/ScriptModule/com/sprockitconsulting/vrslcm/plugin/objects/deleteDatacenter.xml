@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="deleteDatacenter" result-type="void" api-version="6.0.0" id="64e4e41a-80ff-4068-81e7-e7548182ade0" version="1.0.1" allowed-operations="vef">
+  <description><![CDATA[Deletes a Datacenter.]]></description>
+  <param n="datacenter" t="vRSLCM:Datacenter"><![CDATA[The datacenter to update]]></param>
+  <script encoded="false"><![CDATA[return vRSLCMConnectionManager.getConnectionById(datacenter.connection.id).getLifecycleOperationsService().deleteDatacenter(datacenter)]]></script>
+</dunes-script-module>

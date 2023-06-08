@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="deleteCertificate" result-type="string" api-version="6.0.0" id="46c9988c-c385-46ae-9d13-cc4d08fb82e4" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Deletes a Certificate in Locker.]]></description>
+  <param n="certificate" t="vRSLCM:Certificate"><![CDATA[The certificate to delete.]]></param>
+  <script encoded="false"><![CDATA[var deleteRequest = null;
+// Make the request
+try {
+    deleteRequest = vRSLCMConnectionManager.getConnectionById(certificate.connection.id).getLockerService().deleteCertificate(certificate)
+    System.log("Certificate deleted, response: "+deleteRequest)
+} catch(e) {
+    throw("Error during Certificate deletion : "+e)
+}
+
+// Return the request data
+return deleteRequest;]]></script>
+</dunes-script-module>

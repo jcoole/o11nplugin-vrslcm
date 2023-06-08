@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getDatacenterFieldForUpdateUi" result-type="string" api-version="6.0.0" id="c9557c91-d5a3-4f29-8289-b394935e2063" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[This is used in update workflow presentation layers to retrieve existing object values.]]></description>
+  <param n="o" t="vRSLCM:Datacenter"><![CDATA[The object to reference]]></param>
+  <param n="field" t="string"><![CDATA[Name of the field to get the value of]]></param>
+  <script encoded="false"><![CDATA[var returnValue = null
+// Add custom logic here, if needed.
+returnValue = o[field]
+return returnValue]]></script>
+</dunes-script-module>

@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="updateDatacenter" result-type="vRSLCM:Datacenter" api-version="6.0.0" id="228689a5-5771-4e16-92b2-bf6248c1303c" version="1.0.1" allowed-operations="vef">
+  <description><![CDATA[Updates a given Datacenter's name and/or location.]]></description>
+  <param n="datacenter" t="vRSLCM:Datacenter"><![CDATA[The datacenter to update]]></param>
+  <param n="name" t="string"><![CDATA[Name of the datacenter]]></param>
+  <param n="location" t="string"><![CDATA[Location of the datacenter]]></param>
+  <script encoded="false"><![CDATA[return vRSLCMConnectionManager.getConnectionById(datacenter.connection.id).getLifecycleOperationsService().updateDatacenter(datacenter, name, location)]]></script>
+</dunes-script-module>

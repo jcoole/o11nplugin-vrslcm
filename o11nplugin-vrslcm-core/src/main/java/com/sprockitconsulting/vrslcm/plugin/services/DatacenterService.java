@@ -50,7 +50,8 @@ public class DatacenterService extends AbstractService {
 	}
 	
 	public Datacenter update(Connection connection, Datacenter original, Datacenter replacement) {
-		return dao.update(connection, original, replacement);
+		Datacenter updatedDc = dao.update(connection, original, replacement);
+		return dao.findById(connection, updatedDc.getResourceId());
 	}
 	
 	public void delete(Connection connection, Datacenter dc) {

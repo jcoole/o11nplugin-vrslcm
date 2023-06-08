@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getConnections" result-type="Array/vRSLCM:Connection" api-version="6.0.0" id="be9d11d3-1f3b-4fcf-9e1d-44fc2081ed10" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Searches for the LCM Server connection based on ID, or returns all of them.]]></description>
+  <param n="id" t="string"><![CDATA[(Optional) ID of the Connection]]></param>
+  <script encoded="false"><![CDATA[var conns = new Array()
+
+if(id !== "") {
+    conns.push(vRSLCMConnectionManager.getConnectionById(id))
+} else {
+    conns = vRSLCMConnectionManager.getAllConnections()
+}
+
+
+if(conns.length > 0) {
+    var log = "Found ["+conns.length+"] connections :: "
+    for each(conn in conns) {
+        log += conn.info.toString()+ ", "
+    }
+    System.log(log)
+} else {
+    System.warn("No connections found.")
+}
+
+return conns]]></script>
+</dunes-script-module>

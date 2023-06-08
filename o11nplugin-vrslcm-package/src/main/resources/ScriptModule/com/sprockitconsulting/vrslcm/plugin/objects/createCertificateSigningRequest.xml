@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="createCertificateSigningRequest" result-type="string" api-version="6.0.0" id="5764cdc5-ba90-4e83-a3a4-0b6bd9727aa8" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Creates a CSR from Locker API.]]></description>
+  <param n="commonName" t="string"><![CDATA[Common Name (CN) used on the Certificate.]]></param>
+  <param n="org" t="string"><![CDATA[Organization field used on the Certificate.]]></param>
+  <param n="orgUnit" t="string"><![CDATA[Organizational Unit field used on the Certificate.]]></param>
+  <param n="country" t="string"><![CDATA[Country (US, JP, CN) used on the Certificate.]]></param>
+  <param n="locality" t="string"><![CDATA[Locality/City field used on the Certificate.]]></param>
+  <param n="state" t="string"><![CDATA[State field used on the Certificate.]]></param>
+  <param n="keyLength" t="number"><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></param>
+  <param n="sans" t="Array/string"><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></param>
+  <param n="tenant" t="string"><![CDATA[Tenant Name]]></param>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The server connection]]></param>
+  <script encoded="false"><![CDATA[// Setup the Certificate Info payload
+var certInfo = new vRSLCMCertificateInfo(
+    "CSR",
+    commonName,
+    org,
+    orgUnit,
+    country,
+    locality,
+    state,
+    keyLength,
+    sans,
+    tenant
+)
+
+var certRequest = ""
+// Make the request
+try {
+    certRequest = connection.getLockerService().createCertificateSigningRequest(certInfo)
+    System.log("Certificate Signing Request submitted.")
+} catch(e) {
+    throw("Error during CSR submission : "+e)
+}
+
+// Return the string containing the request and key.
+return certRequest]]></script>
+</dunes-script-module>

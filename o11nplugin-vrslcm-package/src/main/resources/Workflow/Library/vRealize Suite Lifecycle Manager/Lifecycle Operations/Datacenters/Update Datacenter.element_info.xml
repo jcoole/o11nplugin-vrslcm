@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Lifecycle Operations.Datacenters</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TGlmZWN5Y2xlIE9wZXJhdGlvbnM=.RGF0YWNlbnRlcnM=</entry>
+<entry key="name">Update Datacenter</entry>
+<entry key="id">6ef8cb62-b796-4519-a5f8-0f33b6f3d2c5</entry>
+<entry key="type">Workflow</entry>
+</properties>

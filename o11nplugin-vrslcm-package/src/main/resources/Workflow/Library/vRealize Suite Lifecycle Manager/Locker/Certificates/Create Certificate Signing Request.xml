@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="e63fcc89-ef6d-4f9e-8d50-807e0cef40d0" version="1.0.1" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Create Certificate Signing Request]]></display-name>
+  <description><![CDATA[Creates a CSR Request from Locker based on inputs. You can optionally prompt to Import from the UI.]]></description>
+  <position y="190.0" x="80.0"/>
+  <input>
+    <param name="commonName" type="string">
+      <description><![CDATA[Common Name (CN) used on the Certificate.]]></description>
+    </param>
+    <param name="org" type="string">
+      <description><![CDATA[Organization field used on the Certificate.]]></description>
+    </param>
+    <param name="orgUnit" type="string">
+      <description><![CDATA[Organizational Unit field used on the Certificate.]]></description>
+    </param>
+    <param name="country" type="string">
+      <description><![CDATA[Country (US, JP, CN) used on the Certificate.]]></description>
+    </param>
+    <param name="locality" type="string">
+      <description><![CDATA[Locality/City field used on the Certificate.]]></description>
+    </param>
+    <param name="state" type="string">
+      <description><![CDATA[State field used on the Certificate.]]></description>
+    </param>
+    <param name="keyLength" type="number">
+      <description><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></description>
+    </param>
+    <param name="sans" type="Array/string">
+      <description><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></description>
+    </param>
+    <param name="tenant" type="string">
+      <description><![CDATA[Tenant Name]]></description>
+    </param>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The server connection]]></description>
+    </param>
+    <param name="prompt" type="boolean">
+      <description><![CDATA[Allows the requestor to pull up an interaction to import the signed certificate right away]]></description>
+    </param>
+    <param name="useTemplate" type="boolean">
+      <description><![CDATA[Specify if a previously created CA template should populate values]]></description>
+    </param>
+    <param name="caTemplate" type="string">
+      <description><![CDATA[The CA Template to (re)-use]]></description>
+    </param>
+    <param name="caTemplateData" type="Properties">
+      <description><![CDATA[(Hidden) CA Template Properties]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="output" type="string">
+      <description><![CDATA[Output, based on choices. Will either be CSR with Key or Signed Cert output]]></description>
+    </param>
+  </output>
+  <attrib name="certificateSigningRequest" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[The base64-encoded request and Private Key.]]></description>
+  </attrib>
+  <attrib name="csr" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[The CSR data]]></description>
+  </attrib>
+  <attrib name="privateKey" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[The Private Key string]]></description>
+  </attrib>
+  <attrib name="chain" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[The CA Chain]]></description>
+  </attrib>
+  <attrib name="certificateName" type="string" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Name of the Certificate for Import]]></description>
+  </attrib>
+  <attrib name="privateKeyPassphrase" type="SecureString" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+    <description><![CDATA[Passphrase for Private Key if used]]></description>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="190.0" x="720.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item3" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/createCertificateSigningRequest">
+    <display-name><![CDATA[createCertificateSigningRequest]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").createCertificateSigningRequest(commonName,org,orgUnit,country,locality,state,keyLength,sans,tenant,connection);
+]]></script>
+    <in-binding>
+      <bind name="commonName" type="string" export-name="commonName">
+        <description><![CDATA[Common Name (CN) used on the Certificate.]]></description>
+      </bind>
+      <bind name="org" type="string" export-name="org">
+        <description><![CDATA[Organization field used on the Certificate.]]></description>
+      </bind>
+      <bind name="orgUnit" type="string" export-name="orgUnit">
+        <description><![CDATA[Organizational Unit field used on the Certificate.]]></description>
+      </bind>
+      <bind name="country" type="string" export-name="country">
+        <description><![CDATA[Country (US, JP, CN) used on the Certificate.]]></description>
+      </bind>
+      <bind name="locality" type="string" export-name="locality">
+        <description><![CDATA[Locality/City field used on the Certificate.]]></description>
+      </bind>
+      <bind name="state" type="string" export-name="state">
+        <description><![CDATA[State field used on the Certificate.]]></description>
+      </bind>
+      <bind name="keyLength" type="number" export-name="keyLength">
+        <description><![CDATA[Encryption key size used on the Certificate, default is 2048.]]></description>
+      </bind>
+      <bind name="sans" type="Array/string" export-name="sans">
+        <description><![CDATA[List of Subject Alternative Names for the Certificate. These need to be Fully-Qualified Domain Name entries.]]></description>
+      </bind>
+      <bind name="tenant" type="string" export-name="tenant">
+        <description><![CDATA[Tenant Name]]></description>
+      </bind>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The server connection]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="string" export-name="certificateSigningRequest"/>
+    </out-binding>
+    <description><![CDATA[Requests a CSR from Locker.]]></description>
+    <position y="200.0" x="200.0"/>
+  </workflow-item>
+  <workflow-item name="item3" out-name="item4" type="condition" alt-out-name="item6" comparator="0">
+    <display-name><![CDATA[Prompt?]]></display-name>
+    <script encoded="false"><![CDATA[// Generated by the system, cannot be edited
+return (prompt === true);]]></script>
+    <in-binding>
+      <bind name="prompt" type="boolean" export-name="prompt"/>
+    </in-binding>
+    <out-binding/>
+    <condition name="prompt" type="boolean" comparator="0" label="null"/>
+    <description><![CDATA[Whether or not the user requested a prompt to import the signed cert or not]]></description>
+    <position y="190.0" x="360.0"/>
+  </workflow-item>
+  <workflow-item name="item4" out-name="item5" type="task">
+    <display-name><![CDATA[Setup Prompt]]></display-name>
+    <script encoded="false"><![CDATA[// Find where '-----BEGIN PRIVATE KEY-----' starts
+var pkIndex = certificateSigningRequest.indexOf("-----BEGIN PRIVATE KEY-----")
+
+// Substring the values out and pass them through.
+privateKey = certificateSigningRequest.substring(pkIndex)
+csr = certificateSigningRequest.substr(0, pkIndex)
+]]></script>
+    <in-binding>
+      <bind name="certificateSigningRequest" type="string" export-name="certificateSigningRequest"/>
+    </in-binding>
+    <out-binding>
+      <bind name="csr" type="string" export-name="csr"/>
+      <bind name="privateKey" type="string" export-name="privateKey"/>
+    </out-binding>
+    <description><![CDATA[Sets up the User Interaction fields]]></description>
+    <position y="130.0" x="360.0"/>
+  </workflow-item>
+  <workflow-item name="item5" out-name="item7" type="input">
+    <display-name><![CDATA[Import]]></display-name>
+    <in-binding>
+      <bind name="security.group" type="LdapGroup">
+        <description><![CDATA[Any user member of this group will be authorized to fill in this form.]]></description>
+      </bind>
+      <bind name="security.assignees" type="Array/LdapUser">
+        <description><![CDATA[Any user from this array of users will be authorized to fill in this form]]></description>
+      </bind>
+      <bind name="security.assignee.groups" type="Array/LdapGroup">
+        <description><![CDATA[Any user member of any of the groups will be authorized to fill in this form.]]></description>
+      </bind>
+      <bind name="timeout.date" type="Date">
+        <description><![CDATA[If not null, this input item will wait until date and will continue workflow execution.]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="csr" type="string" export-name="csr"/>
+      <bind name="privateKey" type="string" export-name="privateKey"/>
+      <bind name="chain" type="string" export-name="chain"/>
+      <bind name="certificateName" type="string" export-name="certificateName"/>
+      <bind name="privateKeyPassphrase" type="SecureString" export-name="privateKeyPassphrase"/>
+    </out-binding>
+    <presentation/>
+    <description><![CDATA[Prompt for the user to import the certificate]]></description>
+    <position y="130.0" x="520.0"/>
+  </workflow-item>
+  <workflow-item name="item6" out-name="item0" type="task">
+    <display-name><![CDATA[Output]]></display-name>
+    <script encoded="false"><![CDATA[output = certificateSigningRequest]]></script>
+    <in-binding>
+      <bind name="certificateSigningRequest" type="string" export-name="certificateSigningRequest"/>
+    </in-binding>
+    <out-binding>
+      <bind name="output" type="string" export-name="output"/>
+    </out-binding>
+    <description><![CDATA[Output]]></description>
+    <position y="200.0" x="520.0"/>
+  </workflow-item>
+  <workflow-item name="item7" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/importCertificate">
+    <display-name><![CDATA[importCertificate]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").importCertificate(connection,alias,key,chain,passphrase);
+]]></script>
+    <in-binding>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The server connection]]></description>
+      </bind>
+      <bind name="alias" type="string" export-name="">
+        <description><![CDATA[Alias/Name of the Certificate]]></description>
+      </bind>
+      <bind name="key" type="string" export-name="">
+        <description><![CDATA[Private Key]]></description>
+      </bind>
+      <bind name="chain" type="string" export-name="chain">
+        <description><![CDATA[CA Certificate Chain]]></description>
+      </bind>
+      <bind name="passphrase" type="SecureString" export-name="">
+        <description><![CDATA[Private Key passphrase if required]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="vRSLCM:Certificate" export-name=""/>
+    </out-binding>
+    <description><![CDATA[Import the certificate.]]></description>
+    <position y="130.0" x="680.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

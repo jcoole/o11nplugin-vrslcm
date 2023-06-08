@@ -3,8 +3,6 @@
 <properties>
 	<comment>127.0.0.1:8230</comment>
 	<entry key="pkg-description">vRealize Suite Lifecycle Manager package</entry>
-	<!-- <entry
-	key="pkg-name">com.sprockitconsulting.vrslcm.plugin.vrslcm_spring</entry> -->
 	<entry key="pkg-name">com.sprockitconsulting.vrslcm.plugin</entry>
 	<!-- <entry key="used-plugins">vRSLCM#1.0.0</entry>-->
 	<entry key="pkg-owner">Sprockit</entry>

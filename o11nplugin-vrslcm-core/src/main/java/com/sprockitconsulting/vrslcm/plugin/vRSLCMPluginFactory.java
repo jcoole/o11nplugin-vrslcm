@@ -140,6 +140,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
      */
     @Override
     public QueryResult findAll(String type, String query) {
+    	log.debug("findAll() begin with type ["+type+"] and query ["+query+"]");
     	QueryResult results = new QueryResult();
     	for (Connection connection : repository.findAll() ) {
 			log.debug("findAll() searching for "+type+" in Connection ["+connection.getName()+":"+connection.getId()+"]");

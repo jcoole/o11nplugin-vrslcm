@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Lifecycle Operations.Datacenters</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TGlmZWN5Y2xlIE9wZXJhdGlvbnM=.RGF0YWNlbnRlcnM=</entry>
+<entry key="name">Create Datacenter</entry>
+<entry key="id">b9d27818-e107-49fc-aeaf-01c975c71c02</entry>
+<entry key="type">Workflow</entry>
+</properties>

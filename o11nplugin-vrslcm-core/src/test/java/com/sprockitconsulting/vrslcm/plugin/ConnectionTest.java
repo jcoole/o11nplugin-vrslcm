@@ -39,8 +39,9 @@ public class ConnectionTest {
 		}
 		assertTrue(json != null);
 	}
+	
 	@Test
-	void infoIsCreated() {
+	void testInfoIsCreated() {
 		assertTrue(connectionInfo != null);
 	}
 	

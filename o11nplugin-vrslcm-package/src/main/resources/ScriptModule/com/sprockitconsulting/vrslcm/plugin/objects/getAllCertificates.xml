@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getAllCertificates" result-type="Array/vRSLCM:Certificate" api-version="6.0.0" id="768243af-5418-452b-8810-917af03bd873" version="0.0.0" allowed-operations="vef">
+  <description><![CDATA[Gets all Certificates from the LCM Server.]]></description>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The LCM Server]]></param>
+  <script encoded="false"><![CDATA[var objects = new Array()
+
+try {
+    objects = connection.getLockerService().getAllCertificates()
+} catch(e) {
+    throw("Error while querying for remote objects on connection: "+e)
+}
+
+return objects]]></script>
+</dunes-script-module>

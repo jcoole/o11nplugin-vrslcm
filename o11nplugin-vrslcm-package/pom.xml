@@ -10,40 +10,86 @@
 	<parent>
 		<artifactId>vrslcm</artifactId>
 		<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
-		<version>0.2.0-SNAPSHOT</version>
+		<version>0.3.0-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 		<!-- vCO packages are signed. Create your own JKS keystore that contains
 		a key-pair under the alias _DunesRSA_Alias_ -->
-		<!-- This keystore is meant for easier initial setup and should not be
-		used in production -->
-		<keystoreLocation>archetype.keystore</keystoreLocation>
+		
+		<!-- 
+		To create your own keystore, do the following:
+		* keytool -keystore sprockitpackage.keystore -genkey -alias _DunesRSA_Alias_ -keyalg rsa -validity 1536 -storetype JKS -storepass password123 -dname "CN=Sprockit Package Signing, OU=Lab, O=Sprockit Consulting, L=Seattle, ST=WA, C=US"
+		
+		Input the values that it asks you for.
+		With the new keystore you'll have what you need to generate a CSR, and the private key.
+		
+		* keytool -keystore sprockitpackage.keystore -certreq -alias _DunesRSA_Alias_ -keyalg rsa -file sprockitpackagerequest.csr -storepass password123 -sigalg SHA256withRSA -keysize 2048
+		Request and retrieve the signed certificate file.
+		
+		Import trusted CA certs to the keystore.
+		* keytool -import -keystore sprockitpackage.keystore -file chain.cer -storepass password123 -trustcacerts
+		
+		Import to the keystore.
+		* keytool -import -keystore mykeystore -file mycertificate.cer -alias _DunesRSA_Alias_
+		
+		Replace the values below to sign your packages on build.
+		
+		-->
+		<keystoreLocation>sprockit.keystore</keystoreLocation>
 		<keystorePassword>password123</keystorePassword>
 	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<executions>
+					<execution>
+						<!-- Run vCO-CLI to pull the package contents prior to repackaging -->
+						<id>Sync Content from Orchestrator</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<arguments>
+							<argument>-Dlog4j2.formatMsgNoLookups=true</argument>
+							<argument>-DincludeConfigurationSecureStringValues=true</argument>
+							<argument>-DignoreServerCertificate=true</argument>
+							<argument>-DexportVersionHistory=false</argument>
+							<argument>-DexactPackageNameMatch=true</argument>
+							<argument>-Dusername=${orchestratorUser}</argument>
+							<argument>-Dpassword=${orchestratorPass}</argument>
+							<argument>-DserverHost=${orchestratorHost}</argument>
+							<argument>-DserverPort=443</argument>
+							<argument>-jar</argument>
+							<argument>vco-cli-java-8.10.0.jar</argument>
+							<argument>de</argument>
+							<argument>${remotePackageName}</argument>
+							<argument>${project.basedir}/src/main/resources</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>com.vmware.o11n.mojo.pkg</groupId>
 				<artifactId>o11n-package-maven-plugin</artifactId>
-				<!-- Normally the version is a property, but the 8.4.2 version
-				fails, overriding -->
 				<version>${vco.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<packageName>com.sprockitconsulting.vrslcm.plugin</packageName>
-					<!-- Set the local path to the *.vmokeystore file used to
-					sign the content -->
+					<!-- Set the local path to the *.vmokeystore file used to sign the content -->
 					<keystoreLocation>${keystoreLocation}</keystoreLocation>
 					<keystorePassword>${keystorePassword}</keystorePassword>
 					<includes>
 						<include>**/*.element_info.xml</include>
 					</includes>
-					<packageFileName>
-						o11nplugin-vrslcm-package-${project.version}</packageFileName>
-					<!-- For release build change to vf. It will lock the
-					workflows -->
+					<packageFileName>o11nplugin-vrslcm-package-${project.version}</packageFileName>
 					<allowedMask>vef</allowedMask>
 				</configuration>
 			</plugin>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">com.sprockitconsulting.vrslcm.plugin.objects</entry>
+<entry key="categoryPathEscaped">Y29t.c3Byb2NraXRjb25zdWx0aW5n.dnJzbGNt.cGx1Z2lu.b2JqZWN0cw==</entry>
+<entry key="name">createCertificateSigningRequest</entry>
+<entry key="id">5764cdc5-ba90-4e83-a3a4-0b6bd9727aa8</entry>
+<entry key="type">ScriptModule</entry>
+</properties>

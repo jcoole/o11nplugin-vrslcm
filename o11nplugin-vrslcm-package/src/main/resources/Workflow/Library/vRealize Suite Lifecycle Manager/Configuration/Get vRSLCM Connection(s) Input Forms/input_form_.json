@@ -1,0 +1,1 @@
+{"schema":{"id":{"id":"id","type":{"dataType":"string"},"label":"id","constraints":{"required":false}}},"layout":{"pages":[{"id":"page_q9rgal5o","title":"General","sections":[{"id":"section_18pnstuz","fields":[{"id":"id","display":"textField","signpostPosition":"right-middle","state":{"visible":true,"read-only":false}}]}]}]},"itemId":""}

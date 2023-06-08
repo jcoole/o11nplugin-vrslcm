@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Locker.Certificates</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TG9ja2Vy.Q2VydGlmaWNhdGVz</entry>
+<entry key="name">Delete Certificate</entry>
+<entry key="id">0d54b0c5-be16-4a55-adc5-0c52fef32dfb</entry>
+<entry key="type">Workflow</entry>
+</properties>

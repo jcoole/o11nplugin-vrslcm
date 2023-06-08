@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="removeConnection" result-type="void" api-version="6.0.0" id="567dcb80-6b2e-4ae8-8d55-f2534a9c110c" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Removes a vRSLCM Connection from inventory.]]></description>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The vRSLCM Connection to remove]]></param>
+  <script encoded="false"><![CDATA[try {
+    vRSLCMConnectionManager.deleteConnection(connection.id)
+    System.log("Connection ["+connection.id+"] was removed.")
+} catch(e) {
+    throw("Error during Connection removal :: "+e)
+}]]></script>
+</dunes-script-module>

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item2" object-name="workflow:name=generic" id="931bf6ae-1ff3-485a-b534-43631a646c06" version="1.0.1" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Get Environment(s)]]></display-name>
+  <description><![CDATA[Retrieves an Environment by name or ID. If not specified, all Environments are returned.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="nameOrId" type="string">
+      <description><![CDATA[(Optional) Name or ID of the Datacenter]]></description>
+    </param>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The vRSLCM Server Connection]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="environments" type="Array/vRSLCM:Environment">
+      <description><![CDATA[List of Environments found]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="260.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/getEnvironments">
+    <display-name><![CDATA[getEnvironments]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").getEnvironments(nameOrId,connection);
+]]></script>
+    <in-binding>
+      <bind name="nameOrId" type="string" export-name="nameOrId">
+        <description><![CDATA[(Optional) Name or ID of the Environment]]></description>
+      </bind>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The vRSLCM Server Connection]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="Array/vRSLCM:Environment" export-name="environments"/>
+    </out-binding>
+    <description><![CDATA[Retrieves the environments.]]></description>
+    <position y="160.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>
