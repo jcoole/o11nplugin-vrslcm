@@ -46,7 +46,7 @@ public class DaoDatacenter
 		try {
 			vroObjectMapper.readerForUpdating(dcBean).readValue(vroObjectMapper.writeValueAsString(dcObj), Datacenter.class);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.error("There was an error updating the Datacenter bean during the findById method: "+e.getMessage());
 			e.printStackTrace();
 		}
 		assignConnectionToObject(connection, dcBean);

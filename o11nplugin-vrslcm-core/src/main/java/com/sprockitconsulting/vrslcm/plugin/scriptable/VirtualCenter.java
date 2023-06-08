@@ -69,6 +69,10 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 		this.user = user;
 	}
 	
+	/*
+	 * TODO: The LockerReference here needs implementation.
+	 * May be a good idea to create a separate unmapped property like 'credential' that is set during deserialization?
+	 */
 	@VsoProperty(description = "The Locker Password being used for vCenter Host access")
 	public String getLockerPassword() {
 		return lockerPassword;
