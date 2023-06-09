@@ -57,9 +57,9 @@ public final class vRSLCMModuleBuilder extends ModuleBuilder {
         // Create relation for Connections -> Service Folders
         this.finder("Connection", DATASOURCE)
         	.addRelation("LifecycleOperationsFolder","LifecycleOperationsFolders", true,Cardinality.TO_MANY)
-        	.addRelation("LockerFolder","LockerFolders", true, Cardinality.TO_MANY)
-        	.addRelation("UserManagementFolder","UserManagementFolders", true, Cardinality.TO_MANY)
-        	.addRelation("ContentManagementFolder","ContentManagementFolders", true);
+        	.addRelation("LockerFolder","LockerFolders", true, Cardinality.TO_MANY);
+        	//.addRelation("UserManagementFolder","UserManagementFolders", true, Cardinality.TO_MANY)
+        	//.addRelation("ContentManagementFolder","ContentManagementFolders", true);
         
         // Create relation for the Lifecycle Operations -> DC/Env/Req Folders.
         this.finder("LifecycleOperationsFolder", DATASOURCE)

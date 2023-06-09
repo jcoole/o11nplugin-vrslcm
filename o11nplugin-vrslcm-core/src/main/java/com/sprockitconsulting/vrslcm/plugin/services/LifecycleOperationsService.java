@@ -18,6 +18,7 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.VirtualCenter;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 
@@ -39,6 +40,8 @@ public class LifecycleOperationsService extends AbstractService {
 	private EnvironmentService environmentService;
 	@Autowired
 	private RequestService requestService;
+	@Autowired
+	private VirtualCenterService virtualCenterService;
 	
 	public LifecycleOperationsService(Connection connection) {
 		super(connection);
@@ -90,5 +93,49 @@ public class LifecycleOperationsService extends AbstractService {
 	public Request getRequestById(String requestId) {
 		return requestService.getByValue(connection, requestId);
 	}
-
+	
+	@VsoMethod(description = "Retrieves a vCenter in a Datacenter by name.")
+	public VirtualCenter getVirtualCenter(Datacenter dc, String name) {
+		return virtualCenterService.getByName(dc, name);
+	}
+	
+	@VsoMethod(description = "Retrieves all vCenter connections on the server.")
+	public List<VirtualCenter> getAllVirtualCenters(Connection connection) {
+		return virtualCenterService.getAll(connection);
+	}
+	
+	@VsoMethod(description = "Request to update a vCenter's information and properties.")
+	public Request updateVirtualCenter(Datacenter dc, VirtualCenter original, VirtualCenter updated) {
+		return virtualCenterService.update(dc, original, updated);
+	}
+	
+	@VsoMethod(description = "Request creation of a new vCenter Connection in the Datacenter.")
+	public Request createVirtualCenter(Datacenter dc, VirtualCenter vc) {
+		return virtualCenterService.create(dc, vc);
+	}
+	
+	@VsoMethod(description = "Request deleting a vCenter from the Datacenter. If any Environments are associated with it, the Request will fail!")
+	public Request deleteVirtualCenter(Datacenter dc, String name) {
+		return virtualCenterService.delete(dc, name);
+	}
+	
+	@VsoMethod(description = "Request to perform a data collection on a vCenter.")
+	public Request syncVirtualCenter(Datacenter dc, String name) {
+		return virtualCenterService.sync(dc, name);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

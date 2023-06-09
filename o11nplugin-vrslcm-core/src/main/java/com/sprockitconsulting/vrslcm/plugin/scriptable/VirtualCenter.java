@@ -2,10 +2,12 @@ package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sprockitconsulting.vrslcm.plugin.services.CredentialService;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -31,16 +33,15 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	public String name;
 	public String host;
 	public String user;
-	public String lockerPassword; // LockerReference ID.
+	public String lockerReference; // LockerReference ID.
+	public Credential lockerCredential; // The link to the Credential.
 	public String usedAs;
 	public String dataCollectionStatus;
 
 	// These are other properties retrieved when you get the object directly.
 	public String version = "unsure";
 
-	public VirtualCenter() {
-		
-	}
+	public VirtualCenter() {}
 	
 	@VsoProperty(description = "The vCenter Display Name in vRSLCM")
 	public String getName() {
@@ -69,19 +70,30 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 		this.user = user;
 	}
 	
-	/*
-	 * TODO: The LockerReference here needs implementation.
-	 * May be a good idea to create a separate unmapped property like 'credential' that is set during deserialization?
-	 */
-	@VsoProperty(description = "The Locker Password being used for vCenter Host access")
-	public String getLockerPassword() {
-		return lockerPassword;
-	}
-	@JsonProperty("vcPassword")
-	public void setLockerPassword(String password) {
-		this.lockerPassword = password;
+	@VsoProperty(description = "The Locker Reference to the Credential being used for vCenter Host access")
+	public String getLockerReference() {
+		return lockerReference;
 	}
 	
+	@JsonProperty("vcPassword")
+	public void setLockerReference(String reference) {
+		log.debug("vc inside setReference");
+		this.lockerReference = reference;
+		log.debug("reference assigned: "+reference);
+		// Add the Credential to separate property via lookup in the LockerReference class
+		LockerReference ref = new LockerReference(reference);
+		log.debug("ref object created: "+ref.toString());
+		ref.setConnection(connection);
+		log.debug("ref connection assigned: "+ref.toString());
+		this.lockerCredential = ref.getReferencedLockerResource();
+		log.debug("credential assigned: "+this.lockerCredential.toString());
+	}
+	
+	@VsoProperty(description = "The Credential used for vCenter Authentication.")	
+	public Credential getLockerCredential() {
+		return lockerCredential;
+	}
+
 	@VsoProperty(description = "The vCenter role - Management, Workload, or Both")
 	public String getUsedAs() {
 		return usedAs;
@@ -96,14 +108,13 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 		return dataCollectionStatus;
 	}
 	
-	// TODO: The datacollection status shows not-null in the 'all' query for some reason. if null, assume ok? revisit.
 	@JsonProperty("vcDataCollectionStatus")
 	@JsonAlias("dataCollectionStatus")
 	public void setDataCollectionStatus(String dataCollectionStatus) {
 		this.dataCollectionStatus = dataCollectionStatus;
 	}
 	
-	// Instance Methods
+	// TODO: Revisit
 	@VsoMethod(description = "Update the vCenter Connection credential")
 	public void updateVirtualCenterPassword() {
 		throw new RuntimeException("updateVirtualCenterPassword() is not implemented!!");

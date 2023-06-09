@@ -126,4 +126,12 @@ public class Credential extends BaseLifecycleManagerObject {
 		this.isReferenced = isReferenced;
 	}
 
+	@Override
+	public String toString() {
+		return String.format(
+				"Credential [name=%s, alias=%s, userName=%s, passwordDescription=%s, tenant=%s, createdOn=%s, lastUpdatedOn=%s, isReferenced=%s, connection=%s]",
+				name, alias, userName, passwordDescription, tenant, createdOn, lastUpdatedOn, isReferenced, connection);
+	}
+	
+	
 }

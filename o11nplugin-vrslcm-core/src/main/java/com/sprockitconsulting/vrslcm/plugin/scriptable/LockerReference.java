@@ -84,4 +84,10 @@ public class LockerReference extends BaseLifecycleManagerObject {
 		return resource;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("LockerReference [reference=%s, type=%s, resourceId=%s, alias=%s, connection=%s]",
+				reference, type, resourceId, alias, connection);
+	}
+	
 }

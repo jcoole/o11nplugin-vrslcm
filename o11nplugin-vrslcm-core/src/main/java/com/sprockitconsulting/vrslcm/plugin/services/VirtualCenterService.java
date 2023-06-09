@@ -32,8 +32,8 @@ public class VirtualCenterService extends AbstractService {
 		log.debug("VirtualCenterService initialized");
 	}
 
-	public VirtualCenter getByValue(Connection connection, String value) {
-		return dao.findById(connection, value);
+	public VirtualCenter getByName(Datacenter dc, String name) {
+		return dao.findByName(dc, name);
 	}
 
 	public List<VirtualCenter> getAll(Connection connection) {
@@ -50,5 +50,9 @@ public class VirtualCenterService extends AbstractService {
 	
 	public Request delete(Datacenter dc, String name) {
 		return dao.delete(dc, name);
+	}
+	
+	public Request sync(Datacenter dc, String name) {
+		return dao.sync(dc, name);
 	}
 }
