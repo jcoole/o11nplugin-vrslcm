@@ -2,12 +2,9 @@ package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sprockitconsulting.vrslcm.plugin.services.CredentialService;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -34,7 +31,7 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	public String host;
 	public String user;
 	public String lockerReference; // LockerReference ID.
-	//public Credential lockerCredential; // The link to the Credential. TODO: remove this
+	public Credential lockerCredential; // The link to the Credential.
 	public String usedAs;
 	public String dataCollectionStatus;
 
@@ -82,7 +79,7 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	
 	@VsoProperty(description = "The Credential used for vCenter Authentication.")	
 	public Credential getLockerCredential() {
-		log.debug("inside getLockerCredential");
+		log.debug("inside getLockerCredential - using reference ["+this.lockerReference+"]");
 		// convert this to a dynamic lookup to the cred service. does this even need a field?
 		Credential lockerCredential = new LockerReference(this.getLockerReference()).getReferencedLockerResource();
 		log.debug("got cred: "+lockerCredential.toString());
