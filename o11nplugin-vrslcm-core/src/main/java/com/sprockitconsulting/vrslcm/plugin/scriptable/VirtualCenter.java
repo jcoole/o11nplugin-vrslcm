@@ -34,7 +34,7 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	public String host;
 	public String user;
 	public String lockerReference; // LockerReference ID.
-	//public Credential lockerCredential; // The link to the Credential.
+	//public Credential lockerCredential; // The link to the Credential. TODO: remove this
 	public String usedAs;
 	public String dataCollectionStatus;
 
