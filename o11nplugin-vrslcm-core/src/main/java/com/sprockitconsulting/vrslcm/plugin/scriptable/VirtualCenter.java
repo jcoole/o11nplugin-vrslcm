@@ -34,7 +34,7 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	public String host;
 	public String user;
 	public String lockerReference; // LockerReference ID.
-	public Credential lockerCredential; // The link to the Credential.
+	//public Credential lockerCredential; // The link to the Credential.
 	public String usedAs;
 	public String dataCollectionStatus;
 
@@ -77,21 +77,17 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	
 	@JsonProperty("vcPassword")
 	public void setLockerReference(String reference) {
-		log.debug("vc inside setReference");
 		this.lockerReference = reference;
-		log.debug("reference assigned: "+reference);
-		// Add the Credential to separate property via lookup in the LockerReference class
-		LockerReference ref = new LockerReference(reference);
-		log.debug("ref object created: "+ref.toString());
-		ref.setConnection(connection);
-		log.debug("ref connection assigned: "+ref.toString());
-		this.lockerCredential = ref.getReferencedLockerResource();
-		log.debug("credential assigned: "+this.lockerCredential.toString());
 	}
 	
 	@VsoProperty(description = "The Credential used for vCenter Authentication.")	
 	public Credential getLockerCredential() {
-		return lockerCredential;
+		log.debug("inside getLockerCredential");
+		// convert this to a dynamic lookup to the cred service. does this even need a field?
+		Credential lockerCredential = new LockerReference(this.getLockerReference()).getReferencedLockerResource();
+		log.debug("got cred: "+lockerCredential.toString());
+		return lockerCredential; 
+		//return lockerCredential;
 	}
 
 	@VsoProperty(description = "The vCenter role - Management, Workload, or Both")
