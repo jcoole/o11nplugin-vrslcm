@@ -40,6 +40,10 @@ public class VirtualCenterService extends AbstractService {
 		return dao.findAll(connection);
 	}
 	
+	public List<VirtualCenter> getAllForDatacenter(Datacenter dc) {
+		return dao.findAllForDatacenter(dc);
+	}
+	
 	public Request create(Datacenter dc, VirtualCenter vc) {
 		return dao.create(dc, vc);
 	}

@@ -30,7 +30,7 @@ public class CredentialService extends AbstractService {
 	public Credential getByValue(Connection connection, String value) {
 		return dao.findById(connection, value);
 	}
-
+	
 	public List<Credential> getAll(Connection connection) {
 		return dao.findAll(connection);
 	}
@@ -46,4 +46,11 @@ public class CredentialService extends AbstractService {
 	public void delete(Connection connection, Credential credential) {
 		dao.delete(connection, credential);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("CredentialService [dao=%s, connection=%s]", dao, connection);
+	}
+	
+	
 }

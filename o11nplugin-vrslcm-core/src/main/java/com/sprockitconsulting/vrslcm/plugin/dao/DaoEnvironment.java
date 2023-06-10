@@ -71,4 +71,5 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		assignConnectionToList(connection, envs);
 		return Arrays.asList(envs);
 	}
+
 }

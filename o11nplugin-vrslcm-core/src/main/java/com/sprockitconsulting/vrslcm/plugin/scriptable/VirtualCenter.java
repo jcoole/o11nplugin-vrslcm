@@ -2,9 +2,18 @@ package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
+import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
+import com.sprockitconsulting.vrslcm.plugin.services.CredentialService;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -13,7 +22,8 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
  * Represents a vCenter instance in a Datacenter in LCM.
  * @author justin
  */
-@JsonIgnoreProperties({"vCDataCenters", "templateCustomSpecs", "contentLibraries"})
+@JsonIgnoreProperties(ignoreUnknown = true) // during deserialization, if a field isn't mapped to a JSON property, skip it
+@JsonInclude(JsonInclude.Include.NON_NULL) // during serialization, ignores fields set to null (helps on inherited fields and fields not needed during creation)
 @VsoObject(description = "Represents a vCenter Server in vRSLCM.")
 //Creating the VsoFinder exposes this in the 'Types' section of API Explorer.
 @VsoFinder(
@@ -32,12 +42,13 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	public String user;
 	public String lockerReference; // LockerReference ID.
 	public Credential lockerCredential; // The link to the Credential.
+	public Datacenter datacenter; // the associated datacenter object
 	public String usedAs;
 	public String dataCollectionStatus;
 
 	// These are other properties retrieved when you get the object directly.
 	public String version = "unsure";
-
+	
 	public VirtualCenter() {}
 	
 	@VsoProperty(description = "The vCenter Display Name in vRSLCM")
@@ -79,12 +90,20 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	
 	@VsoProperty(description = "The Credential used for vCenter Authentication.")	
 	public Credential getLockerCredential() {
-		log.debug("inside getLockerCredential - using reference ["+this.lockerReference+"]");
-		// convert this to a dynamic lookup to the cred service. does this even need a field?
-		Credential lockerCredential = new LockerReference(this.getLockerReference()).getReferencedLockerResource();
-		log.debug("got cred: "+lockerCredential.toString());
-		return lockerCredential; 
-		//return lockerCredential;
+		return lockerCredential;
+	}
+	
+	public void setLockerCredential(Credential lockerCredential) {
+		this.lockerCredential = lockerCredential;
+	}
+	
+	@VsoProperty(description = "The Datacenter associated with the vCenter connection.")
+	public Datacenter getDatacenter() {
+		return datacenter;
+	}
+
+	public void setDatacenter(Datacenter datacenter) {
+		this.datacenter = datacenter;
 	}
 
 	@VsoProperty(description = "The vCenter role - Management, Workload, or Both")
@@ -112,5 +131,5 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	public void updateVirtualCenterPassword() {
 		throw new RuntimeException("updateVirtualCenterPassword() is not implemented!!");
 	}
-
+	
 }

@@ -61,6 +61,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 	/**
 	 * This method is used after deserialization to assign the Connection and subsequently Internal ID to a single object.
 	 * The Orchestrator Finder uses the 'internalId' value as its InventoryRef in the Factory for lookups.
+	 * @param connection The Connection to assign
 	 * @param resource The resource to assign the connection to. This is generic, and the input must inherit from the BaseLifecycleManagerObject class.
 	 * @see BaseLifecycleManagerObject
 	 */
@@ -76,6 +77,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 	/**
 	 * This method is used after deserialization to assign the Connection ID to a list of resources.
 	 * It simply calls the 'assignConnectionToObject' method for each object.
+	 * @param connection The Connection to assign
 	 * @param resourceList The resource list object to assign the connection to. This is generic, and the objects in the list must inherit from the BaseLifecycleManagerObject class.
 	 * @see BaseLifecycleManagerObject
 	 */

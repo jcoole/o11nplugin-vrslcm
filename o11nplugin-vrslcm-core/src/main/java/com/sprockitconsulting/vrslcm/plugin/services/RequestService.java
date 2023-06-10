@@ -33,14 +33,7 @@ public class RequestService extends AbstractService {
 		super(connection);
 		log.debug("Initialized with Connection ["+connection.getId()+"]");
 	}
-/*
-	@PostConstruct
-	public void init() {
-		log.debug("RequestService @PostConstruct Begin");
-		this.dao = (DaoRequest) context.getBean("daoRequest", this.connection);
-		log.debug("RequestService @PostConstruct Success - DaoRequest service bean created");
-	}
-*/	
+
 	public Request getByValue(Connection connection, String value) {
 		return dao.findById(connection, value);
 	}

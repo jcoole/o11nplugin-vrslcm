@@ -3,6 +3,7 @@ package com.sprockitconsulting.vrslcm.plugin.dao;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -40,6 +41,12 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 		
 		VirtualCenter vc = doApiRequest(dc.getConnection(), "GET", URL_GET_BY_VALUE, "{}", VirtualCenter.class, uriVariables);
 		return vc;
+	}
+	
+	public List<VirtualCenter> findAllForDatacenter(Datacenter dc) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("dcId", dc.getResourceId());
+		return Arrays.asList(doApiRequest(dc.getConnection(), "GET", URL_GET_ALL, "{}", VirtualCenter[].class, uriVariables) );
 	}
 
 	@Override

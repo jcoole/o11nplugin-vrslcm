@@ -55,6 +55,8 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 	private CredentialService credentialService;
 	@Autowired
 	private CertificateService certificateService;
+	@Autowired
+	private VirtualCenterService virtualCenterService;
 	
 	/**
 	 * This method is called when the Finder is invoked to serialize the object for the specified type.
@@ -159,6 +161,9 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
     			break;
     		case "Certificate":
     			results.addElements(certificateService.getAllCertificates(connection));
+    			break;
+    		case "VirtualCenter":
+    			results.addElements(virtualCenterService.getAll(connection));
     			break;
     		default:
     			log.warn("findAll() could not handle a search for the type ["+type+"] in the factory, a case should be added for it");
@@ -282,11 +287,12 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         	} 
         	// Parent type: Datacenter -> Relation: VirtualCenters
         	if(parent.isOfType("Datacenter") && relationName.equals("VirtualCenters")) {
-        		String dcId = parent.getId().split("@")[0];
+        		String dcId = parent.getId().split("@")[0]; // vCenters do not have unique IDs, just associations with Datacenters.
         		log.debug("findChildrenInRelation - Creating VIRTUALCENTERS for Connection ID ["+connectionId+"] in Datacenter ["+dcId+"]");    			
         		try {
-        			return datacenterService.findAllVirtualCentersInDatacenter(connection, dcId);
-        		} catch (RuntimeException e) {
+        			return datacenterService.getByValue(connection, dcId).getVirtualCenters();
+        			//return datacenterService.findAllVirtualCentersInDatacenter(connection, dcId);
+        		} catch (Exception e) {
         			log.error("Unable to retrieve vCenters associated to Datacenter ["+dcId+"] from the API service! Error was: "+e.getMessage());
         			e.printStackTrace();
 				}

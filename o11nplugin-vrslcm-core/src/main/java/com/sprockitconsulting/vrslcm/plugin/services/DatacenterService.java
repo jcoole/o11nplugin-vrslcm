@@ -40,11 +40,12 @@ public class DatacenterService extends AbstractService {
 	public List<Environment> findAllEnvironmentsInDatacenter(Connection connection, String nameOrId) {
 		return dao.getEnvironments(connection, nameOrId);
 	}
-	
+/*
+ * TODO: Remove
 	public List<VirtualCenter> findAllVirtualCentersInDatacenter(Connection connection, String nameOrId) {
 		return dao.getVirtualCenters(connection, nameOrId);
 	}
-	
+*/	
 	public Datacenter create(Connection connection, Datacenter dc) {
 		return dao.create(connection, dc);
 	}
