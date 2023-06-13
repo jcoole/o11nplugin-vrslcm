@@ -3,7 +3,6 @@ package com.sprockitconsulting.vrslcm.plugin.dao;
 import java.util.List;
 import java.util.Map;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,8 +19,6 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.VirtualCenter;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.LockerReference;
 import com.sprockitconsulting.vrslcm.plugin.services.CredentialService;
-import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
-import com.sprockitconsulting.vrslcm.plugin.services.VirtualCenterService;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
 /**
  * This class contains the data access and manipulation methods for the Datacenter Service.
@@ -36,8 +33,8 @@ public class DaoDatacenter
 	private static final Logger log = LoggerFactory.getLogger(DaoDatacenter.class);
 	
 	// Additional URL fields
-	private String URL_GET_VC = URL_GET_BY_VALUE+"/vcenters";
-	private String URL_GET_ENV = URL_GET_BY_VALUE+"/environments";
+	private String URL_GET_VC = "/lcm/lcops/api/v2/datacenters/{id}/vcenters";
+	private String URL_GET_ENV = "/lcm/lcops/api/v2/datacenters/{id}/environments";
 	
 	@Autowired
 	private CredentialService credentialService;
@@ -53,40 +50,35 @@ public class DaoDatacenter
 	public Datacenter findById(Connection connection, String id) {
 		Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("id", id);
-		Datacenter dcBean = (Datacenter) context.getBean("datacenter");
 		Datacenter dcObj = doApiRequest(connection, "GET", URL_GET_BY_VALUE, "{}", Datacenter.class, uriVariables);
-		try {
-			vroObjectMapper.readerForUpdating(dcBean).readValue(vroObjectMapper.writeValueAsString(dcObj), Datacenter.class);
-		} catch (IOException e) {
-			log.error("There was an error updating the Datacenter bean during the findById method: "+e.getMessage());
-			e.printStackTrace();
-		}
-		assignConnectionToObject(connection, dcBean);
+		assignConnectionToObject(connection, dcObj);
 		
 		// Assign additional Properties (if possible - depends on service account access)
 		try {
-			dcBean.setEnvironments(getEnvironments(connection, id) );
-			dcBean.setVirtualCenters(getVirtualCenters(connection, dcBean));
+			List<Environment> dcEnvs = getEnvironments(connection, id);
+			dcObj.setEnvironments(dcEnvs);
+			List<VirtualCenter> dcVirtualCenters = getVirtualCenters(connection, dcObj);
+			dcObj.setVirtualCenters(dcVirtualCenters);
 		} catch (RuntimeException e) {
 			log.error("Unable to add Environment/vCenter objects to the Datacenter, likely due to API access limitations for account ["+connection.getUserName()+"]");
 		}
-		return dcBean;
+		return dcObj;
 	}
 
 	@Override
 	public List<Datacenter> findAll(Connection connection) {
-		List<Datacenter> findings = new ArrayList<Datacenter>();
+		List<Datacenter> allDc = new ArrayList<Datacenter>();
 		Datacenter[] dcs = doApiRequest(connection, "GET", URL_GET_ALL, "{}", Datacenter[].class, null);
 		
 		if(dcs != null && dcs.length > 0) {
 			for (Datacenter dc : dcs) {
 				assignConnectionToObject(connection, dc);
-				findings.add(dc);
+				allDc.add(dc);
 			}
 		} else {
 			log.debug("findAll() returned no datacenters or had an issue");
 		}
-		return findings;
+		return allDc;
 	}
 
 
@@ -99,10 +91,9 @@ public class DaoDatacenter
 			log.error("There was an error serializing the Datacenter entity into valid JSON!");
 			e.printStackTrace();
 		}
-		// Create the Datacenter
 		Datacenter dc = doApiRequest(connection, "POST", URL_GET_ALL, body, Datacenter.class, null);
-		// After creation, perform a new lookup
-		return findById(connection, dc.getResourceId());
+		assignConnectionToObject(connection, dc);
+		return dc;
 	}
 
 	@Override
@@ -121,22 +112,13 @@ public class DaoDatacenter
 		return doApiRequest(connection, "PUT", URL_GET_BY_VALUE, body, Datacenter.class, uriVariables);
 	}
 
-	// TODO: Deletes turn into a requestID but sometimes not, so revisit.
 	@Override
-	public Object delete(Connection connection, Datacenter entity) {
+	public Request delete(Connection connection, Datacenter entity) {
 		Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("id", entity.getResourceId());
-		String deleteRequest = doApiRequest(connection, "DELETE", URL_GET_BY_VALUE, null, String.class, uriVariables);
-		System.out.println(deleteRequest);
-		Request deleteRequestObject = null;
-		try {
-			deleteRequestObject = vroObjectMapper.readerFor(Request.class).readValue(deleteRequest);
-		} catch (JsonProcessingException e) {
-			log.error("There was an error retrieving the Request for deleting the Datacenter ["+entity.getResourceId()+"] : "+e.getMessage());
-			e.printStackTrace();
-		}
-
-		return deleteRequestObject;
+		Request deleteRequest = doApiRequest(connection, "DELETE", URL_GET_BY_VALUE, null, Request.class, uriVariables);
+		assignConnectionToObject(connection, deleteRequest);
+		return deleteRequest;
 	}
 
 	/**
@@ -147,20 +129,6 @@ public class DaoDatacenter
 	public List<Environment> getEnvironments(Connection connection, String nameOrId) {
 		Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("id", nameOrId);
-		
-		// Old version with additional parsing
-		/*
-		String environmentRequest = doApiRequest(connection, "GET", URL_GET_ENV, null, String.class, uriVariables);
-
-		List<Environment> dcEnvs = null;
-		try {
-			dcEnvs = Arrays.asList(vroObjectMapper.readValue(environmentRequest, Environment[].class));
-		} catch (JsonProcessingException e) {
-			log.error("Unable to convert the Environment string response to object, error was : "+e.getMessage());
-			e.printStackTrace();
-		}
-		*/
-		
 		return Arrays.asList(doApiRequest(connection, "GET", URL_GET_ENV, null, Environment[].class, uriVariables) );
 	}
 	
@@ -181,15 +149,12 @@ public class DaoDatacenter
 			log.error("There was an error retrieving the vCenter servers in the JSON response: "+e.getMessage());
 			e.printStackTrace();
 		}
-		assignConnectionToList(connection, vcs);
-		log.debug("connections assigned to vc");
+		assignConnectionToArray(connection, vcs);
+
 		// Assign additional values
 		for(VirtualCenter vc: vcs) {
-			log.debug("begin assign dc and cred");
 			vc.setDatacenter(dc);
-			log.debug("dc for "+vc.name+" set to "+vc.getDatacenter().toString());
 			vc.setLockerCredential(credentialService.getByValue(connection, new LockerReference(vc.getLockerReference()).getResourceId() ) );
-			log.debug("cred for "+vc.name+" set to "+vc.getLockerCredential().toString());
 		}
 		return Arrays.asList(vcs);
 	}

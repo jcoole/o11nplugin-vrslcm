@@ -1,5 +1,6 @@
 package com.sprockitconsulting.vrslcm.plugin.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -75,18 +76,33 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 	}
 	
 	/**
-	 * This method is used after deserialization to assign the Connection ID to a list of resources.
+	 * This method is used after deserialization to assign the Connection ID to an Array of resources.
 	 * It simply calls the 'assignConnectionToObject' method for each object.
 	 * @param connection The Connection to assign
-	 * @param resourceList The resource list object to assign the connection to. This is generic, and the objects in the list must inherit from the BaseLifecycleManagerObject class.
+	 * @param resourceList The resource array of objects to assign the connection to. This is generic, and the objects in the list must inherit from the BaseLifecycleManagerObject class.
 	 * @see BaseLifecycleManagerObject
 	 */
 	@SuppressWarnings("hiding")
-	protected <T extends BaseLifecycleManagerObject> void assignConnectionToList(Connection connection, T[] resourceList) {
+	protected <T extends BaseLifecycleManagerObject> void assignConnectionToArray(Connection connection, T[] resourceArray) {
+		for(Object resource: resourceArray) {
+			assignConnectionToObject(connection, resource);
+		}
+	}
+
+	/**
+	 * This method is used after deserialization to assign the Connection ID to an List of resources.
+	 * It simply calls the 'assignConnectionToObject' method for each object.
+	 * @param connection The Connection to assign
+	 * @param resourceList The resource list of objects to assign the connection to. This is generic, and the objects in the array must inherit from the BaseLifecycleManagerObject class.
+	 * @see BaseLifecycleManagerObject
+	 */
+	@SuppressWarnings("hiding")
+	protected <T extends BaseLifecycleManagerObject> void assignConnectionToList(Connection connection, List<T> resourceList) {
 		for(Object resource: resourceList) {
 			assignConnectionToObject(connection, resource);
 		}
 	}
+
 	/**
 	 * This is the core method that performs the exchange of requests and responses for objects in the LCM API.
 	 * 

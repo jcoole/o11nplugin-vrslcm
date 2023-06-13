@@ -32,8 +32,8 @@ public class VirtualCenterService extends AbstractService {
 		log.debug("VirtualCenterService initialized");
 	}
 
-	public VirtualCenter getByName(Datacenter dc, String name) {
-		return dao.findByName(dc, name);
+	public VirtualCenter getByName(Connection connection, String name) {
+		return dao.findByName(connection, name);
 	}
 
 	public List<VirtualCenter> getAll(Connection connection) {

@@ -34,15 +34,6 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 		log.debug("DAO VirtualCenter initialized");
 	}
 
-	public VirtualCenter findByName(Datacenter dc, String name) {
-		Map<String, Object> uriVariables = new HashMap<>();
-		uriVariables.put("dcId", dc.getResourceId());
-		uriVariables.put("vcName", name);
-		
-		VirtualCenter vc = doApiRequest(dc.getConnection(), "GET", URL_GET_BY_VALUE, "{}", VirtualCenter.class, uriVariables);
-		return vc;
-	}
-	
 	public List<VirtualCenter> findAllForDatacenter(Datacenter dc) {
 		Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("dcId", dc.getResourceId());
@@ -52,10 +43,25 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 	@Override
 	public List<VirtualCenter> findAll(Connection connection) {
 		// Go through all Datacenters in a given connection, return all vCenters.
-		List<VirtualCenter> vcs = new ArrayList<VirtualCenter>();
+		List<VirtualCenter> vcs = new ArrayList<VirtualCenter>(0);
 		for (Datacenter dc: datacenterService.getAll(connection)) {
 			try {
-				vcs.addAll(dc.getVirtualCenters());
+				log.debug("daoVC.findAll() - DC "+dc.getName()+"-"+dc.getResourceId());
+				List<VirtualCenter> currentDcVcList = findAllForDatacenter(dc);
+				log.debug("daoVC.findAll() - found ["+currentDcVcList.size()+"]");
+				if(currentDcVcList.size() > 0) {
+					log.debug("daoVC.findAll() - Adding ["+currentDcVcList.size()+"] vCenters to Datacenter ["+dc.getName()+"] list.");
+					
+					// Assign the connection and Datacenter to each vCenter object
+					for(VirtualCenter vc : currentDcVcList) {
+						assignConnectionToObject(connection, vc);
+						vc.setDatacenter(dc);
+					}
+					
+					vcs.addAll(currentDcVcList);
+				} else {
+					log.debug("daoVC.findall() - No vCenters found in Datacenter ["+dc.getName()+"].");
+				}
 			} catch (Exception e) {
 				log.error("There was an error adding the VirtualCenters in Datacenter ["+dc.getName()+"] to the list : "+e.getMessage());
 				e.printStackTrace();
@@ -63,8 +69,24 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 		}
 		return vcs;
 	}
-
-
+	/**
+	 * For a given connection, filter out a vCenter connection by name.
+	 * @param connection The connection
+	 * @param name Name of the vCenter to find
+	 * @return VirtualCenter
+	 */
+	public VirtualCenter findByName(Connection connection, String name) {
+		return findAll(connection).stream()
+				.filter(v -> name.equals(v.getName()))
+				.findFirst()
+				.orElse(null);
+	}
+	/**
+	 * Requests that a vCenter connection be deleted.
+	 * @param dc The Datacenter that holds the vCenter connection.
+	 * @param name Name of the vCenter to delete
+	 * @return Request for deletion
+	 */
 	public Request delete(Datacenter dc, String name) {
 		// Use the DC and name fields for the api call
 		Map<String, Object> uriVariables = new HashMap<>();
@@ -72,6 +94,7 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 		uriVariables.put("vcName", name);
 		
 		Request deleteRequest = doApiRequest(dc.getConnection(), "DELETE", URL_GET_BY_VALUE, "{}", Request.class, uriVariables);
+		assignConnectionToObject(dc.getConnection(), deleteRequest);
 		return deleteRequest;
 	}
 
@@ -91,6 +114,7 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 		}
 		
 		Request updateRequest = doApiRequest(dc.getConnection(), "PUT", URL_GET_BY_VALUE, updateBody, Request.class, uriVariables);
+		assignConnectionToObject(dc.getConnection(), updateRequest);
 		return updateRequest;
 	}
 
@@ -108,6 +132,7 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 			e.printStackTrace();
 		}
 		Request createRequest = doApiRequest(dc.getConnection(), "POST", URL_GET_ALL, createBody, Request.class, uriVariables);
+		assignConnectionToObject(dc.getConnection(), createRequest);
 		return createRequest;
 	}
 	
@@ -120,6 +145,7 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 		String dataCollectionUrl = URL_GET_BY_VALUE+"/data-collection";
 		
 		Request syncRequest = doApiRequest(dc.getConnection(), "POST", dataCollectionUrl, "{}", Request.class, uriVariables);
+		assignConnectionToObject(dc.getConnection(), syncRequest);
 		return syncRequest;
 	}
 

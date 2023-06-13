@@ -43,7 +43,7 @@ public class DaoRequest extends DaoAbstract<Request> {
 		Request[] reqs = doApiRequest(connection, "GET", URL_GET_ALL, "{}", Request[].class, null);
 		
 		// Assign Connection object
-		assignConnectionToList(connection, reqs);
+		assignConnectionToArray(connection, reqs);
 		
 		// By default, the API does not perform any sorting of requests, so using the 'lastUpdated' field the Request objects are returned in descending order.
 		

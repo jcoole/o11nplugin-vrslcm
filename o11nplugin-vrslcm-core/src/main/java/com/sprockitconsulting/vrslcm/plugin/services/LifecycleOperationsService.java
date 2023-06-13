@@ -79,10 +79,10 @@ public class LifecycleOperationsService extends AbstractService {
 	}
 	
 	@VsoMethod(description = "Deletes a Datacenter on the server. Returns a request to monitor for completion.")
-	public void deleteDatacenter(
+	public Request deleteDatacenter(
 			@VsoParam(description = "The Datacenter to delete.")Datacenter dc
 			) {
-		datacenterService.delete(connection, dc);
+		return datacenterService.delete(connection, dc);
 
 	}
 	
@@ -115,7 +115,7 @@ public class LifecycleOperationsService extends AbstractService {
 			@VsoParam(description = "The Datacenter to search.")Datacenter dc, 
 			@VsoParam(description = "Name of the vCenter.")String name
 			) {
-		return virtualCenterService.getByName(dc, name);
+		return virtualCenterService.getByName(connection, name);
 	}
 	
 	@VsoMethod(description = "Retrieves all vCenter connections on the server.")
