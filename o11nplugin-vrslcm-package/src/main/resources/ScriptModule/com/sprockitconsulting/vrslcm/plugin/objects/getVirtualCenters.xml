@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getVirtualCenters" result-type="Array/vRSLCM:VirtualCenter" api-version="6.0.0" id="644f561d-27cd-48bc-98a5-ac413784d47d" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Gets Virtual Center objects for a given Connection.]]></description>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The Connection]]></param>
+  <script encoded="false"><![CDATA[return connection.getLifecycleOperationsService().getAllVirtualCenters()]]></script>
+</dunes-script-module>

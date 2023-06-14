@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="syncVirtualCenter" result-type="vRSLCM:Request" api-version="6.0.0" id="50bef902-2e6e-46b8-b6e0-dfca2b8d1475" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Performs a sync or data collection on the specified vCenter Server.]]></description>
+  <param n="vc" t="vRSLCM:VirtualCenter"><![CDATA[The vCenter to sync]]></param>
+  <script encoded="false"><![CDATA[return vc.connection.getLifecycleOperationsService().syncVirtualCenter(vc.datacenter, vc.name)]]></script>
+</dunes-script-module>

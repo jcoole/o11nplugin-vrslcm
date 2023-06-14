@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="2a39b63b-1f82-41a4-99d7-08c2d6e9b220" version="1.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Get vCenter Connections]]></display-name>
+  <description><![CDATA[Retrieves vCenters in a given Connection.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="connection" type="vRSLCM:Connection">
+      <description><![CDATA[The LCM Connection]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="virtualCenters" type="Array/vRSLCM:VirtualCenter">
+      <description><![CDATA[The vCenters found]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="220.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/getVirtualCenters">
+    <display-name><![CDATA[getVirtualCenters]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").getVirtualCenters(connection);
+]]></script>
+    <in-binding>
+      <bind name="connection" type="vRSLCM:Connection" export-name="connection">
+        <description><![CDATA[The Connection]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="Array/vRSLCM:VirtualCenter" export-name="virtualCenters"/>
+    </out-binding>
+    <description><![CDATA[Gets the vCenter servers in the Connection]]></description>
+    <position y="140.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>
