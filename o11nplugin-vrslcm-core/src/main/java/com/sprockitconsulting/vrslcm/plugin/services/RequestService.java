@@ -2,12 +2,9 @@ package com.sprockitconsulting.vrslcm.plugin.services;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.sprockitconsulting.vrslcm.plugin.dao.DaoRequest;
@@ -33,14 +30,7 @@ public class RequestService extends AbstractService {
 		super(connection);
 		log.debug("Initialized with Connection ["+connection.getId()+"]");
 	}
-/*
-	@PostConstruct
-	public void init() {
-		log.debug("RequestService @PostConstruct Begin");
-		this.dao = (DaoRequest) context.getBean("daoRequest", this.connection);
-		log.debug("RequestService @PostConstruct Success - DaoRequest service bean created");
-	}
-*/	
+
 	public Request getByValue(Connection connection, String value) {
 		return dao.findById(connection, value);
 	}

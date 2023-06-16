@@ -126,7 +126,21 @@ public class LockerService extends AbstractService {
 	) {
 		credentialService.delete(connection, credential);
 	}
-
+/*
+ * TODO: Maybe delete this
+	public <T extends BaseLifecycleManagerObject> T getLockerResourceByReference(String reference) {
+		T resource = null;
+		switch(type) {
+		case "certificate":
+			resource = (T) certificateService.getCertificateByValue(connection, resourceId);
+			break;
+		case "password":
+			resource = (T) credentialService.getByValue(connection, resourceId);
+			break;
+		}
+		return resource;
+	}
+*/
 	@Override
 	public String toString() {
 		return String.format("LockerService [connection=%s]", connection);

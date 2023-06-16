@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getInstalledProducts" result-type="Array/Any" api-version="6.0.0" id="d65518a0-08fa-40d2-aa3f-b037cc92e61c" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Given a specific Environment, return the Products installed.]]></description>
+  <param n="environment" t="vRSLCM:Environment"><![CDATA[The Environment to query for Products]]></param>
+  <script encoded="false"><![CDATA[/**
+ * The return type of this Action is Array/ANY due to the variable Products that could be
+ * returned. Any plugin class with 'Product' in the suffix is a possible value in this array.
+ * 
+ * If you want to filter the results, use System.getObjectClassName(obj) in your code.
+ */
+var products = new Array()
+
+try {
+    if(environment.products != null && environment.products.length > 0) {
+        for each(environmentProduct in environment.products) {
+            System.log("Product: "+environmentProduct.name+" found in the Environment ["+environment.name+"]")
+            products.push(environmentProduct)
+        }
+    } else {
+        System.log("No products were found in the Environment.")
+    }
+} catch(e) {
+    throw("There was an error looking up Products in the Environment: "+e)
+}
+
+return products;
+
+]]></script>
+</dunes-script-module>

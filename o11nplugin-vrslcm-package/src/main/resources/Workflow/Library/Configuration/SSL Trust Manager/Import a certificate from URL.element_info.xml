@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.Configuration.SSL Trust Manager</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.Q29uZmlndXJhdGlvbg==.U1NMIFRydXN0IE1hbmFnZXI=</entry>
+<entry key="name">Import a certificate from URL</entry>
+<entry key="id">c5a874a2-e8e7-480d-bdde-d1a80b8a3011</entry>
+<entry key="type">Workflow</entry>
+</properties>

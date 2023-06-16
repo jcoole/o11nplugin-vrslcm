@@ -1,7 +1,6 @@
 package com.sprockitconsulting.vrslcm.plugin.endpoints;
 
 import java.util.Base64;
-import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

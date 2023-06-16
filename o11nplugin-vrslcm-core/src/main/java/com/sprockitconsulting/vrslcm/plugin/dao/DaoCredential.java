@@ -81,7 +81,7 @@ public class DaoCredential extends DaoAbstract<Credential>
 			log.error("There was an error converting the JSON into a List of Certificates: "+e.getMessage());
 			e.printStackTrace();
 		}
-		assignConnectionToList(connection, creds);
+		assignConnectionToArray(connection, creds);
 		return Arrays.asList(creds);
 	}
 

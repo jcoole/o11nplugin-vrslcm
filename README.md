@@ -6,15 +6,11 @@ Features a fully functional plugin inventory for review and executing actions up
 
 # Installation
 
-See the [Releases](releases/) folder for the built VMOAPP and accompanying Workflow Package.
+See the **Releases** section for the built VMOAPP.
 
 To install the VMOAPP file, login to your Orchestrator appliance Control Center (https://orchestrator.local/vco-controlcenter/config) as root.
 
 Select *Manage Plugins* and upload the VMOAPP to install it. This will restart Orchestrator services in 2 minutes.
-
-Once Orchestrator is back up, login and using the client, go to Packages and Import the .package file from the release.
-
-For some reason the SDK Mojo Maven plugin will not import workflows directly into the VMOAPP, so until I get that resolved, it's a two-step process.
 
 # Specific Features and Workflows Supported
 
@@ -24,7 +20,7 @@ The ability to deploy/scale products and nodes may come later.
 
 For now, this is what it can do:
 - Datacenters : Get, Create, Update, Delete
-- vCenters : Get
+- vCenters : Get, Create, Delete
 - Environments : Get
 - Certificates : Get, Create, Import, Delete
 - Credentials : Get, Create, Update, Delete

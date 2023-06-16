@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
-import com.sprockitconsulting.vrslcm.plugin.scriptable.VirtualCenter;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.dao.DaoDatacenter;
 /**
  * This service governs access to the LCM Datacenter resources and related objects.
@@ -40,11 +40,7 @@ public class DatacenterService extends AbstractService {
 	public List<Environment> findAllEnvironmentsInDatacenter(Connection connection, String nameOrId) {
 		return dao.getEnvironments(connection, nameOrId);
 	}
-	
-	public List<VirtualCenter> findAllVirtualCentersInDatacenter(Connection connection, String nameOrId) {
-		return dao.getVirtualCenters(connection, nameOrId);
-	}
-	
+
 	public Datacenter create(Connection connection, Datacenter dc) {
 		return dao.create(connection, dc);
 	}
@@ -54,7 +50,7 @@ public class DatacenterService extends AbstractService {
 		return dao.findById(connection, updatedDc.getResourceId());
 	}
 	
-	public void delete(Connection connection, Datacenter dc) {
-		dao.delete(connection, dc);
+	public Request delete(Connection connection, Datacenter dc) {
+		return dao.delete(connection, dc);
 	}
 }

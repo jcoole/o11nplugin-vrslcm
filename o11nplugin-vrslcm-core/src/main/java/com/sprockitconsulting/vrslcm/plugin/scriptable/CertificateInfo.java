@@ -204,7 +204,7 @@ public class CertificateInfo {
 	/** 
 	 * Searches an array for a value. Java arrays of primitives do not have 'indexOf()' so this is a substitute.
 	 */
-	public static int indexOfArray(String[] array, String key) {
+	private static int indexOfArray(String[] array, String key) {
 	    int returnvalue = -1;
 	    for (int i = 0; i < array.length; ++i) {
 	        if (key == array[i]) {

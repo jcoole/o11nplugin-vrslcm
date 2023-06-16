@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getInstalledProductNodeByVmName" result-type="vRSLCM:ProductNode" api-version="6.0.0" id="3d2ef778-d60f-470c-8baa-067e8a89a3d1" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Searches the Product for a specific node by the VM Name.]]></description>
+  <param n="environment" t="vRSLCM:Environment"><![CDATA[The Environment]]></param>
+  <param n="product" t="string"><![CDATA[Name of the Product, such as vidm, vra, vrli, vrops, vrni, vrbc]]></param>
+  <param n="vmName" t="string"><![CDATA[Name of the VM to search for]]></param>
+  <script encoded="false"><![CDATA[var productNodes = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").getInstalledProductNodes(environment, product)
+
+var node = productNodes.filter(function(x) {return x.productNodeSpec.getNodeProperty("vmName") == vmName})
+if(node.length > 1) {
+    System.warn("Multiple entries found matching the VM name ["+vmName+"] - returning the first entry only!")
+}
+return node[0]]]></script>
+</dunes-script-module>

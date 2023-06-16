@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getInstalledProductData" result-type="Properties" api-version="6.0.0" id="12e1c657-6a7f-46af-b8cd-14917437bccb" version="0.0.0" allowed-operations="vef">
+  <description><![CDATA[Retrieves data about the specified Product.]]></description>
+  <param n="environment" t="vRSLCM:Environment"><![CDATA[The Environment]]></param>
+  <param n="productId" t="string"><![CDATA[Name of the Product, such as vidm, vra, vrli, vrops, vrni]]></param>
+  <script encoded="false"><![CDATA[var product = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").getInstalledProductById(environment, productId)
+var props = new Properties()
+for each(key in product.productSpec.getProductPropertyNames() ) {
+    props.put(key, product.productSpec.getProductProperty(key))
+}
+
+return props]]></script>
+</dunes-script-module>

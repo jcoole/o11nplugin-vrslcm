@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getAllCertificatesMatchingAliases" result-type="Array/vRSLCM:Certificate" api-version="6.0.0" id="6efd854f-9da6-45a3-8522-001e4fc5d9b5" version="0.0.0" allowed-operations="vef">
+  <description><![CDATA[Gets all Certificates from the LCM Server that match the list of provided Aliases/Names.]]></description>
+  <param n="connection" t="vRSLCM:Connection"><![CDATA[The LCM Server]]></param>
+  <param n="aliases" t="Array/string"><![CDATA[List of aliases to match against]]></param>
+  <script encoded="false"><![CDATA[var objects = new Array()
+
+try {
+    objects = connection.getLockerService().getAllCertificatesMatchingAliases(aliases)
+} catch(e) {
+    throw("Error while querying for remote objects on connection: "+e)
+}
+
+return objects]]></script>
+</dunes-script-module>

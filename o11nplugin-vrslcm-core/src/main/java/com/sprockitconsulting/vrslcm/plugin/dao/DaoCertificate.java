@@ -72,7 +72,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 			log.error("There was an error converting the response into a List of Certificates: "+e.getMessage());
 			e.printStackTrace();
 		}
-		assignConnectionToList(connection, certs);
+		assignConnectionToArray(connection, certs);
 		return Arrays.asList(certs);
 	}
 
@@ -196,7 +196,7 @@ public class DaoCertificate extends DaoAbstract<Certificate>
 			e.printStackTrace();
 		}
 		
-		assignConnectionToList(connection, certs);
+		assignConnectionToArray(connection, certs);
 		return Arrays.asList(certs);
 	}
 

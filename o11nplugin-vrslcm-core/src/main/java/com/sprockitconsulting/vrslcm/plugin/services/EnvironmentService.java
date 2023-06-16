@@ -3,12 +3,9 @@ package com.sprockitconsulting.vrslcm.plugin.services;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
@@ -61,7 +58,6 @@ public class EnvironmentService extends AbstractService {
 		
 		T[] products = getByValue(connection, environmentId).getProducts();
 		// There can be only one product of specified type per Environment.
-		@SuppressWarnings("unchecked")
 		T product = (T) Arrays.stream(products).filter(p -> p.getProductId().equals(productId)).findFirst().orElse(null);
 		if(product == null) {
 			log.warn("Unable to find specified Product ["+productId+"] in Environment ID ["+environmentId+"]!");

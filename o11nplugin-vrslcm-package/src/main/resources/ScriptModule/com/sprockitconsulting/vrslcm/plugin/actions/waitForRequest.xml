@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="waitForRequest" result-type="void" api-version="6.0.0" id="1fe9a1b5-a793-438c-9bef-01533b96f15d" version="1.0.3" allowed-operations="vef">
+  <description><![CDATA[Monitors a request until it is Completed or Fails]]></description>
+  <param n="request" t="vRSLCM:Request"><![CDATA[The Request]]></param>
+  <param n="intervalSeconds" t="number"><![CDATA[(Optional) Polling interval in seconds]]></param>
+  <param n="showPolling" t="boolean"><![CDATA[Optionally log polling messages, disabled by default]]></param>
+  <script encoded="false"><![CDATA[// Input checks
+if(!request) {
+    throw("A Connection and Request must be provided to be monitored!")
+}
+// Setup defaults if not specified
+if(!intervalSeconds) {
+    intervalSeconds = 5
+    System.log("Setting default polling interval to ["+intervalSeconds+"] seconds.")
+}
+var requestId = request.resourceId
+var conn = request.connection
+
+// Query the request state via the API
+var requestEnded = false
+var isError = false
+var message = "Request Message: "
+System.log("Begin polling on Request "+request.resourceId)
+
+while (requestEnded == false) {
+    // Get the request state.
+    var req = null
+    try {
+        var req = conn.getLifecycleOperationsService().getRequestById(requestId)
+    } catch(e) {
+        throw("Unable to retrieve the state of request from the API: "+e)
+    }
+    // Check state based on known values
+ if (req.state == "COMPLETED") {
+        requestEnded = true
+ } else if (req.state == "FAILED") {
+        isError = true
+        requestEnded = true
+        message += "Request "+req.resourceId+" has failed!"
+ } else if (req.state == "INPROGRESS" || req.state == "UI_INPROGRESS" || req.state == "CREATED") {
+        if(showPolling) {
+            var currentTime = new Date().toLocaleTimeString()
+      System.log("Request ["+req.name+"] with ID ["+req.resourceId+"] is still in progress with state ["+req.state+"] as of ["+currentTime+"]")
+        }
+    } else {
+        System.warn("Unknown state with request polling reached! The state is "+req.state)
+    }
+ System.sleep(intervalSeconds*1000);
+} 
+
+if(isError) {
+    throw("Error - "+message)
+} else {
+    var finalStatus = conn.getLifecycleOperationsService().getRequestById(requestId).state
+    System.log("Ending polling on Request "+request.resourceId+", with state of "+finalStatus)
+}
+
+
+]]></script>
+</dunes-script-module>

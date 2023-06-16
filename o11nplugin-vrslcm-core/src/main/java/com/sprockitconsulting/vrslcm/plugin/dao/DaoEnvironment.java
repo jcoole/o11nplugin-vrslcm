@@ -68,7 +68,8 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 	@Override
 	public List<Environment> findAll(Connection connection) {
 		Environment[] envs = doApiRequest(connection, "GET", URL_GET_ALL, "{}", Environment[].class, null);
-		assignConnectionToList(connection, envs);
+		assignConnectionToArray(connection, envs);
 		return Arrays.asList(envs);
 	}
+
 }
