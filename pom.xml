@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
+
+
+	<artifactId>vrslcm</artifactId>
+
+
+	<packaging>pom</packaging>
+
+
+	<version>0.3.2-SNAPSHOT</version>
+
+
+	<properties>
+
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
+		<vco.version>8.4.2</vco.version>
+
+
+	</properties>
+
+
+	<repositories>
+
+
+		<repository>
+
+
+			<id>added-by-archetype</id>
+
+
+			<name>This repo was added by the archetype. There are better way to
+				handle it</name>
+
+
+			<url>--provided--</url>
+
+
+		</repository>
+
+
+	</repositories>
+
+
+	<pluginRepositories>
+
+
+		<pluginRepository>
+
+
+			<id>added-by-archetype</id>
+
+
+			<name>This repo was added by the archetype. There are better way to
+				handle it</name>
+
+
+			<url>--provided--</url>
+
+
+		</pluginRepository>
+
+
+	</pluginRepositories>
+
+
+	<dependencyManagement>
+
+
+		<dependencies>
+
+
+			<dependency>
+
+
+				<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
+
+
+				<artifactId>o11nplugin-vrslcm-core</artifactId>
+
+
+				<version>${project.version}</version>
+
+
+			</dependency>
+
+			<dependency>
+
+
+				<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
+
+
+				<artifactId>o11nplugin-vrslcm-package</artifactId>
+
+
+				<version>${project.version}</version>
+
+
+				<type>package</type>
+
+
+			</dependency>
+
+
+			<dependency>
+
+
+				<groupId>com.vmware.o11n</groupId>
+
+
+				<artifactId>o11n-provided-deps</artifactId>
+
+
+				<version>${vco.version}</version>
+
+
+				<type>pom</type>
+
+
+			</dependency>
+
+
+			<dependency>
+
+
+				<groupId>com.vmware.o11n</groupId>
+
+
+				<artifactId>o11n-spring-tools</artifactId>
+
+
+				<version>${vco.version}</version>
+
+
+			</dependency>
+
+
+			<dependency>
+
+
+				<groupId>com.vmware.o11n</groupId>
+
+
+				<artifactId>o11n-sdkapi</artifactId>
+
+
+				<version>${vco.version}</version>
+
+
+				<scope>provided</scope>
+
+
+			</dependency>
+
+
+		</dependencies>
+
+
+	</dependencyManagement>
+
+
+	<build>
+
+
+		<pluginManagement>
+
+
+			<plugins>
+
+
+				<plugin>
+
+
+					<groupId>org.apache.maven.plugins</groupId>
+
+
+					<artifactId>maven-compiler-plugin</artifactId>
+
+
+					<configuration>
+
+
+						<source>11</source>
+
+
+						<target>11</target>
+
+
+					</configuration>
+
+
+				</plugin>
+
+
+			</plugins>
+
+
+		</pluginManagement>
+
+
+	</build>
+
+
+	<modules>
+
+
+		<module>o11nplugin-vrslcm-core</module>
+
+
+		<module>o11nplugin-vrslcm-package</module>
+
+
+		<module>o11nplugin-vrslcm</module>
+
+	</modules>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+	</dependencies>
+</project>

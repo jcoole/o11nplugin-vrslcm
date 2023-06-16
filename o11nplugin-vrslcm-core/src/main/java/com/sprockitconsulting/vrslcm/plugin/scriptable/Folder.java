@@ -1,7 +1,5 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
@@ -10,9 +8,6 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
  *
  */
 public abstract class Folder extends BaseLifecycleManagerObject {
-
-	// Enable Logging
-	private static final Logger log = LoggerFactory.getLogger(Folder.class);
 
 	public String name; // This value will appear in the vRO Inventory view when the folder shows up.
 	public String id; // This ID should be in the form of "Datacenters@[ConnectionId] as a string to preserve uniqueness when instantiated

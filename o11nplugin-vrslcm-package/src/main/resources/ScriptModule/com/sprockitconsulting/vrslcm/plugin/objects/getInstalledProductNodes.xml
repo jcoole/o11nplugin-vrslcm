@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getInstalledProductNodes" result-type="Array/vRSLCM:ProductNode" api-version="6.0.0" id="253b151a-8963-4c92-a27a-0cc1585c108f" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Retrieves the Product Nodes in use for the specific Product and Environment.]]></description>
+  <param n="environment" t="vRSLCM:Environment"><![CDATA[The Environment]]></param>
+  <param n="product" t="string"><![CDATA[Name of the Product, such as vidm, vra, vrli, vrops, vrni, vrbc]]></param>
+  <script encoded="false"><![CDATA[if(!environment || System.isNotFound(environment)) {
+    throw("The Environment cannot be empty, null, unspecified, or not found in the system!")
+}
+if(!product || product == "") {
+    throw("A Product must be specified! Must be one of these values - vra, vidm, vrops, vrbc, vrni, vrli")
+} 
+
+// Simple mapping for API ID type to the Plugin Class.
+var productMapping = new Properties()
+productMapping.put("vidm", "vRSLCMIdentityManagerProduct")
+productMapping.put("vra","vRSLCMAutomationProduct")
+
+// Get the Product
+var existingProduct = environment.products.filter(function(x) { return System.getObjectClassName(x) == productMapping.get(product) })[0]
+if(!existingProduct || existingProduct == null) {
+    throw("The product ["+product+"] was not found!")
+}
+return existingProduct.productNodes]]></script>
+</dunes-script-module>

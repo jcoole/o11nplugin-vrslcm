@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="addVirtualCenterToDatacenter" result-type="vRSLCM:Request" api-version="6.0.0" id="0966a925-cd7f-4b45-9afc-fd0eaa3a42cc" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Adds a vCenter endpoint to a Datacenter.]]></description>
+  <param n="datacenter" t="vRSLCM:Datacenter"><![CDATA[The Datacenter to add the vCenter to]]></param>
+  <param n="vcName" t="string"><![CDATA[Friendly name of the vCenter]]></param>
+  <param n="vcHost" t="string"><![CDATA[Hostname of the vCenter]]></param>
+  <param n="vcPassword" t="vRSLCM:Credential"><![CDATA[Locker Credential to use]]></param>
+  <param n="usedAs" t="string"><![CDATA[MANAGEMENT, WORKLOAD, or MANAGEMENT_AND_WORKLOAD]]></param>
+  <script encoded="false"><![CDATA[var svc = datacenter.connection.getLifecycleOperationsService()
+
+var vc = new vRSLCMVirtualCenter()
+vc.name = vcName
+vc.host = vcHost
+vc.user = vcPassword.userName
+// todo, add reference value to object rather than constructing
+vc.lockerReference = "locker:password:"+vcPassword.resourceId+":"+vcPassword.name
+vc.usedAs = usedAs
+
+var req = null
+try {
+    req = svc.createVirtualCenter(datacenter, vc)
+} catch(e) {
+    throw("Error: "+e)
+}
+
+return req]]></script>
+</dunes-script-module>

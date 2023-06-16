@@ -270,11 +270,11 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 	 		return lockerFolders;
     	} else if(parent.isOfType("ContentManagementFolder")) {	
     		// TODO: Implement
-    		return new ArrayList(0);
+    		return null;
 
     	} else if(parent.isOfType("UserManagementFolder")) {
     		// TODO: Implement
-    		return new ArrayList(0);
+    		return null;
     	} else {
     		// These are objects that require an API connection be established and the results returned.
     		// To ensure multiple Connections are supported, each Object is associated with the ConnectionID value.

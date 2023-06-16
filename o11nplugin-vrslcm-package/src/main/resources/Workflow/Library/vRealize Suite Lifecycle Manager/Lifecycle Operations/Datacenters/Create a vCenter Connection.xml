@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item3" object-name="workflow:name=generic" id="380a7b7a-2ad5-4f08-8eaf-e950be29f2a2" version="1.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Create a vCenter Connection]]></display-name>
+  <description><![CDATA[Requests Creating a connection to vCenter for a particular vRSLCM Datacenter.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="datacenter" type="vRSLCM:Datacenter">
+      <description><![CDATA[The Datacenter]]></description>
+    </param>
+    <param name="vcName" type="string">
+      <description><![CDATA[Name of the vCenter object]]></description>
+    </param>
+    <param name="vcHost" type="string">
+      <description><![CDATA[FQDN of the vCenter]]></description>
+    </param>
+    <param name="vcPassword" type="vRSLCM:Credential">
+      <description><![CDATA[Credential to use for vCenter]]></description>
+    </param>
+    <param name="usedAs" type="string">
+      <description><![CDATA[Management, Workload, or Both]]></description>
+    </param>
+  </input>
+  <attrib name="request" type="vRSLCM:Request" read-only="false">
+    <value encoded="n"><![CDATA[]]></value>
+  </attrib>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="280.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item2" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.actions/waitForRequest">
+    <display-name><![CDATA[waitForRequest]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+System.getModule("com.sprockitconsulting.vrslcm.plugin.actions").waitForRequest(request,intervalSeconds,showPolling);
+]]></script>
+    <in-binding>
+      <bind name="request" type="vRSLCM:Request" export-name="request">
+        <description><![CDATA[The Request]]></description>
+      </bind>
+      <bind name="intervalSeconds" type="number" export-name="">
+        <description><![CDATA[(Optional) Polling interval in seconds]]></description>
+      </bind>
+      <bind name="showPolling" type="boolean" export-name="">
+        <description><![CDATA[Optionally log polling messages, disabled by default]]></description>
+      </bind>
+    </in-binding>
+    <out-binding/>
+    <description><![CDATA[Add a note to the workflow schema.]]></description>
+    <position y="200.0" x="60.0"/>
+  </workflow-item>
+  <workflow-item name="item3" out-name="item2" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.objects/addVirtualCenterToDatacenter">
+    <display-name><![CDATA[addVirtualCenterToDatacenter]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.objects").addVirtualCenterToDatacenter(datacenter,vcName,vcHost,vcPassword,usedAs);
+]]></script>
+    <in-binding>
+      <bind name="datacenter" type="vRSLCM:Datacenter" export-name="datacenter">
+        <description><![CDATA[The Datacenter to add the vCenter to]]></description>
+      </bind>
+      <bind name="vcName" type="string" export-name="vcName">
+        <description><![CDATA[Friendly name of the vCenter]]></description>
+      </bind>
+      <bind name="vcHost" type="string" export-name="vcHost">
+        <description><![CDATA[Hostname of the vCenter]]></description>
+      </bind>
+      <bind name="vcPassword" type="vRSLCM:Credential" export-name="vcPassword">
+        <description><![CDATA[Locker Credential to use]]></description>
+      </bind>
+      <bind name="usedAs" type="string" export-name="usedAs">
+        <description><![CDATA[MANAGEMENT, WORKLOAD, or MANAGEMENT_AND_WORKLOAD]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="vRSLCM:Request" export-name="request"/>
+    </out-binding>
+    <description><![CDATA[Requests adding a new vCenter.]]></description>
+    <position y="130.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

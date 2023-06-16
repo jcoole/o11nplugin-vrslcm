@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="getInstalledProductById" result-type="Any" api-version="6.0.0" id="0fefe53d-7bfb-48ca-8455-00bedebb0bd3" version="1.0.0" allowed-operations="vef">
+  <description><![CDATA[Given a specific Environment, return the Products installed with the ID.]]></description>
+  <param n="environment" t="vRSLCM:Environment"><![CDATA[The Environment to query for Products]]></param>
+  <param n="productId" t="string"><![CDATA[Name of the Product, such as vidm, vra, vrli, vrops, vrni]]></param>
+  <script encoded="false"><![CDATA[/**
+ * The return type of this Action is ANY due to the variable Products that could be
+ * returned. Any plugin class with 'Product' in the suffix is a possible value in this array.
+ */
+
+var product = null;
+if(environment.products != null && environment.products.length > 0) {
+    product = environment.products.filter(function(x) {return x.productId == productId})[0]
+} else {
+    System.log("No products were found in the Environment matching the ID of ["+productId+"].")
+}
+
+return product;
+
+]]></script>
+</dunes-script-module>

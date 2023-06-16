@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<dunes-script-module name="waitForRequest" result-type="void" api-version="6.0.0" id="1fe9a1b5-a793-438c-9bef-01533b96f15d" version="1.0.2" allowed-operations="vef">
+<dunes-script-module name="waitForRequest" result-type="void" api-version="6.0.0" id="1fe9a1b5-a793-438c-9bef-01533b96f15d" version="1.0.3" allowed-operations="vef">
   <description><![CDATA[Monitors a request until it is Completed or Fails]]></description>
   <param n="request" t="vRSLCM:Request"><![CDATA[The Request]]></param>
   <param n="intervalSeconds" t="number"><![CDATA[(Optional) Polling interval in seconds]]></param>
@@ -36,7 +36,7 @@ while (requestEnded == false) {
  } else if (req.state == "FAILED") {
         isError = true
         requestEnded = true
-  message += "Request "+req.resourceId+" has failed!"
+        message += "Request "+req.resourceId+" has failed!"
  } else if (req.state == "INPROGRESS" || req.state == "UI_INPROGRESS" || req.state == "CREATED") {
         if(showPolling) {
             var currentTime = new Date().toLocaleTimeString()
@@ -51,7 +51,8 @@ while (requestEnded == false) {
 if(isError) {
     throw("Error - "+message)
 } else {
-    System.log("Ending polling on Request "+request.resourceId)
+    var finalStatus = conn.getLifecycleOperationsService().getRequestById(requestId).state
+    System.log("Ending polling on Request "+request.resourceId+", with state of "+finalStatus)
 }
 
 

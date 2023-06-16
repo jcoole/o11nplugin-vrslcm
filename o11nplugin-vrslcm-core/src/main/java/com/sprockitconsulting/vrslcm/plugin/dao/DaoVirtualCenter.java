@@ -76,10 +76,14 @@ public class DaoVirtualCenter extends DaoAbstract<VirtualCenter> {
 	 * @return VirtualCenter
 	 */
 	public VirtualCenter findByName(Connection connection, String name) {
-		return findAll(connection).stream()
+		List<VirtualCenter> vcs = findAll(connection);
+		log.debug("findByName() - called findAll and got "+vcs.size()+" results to filter for name "+name);
+		VirtualCenter vc = vcs.stream()
 				.filter(v -> name.equals(v.getName()))
 				.findFirst()
 				.orElse(null);
+		log.debug("findByName() - return result is: "+vc.toString());
+		return vc;
 	}
 	/**
 	 * Requests that a vCenter connection be deleted.

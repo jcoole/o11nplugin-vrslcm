@@ -1,22 +1,14 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
-import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
-import com.sprockitconsulting.vrslcm.plugin.services.CredentialService;
+import com.vmware.o11n.plugin.sdk.annotation.VsoConstructor;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
+import com.vmware.o11n.plugin.sdk.annotation.VsoParam;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 /**
  * Represents a vCenter instance in a Datacenter in LCM.
@@ -34,22 +26,30 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 )
 public class VirtualCenter extends BaseLifecycleManagerObject {
 	
-	// Enable Logging
-	private static final Logger log = LoggerFactory.getLogger(VirtualCenter.class);
-	
-	public String name;
-	public String host;
-	public String user;
-	public String lockerReference; // LockerReference ID.
-	public Credential lockerCredential; // The link to the Credential.
-	public Datacenter datacenter; // the associated datacenter object
-	public String usedAs;
-	public String dataCollectionStatus;
+	private String name;
+	private String host;
+	private String user;
+	private String lockerReference; // LockerReference ID.
+	private Credential lockerCredential; // The link to the Credential.
+	private Datacenter datacenter; // the associated datacenter object
+	private String usedAs;
+	private String dataCollectionStatus;
 
-	// These are other properties retrieved when you get the object directly.
-	public String version = "unsure";
-	
+	@VsoConstructor
 	public VirtualCenter() {}
+	
+	@VsoConstructor
+	public VirtualCenter(
+			@VsoParam(description = "The vCenter Display Name in vRSLCM")String name, 
+			@VsoParam(description = "The vCenter Host DNS address")String host, 
+			@VsoParam(description = "The Credential used for vCenter Authentication.")Credential lockerCredential, 
+			@VsoParam(description = "The vCenter role - Management, Workload, or Both")String usedAs) {
+		this.name = name;
+		this.host = host;
+		this.lockerCredential = lockerCredential;
+		this.lockerReference = "locker:password:"+lockerCredential.getResourceId()+":"+lockerCredential.getAlias();
+		this.usedAs = usedAs;
+	}
 	
 	@VsoProperty(description = "The vCenter Display Name in vRSLCM")
 	public String getName() {
@@ -59,6 +59,9 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	@JsonAlias("name")
 	public void setName(String name) {
 		this.name = name;
+		// Resource IDs for vCenter objects do not exist in vRSLCM API - only named entities.
+		// Since you can technically add as many vCenter connections to the SAME endpoint, the friendly name must be used as the 'resourceId' for lookup purposes.
+		super.setResourceId(name);
 	}
 	@VsoProperty(description = "The vCenter Host DNS address")
 	public String getHost() {
@@ -67,7 +70,6 @@ public class VirtualCenter extends BaseLifecycleManagerObject {
 	@JsonProperty("vCenterHost")
 	public void setHost(String host) {
 		this.host = host;
-		super.setResourceId(host);
 	}
 	@VsoProperty(description = "The vCenter Service User")
 	public String getUser() {

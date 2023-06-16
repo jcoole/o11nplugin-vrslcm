@@ -11,7 +11,6 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Datacenter;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
-import com.sprockitconsulting.vrslcm.plugin.scriptable.VirtualCenter;
 import com.sprockitconsulting.vrslcm.plugin.dao.DaoDatacenter;
 /**
  * This service governs access to the LCM Datacenter resources and related objects.

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Certificate;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateInfo;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
