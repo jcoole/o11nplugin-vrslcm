@@ -20,7 +20,7 @@ The ability to deploy/scale products and nodes may come later.
 
 For now, this is what it can do:
 - Datacenters : Get, Create, Update, Delete
-- vCenters : Get
+- vCenters : Get, Create, Delete
 - Environments : Get
 - Certificates : Get, Create, Import, Delete
 - Credentials : Get, Create, Update, Delete
