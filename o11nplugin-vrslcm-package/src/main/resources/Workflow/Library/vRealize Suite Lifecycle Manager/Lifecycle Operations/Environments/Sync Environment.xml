@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<workflow xmlns="http://vmware.com/vco/workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://vmware.com/vco/workflow http://vmware.com/vco/workflow/Workflow-v4.xsd" root-name="item1" object-name="workflow:name=generic" id="e2cd3d26-1e09-4b02-a0bb-dba3a8412ab4" version="1.0.0" api-version="6.0.0" allowed-operations="vef" editor-version="2.0" restartMode="1" resumeFromFailedMode="0">
+  <display-name><![CDATA[Sync Environment]]></display-name>
+  <description><![CDATA[Request that an Environment be synchronized.]]></description>
+  <position y="50.0" x="100.0"/>
+  <input>
+    <param name="environment" type="vRSLCM:Environment">
+      <description><![CDATA[The Environment to sync]]></description>
+    </param>
+  </input>
+  <output>
+    <param name="requests" type="Array/vRSLCM:Request">
+      <description><![CDATA[The requests returned from the sync]]></description>
+    </param>
+  </output>
+  <workflow-item name="item0" type="end" end-mode="0">
+    <in-binding/>
+    <position y="210.0" x="100.0"/>
+  </workflow-item>
+  <workflow-item name="item1" out-name="item0" type="task" script-module="com.sprockitconsulting.vrslcm.plugin.actions/syncEnvironment">
+    <display-name><![CDATA[syncEnvironment]]></display-name>
+    <script encoded="false"><![CDATA[//Auto generated script, cannot be modified !
+actionResult = System.getModule("com.sprockitconsulting.vrslcm.plugin.actions").syncEnvironment(environment);
+]]></script>
+    <in-binding>
+      <bind name="environment" type="vRSLCM:Environment" export-name="environment">
+        <description><![CDATA[The Environment to sync]]></description>
+      </bind>
+    </in-binding>
+    <out-binding>
+      <bind name="actionResult" type="Array/vRSLCM:Request" export-name="requests"/>
+    </out-binding>
+    <description><![CDATA[Requests an Environment be synchronized.]]></description>
+    <position y="130.0" x="60.0"/>
+  </workflow-item>
+  <presentation/>
+</workflow>

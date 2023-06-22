@@ -1,7 +1,10 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
@@ -53,6 +57,9 @@ public class Environment extends BaseLifecycleManagerObject {
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(Environment.class);
 
+	@Autowired
+	private EnvironmentService environmentService;
+	
 	private String name;
 	private EnvironmentInfrastructure infrastructure;
 	private Datacenter datacenter;
@@ -114,9 +121,9 @@ public class Environment extends BaseLifecycleManagerObject {
 		this.products = (BaseProduct[]) products;
 	}
 	
-	@VsoMethod(description = "Trigger Inventory Sync on the Environment.")
-	public void triggerInventorySync() {
-		throw new RuntimeException("triggerInventorySync is not implemented!");
+	@VsoMethod(description = "Trigger Inventory Sync on the Environment. A separate Request object is returned for each Product in the environment.")
+	public List<Request> triggerInventorySync() {
+		return environmentService.getEnvironmentSyncRequest(this.getConnection(), this.getResourceId());
 	}
 	
 	/**

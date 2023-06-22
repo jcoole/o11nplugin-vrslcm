@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Lifecycle Operations.Datacenters</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TGlmZWN5Y2xlIE9wZXJhdGlvbnM=.RGF0YWNlbnRlcnM=</entry>
+<entry key="name">Sync vCenter</entry>
+<entry key="id">e8a4c34f-38e9-47cc-81d8-f1015357ecdf</entry>
+<entry key="type">Workflow</entry>
+</properties>
