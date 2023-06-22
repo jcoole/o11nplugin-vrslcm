@@ -1,9 +1,13 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -101,6 +105,9 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	private String name; // Friendly name aka "vRealize Automation", set in extended classes
 	private String environmentId;
 	
+	@Autowired
+	private EnvironmentService environmentService;
+	
 	// Since the 'properties' and 'nodes' of each Product vary widely, these values are exposed via generic methods for Workflow developers to key off of.
 	@JsonUnwrapped
 	@JsonProperty("properties")
@@ -167,6 +174,36 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	public void setProductNodes(ProductNode[] productNodes) {
 		this.productNodes = productNodes;
 	}
+	
+	// Day 2 Actions
+	// Power On/Off, Create/Delete Snapshot, Inventory Sync, Health Check, Update Admin Password
+	public Request powerOff() {
+		return null;
+	}
+	
+	public Request powerOn() {
+		return null;
+	}
+	
+	public Request createSnapshot() {
+		return null;
+	}
+	
+	public Request deleteSnapshot() {
+		return null;
+	}
+	
+	public Request inventorySync() {
+		return null;
+	}
+	
+	public Request performHealthCheck() {
+		return null;
+	}
+	
+	public Request updateAdminCredential() {
+		return null;
+	}
 
 	@Override
 	public String toString() {
@@ -174,8 +211,5 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 				"Product [productVersion=%s, name=%s, productSpec=%s]",
 				productVersion, name, productSpec);
 	}
-	
-	
 
-	
 }

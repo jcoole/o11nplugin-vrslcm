@@ -43,7 +43,4 @@ public class IdentityManagerProduct extends BaseProduct {
 				connection, internalId, getProductId(), getEnvironmentId(), getProductVersion(), getName(),
 				getProductSpec(), Arrays.toString(getProductNodes()), getConnection());
 	}
-	
-	
-
 }
