@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.dao.DaoEnvironment;
 import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
@@ -95,5 +96,15 @@ public class EnvironmentService extends AbstractService {
 		// Filter the node(s) by name and type.
 		productNode = Arrays.stream(product.getProductNodes()).filter(n -> n.getType().equals(type) && n.getProductNodeSpec().getNodeProperty("vmName").equals(name)).findFirst().orElse(null);
 		return productNode;
+	}
+	
+	/**
+	 * Requests an inventory sync operation on the environment.
+	 * @param connection The LCM Connection
+	 * @param environmentId Environment ID to sync
+	 * @return The Requests generated for each Product that is installed
+	 */
+	public List<Request> getEnvironmentSyncRequest(Connection connection, String environmentId) {
+		return dao.inventorySync(connection, environmentId);
 	}
 }

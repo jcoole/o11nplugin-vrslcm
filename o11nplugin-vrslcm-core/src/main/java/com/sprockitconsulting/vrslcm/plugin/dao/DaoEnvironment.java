@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 /**
  * This class contains the data access and manipulation methods for the Environment Service.
  * @author justin
@@ -72,4 +73,11 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		return Arrays.asList(envs);
 	}
 
+	public List<Request> inventorySync(Connection connection, String id) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("id", id);
+		Request[] requests = doApiRequest(connection, "POST", URL_GET_BY_VALUE+"/inventory-sync", "{}", Request[].class, uriVariables);
+		assignConnectionToArray(connection, requests);
+		return Arrays.asList(requests);
+	}
 }
