@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dunes-script-module name="syncEnvironment" result-type="Array/vRSLCM:Request" api-version="6.0.0" id="5fe98a2c-ca06-4a2e-8ca8-160f3cf71324" version="1.0.2" allowed-operations="vef">
+  <description><![CDATA[Requests a sync or data collection on the specified Environment and its Products.]]></description>
+  <param n="environment" t="vRSLCM:Environment"><![CDATA[The Environment to sync]]></param>
+  <script encoded="false"><![CDATA[var requests = null
+try {
+    requests = environment.triggerInventorySync();
+    System.log("Environment sync request generated ["+requests.length+"] requests.")
+} catch(e) {
+    throw("There was an error requesting Environment sync: "+e)
+}
+
+return requests]]></script>
+</dunes-script-module>

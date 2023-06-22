@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Lifecycle Operations.Environments</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TGlmZWN5Y2xlIE9wZXJhdGlvbnM=.RW52aXJvbm1lbnRz</entry>
+<entry key="name">Sync Environment</entry>
+<entry key="id">e2cd3d26-1e09-4b02-a0bb-dba3a8412ab4</entry>
+<entry key="type">Workflow</entry>
+</properties>
