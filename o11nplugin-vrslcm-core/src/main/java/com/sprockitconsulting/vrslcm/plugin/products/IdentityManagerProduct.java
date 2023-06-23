@@ -1,13 +1,20 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
 import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
+import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 /**
@@ -28,12 +35,30 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class IdentityManagerProduct extends BaseProduct {
+public class IdentityManagerProduct extends BaseProduct implements IPowerCycleSupport {
 	
-	public IdentityManagerProduct() {
-		super();
+	// Enable Logging
+	private static final Logger log = LoggerFactory.getLogger(IdentityManagerProduct.class);
+	
+	@Autowired
+	public IdentityManagerProduct(EnvironmentService environmentService) {
+		super(environmentService);
 		this.setName("VMware Identity Manager/Workspace ONE Access");
 		this.setProductId("vidm");
+	}
+	
+	@Override
+	@VsoMethod(description = "Request that the system power on the Identity Manager product and its related components. In a clustered scenario it will also remediate the cluster to ensure everything comes up properly.")
+	public Request powerOn() {
+		log.debug("powerOn() this - "+this.getConnection()+", "+this.getEnvironmentId()+", "+this.getProductId());
+		return environmentService.executePowerOn(this.getConnection(), this.getEnvironmentId(), this.getProductId());
+	}
+
+	@Override
+	@VsoMethod(description = "Request that the system power off the Identity Manager product and its related components. In a clustered scenario it will also ensure that all components are shut down in the proper order.")
+	public Request powerOff() {
+		log.debug("powerOff() this - "+this.getConnection()+", "+this.getEnvironmentId()+", "+this.getProductId());
+		return environmentService.executePowerOff(this.getConnection(), this.getEnvironmentId(), this.getProductId());
 	}
 	
 	@Override

@@ -1,6 +1,8 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -69,6 +71,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
  *
  */
 
+
 /*
  * The @JsonTypeInfo is used to handle subclass deserialization.
  * In this setup when the JSON is returned, it is keying off of the 'id' property of the Product to determine what subclass it is.
@@ -105,8 +108,8 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	private String name; // Friendly name aka "vRealize Automation", set in extended classes
 	private String environmentId;
 	
-	@Autowired
-	private EnvironmentService environmentService;
+	// Since all Products are tied to Environments, to perform actions on them this service needs to be wired to all sub-classes
+	protected final EnvironmentService environmentService;
 	
 	// Since the 'properties' and 'nodes' of each Product vary widely, these values are exposed via generic methods for Workflow developers to key off of.
 	@JsonUnwrapped
@@ -116,10 +119,10 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	@JsonProperty("nodes")
 	private ProductNode[] productNodes;
 	
-	public BaseProduct() {
-		
+	public BaseProduct(EnvironmentService environmentService) {
+		this.environmentService = environmentService;
 	}
-	
+
 	@VsoProperty(description = "The Product ID", readOnly = true)
 	public String getProductId() {
 		return productId;
@@ -173,36 +176,6 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	
 	public void setProductNodes(ProductNode[] productNodes) {
 		this.productNodes = productNodes;
-	}
-	
-	// Day 2 Actions
-	// Power On/Off, Create/Delete Snapshot, Inventory Sync, Health Check, Update Admin Password
-	public Request powerOff() {
-		return null;
-	}
-	
-	public Request powerOn() {
-		return null;
-	}
-	
-	public Request createSnapshot() {
-		return null;
-	}
-	
-	public Request deleteSnapshot() {
-		return null;
-	}
-	
-	public Request inventorySync() {
-		return null;
-	}
-	
-	public Request performHealthCheck() {
-		return null;
-	}
-	
-	public Request updateAdminCredential() {
-		return null;
 	}
 
 	@Override

@@ -1,10 +1,12 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -32,8 +34,9 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 )
 public class SaltStackProduct extends BaseProduct {
 
-	public SaltStackProduct() {
-		super();
+	@Autowired
+	public SaltStackProduct(EnvironmentService environmentService) {
+		super(environmentService);
 		this.setName("SaltStack Config");
 		this.setProductId("vssc");
 	}
