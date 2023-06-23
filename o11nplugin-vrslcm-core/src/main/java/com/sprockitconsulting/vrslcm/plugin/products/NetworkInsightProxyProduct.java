@@ -20,10 +20,10 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 @Scope(value = "prototype")
 @JsonTypeName("vrnicloudproxy")
 @JsonIgnoreProperties(ignoreUnknown = true) // if a field isn't mapped to a JSON property, skip it
-@VsoObject(description = "Represents a vRealize/Aria Automation Product object in LCM.")
+@VsoObject(description = "Represents a vRealize/Aria Network Insight Cloud Proxy Product object in LCM.")
 @VsoFinder( //Creating the VsoFinder exposes this in the 'Types' section of API Explorer.
 	name = "NetworkInsightProxyProduct", // Type name!!! This value actually translates to 'type' in VSO.XML!!
-	description = "Represents a vRNI Cloud Proxy Product object in LCM.", // shows up in the 'Types'
+	description = "Represents a vRealize/Aria Network Insight Cloud Proxy Product object in LCM.", // shows up in the 'Types'
 	idAccessor = "getInternalId()", // method in the class to use for specific lookup
 	image = "images/vrniproxy.png", // relative path to image in inventory use
 	relations = {
