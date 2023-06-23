@@ -129,7 +129,7 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
 	    		String environmentId = resourceId.split(":")[3];
 	    		return environmentService.getSpecificProductNode(connection, environmentId, productId, type, vmName);
 	    	case "VirtualCenter":
-	    		// VirtualCenter - vcsa-mgmt.sprockit.lab@<connection>
+	    		// VirtualCenter - <vcenter.fqdn.local>@<connection>
 	    		return virtualCenterService.getByName(connection, resourceId);
 	    	default:
 	    		log.warn("Unknown finder case reached: "+ref.getType()+":"+ref.getId());
