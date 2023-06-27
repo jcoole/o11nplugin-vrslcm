@@ -20,7 +20,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 @Scope(value = "prototype")
 @JsonTypeName("vrli")
 @JsonIgnoreProperties(ignoreUnknown = true) // if a field isn't mapped to a JSON property, skip it
-@VsoObject(description = "Represents a vRealize/Aria Automation Product object in LCM.")
+@VsoObject(description = "Represents a vRealize Log Insight/Aria Insight for LogsProduct object in LCM.")
 @VsoFinder( //Creating the VsoFinder exposes this in the 'Types' section of API Explorer.
 	name = "LogInsightProduct", // Type name!!! This value actually translates to 'type' in VSO.XML!!
 	description = "Represents a vRealize Log Insight/Aria Insight for LogsProduct object in LCM.", // shows up in the 'Types'
@@ -30,7 +30,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class LogInsightProduct extends BaseProduct {
+public class LogInsightProduct extends AbstractProduct {
 
 	public LogInsightProduct() {
 		super();

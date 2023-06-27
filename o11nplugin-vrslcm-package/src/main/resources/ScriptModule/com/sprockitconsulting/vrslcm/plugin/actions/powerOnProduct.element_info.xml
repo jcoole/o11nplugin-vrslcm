@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">com.sprockitconsulting.vrslcm.plugin.actions</entry>
+<entry key="categoryPathEscaped">Y29t.c3Byb2NraXRjb25zdWx0aW5n.dnJzbGNt.cGx1Z2lu.YWN0aW9ucw==</entry>
+<entry key="name">powerOnProduct</entry>
+<entry key="id">192e1b31-1b6f-4c51-b1f9-d59a9f379cef</entry>
+<entry key="type">ScriptModule</entry>
+</properties>

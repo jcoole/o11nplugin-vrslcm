@@ -10,8 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.dao.DaoEnvironment;
-import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
+import com.sprockitconsulting.vrslcm.plugin.products.AbstractProduct;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
 /**
  * This service governs access to the LCM Environment resources and related objects.
@@ -48,7 +49,7 @@ public class EnvironmentService extends AbstractService {
 	 * @param productId The Product ID, such as 'vra', 'vidm'
 	 * @return The Product and its specifications
 	 */
-	public <T extends BaseProduct> T getSpecificProduct(Connection connection, String environmentId, String productId) {
+	public <T extends AbstractProduct> T getSpecificProduct(Connection connection, String environmentId, String productId) {
 		if(connection == null) {
 			throw new RuntimeException("You must specify a Connection!");
 		}
@@ -84,7 +85,7 @@ public class EnvironmentService extends AbstractService {
 		ProductNode productNode = null;
 		
 		// Get the product
-		BaseProduct product = null;
+		AbstractProduct product = null;
 		try {
 			product = getSpecificProduct(connection, environmentId, productId);
 			log.debug("Got the Product ["+productId+"] -- "+product.toString());
@@ -96,4 +97,43 @@ public class EnvironmentService extends AbstractService {
 		productNode = Arrays.stream(product.getProductNodes()).filter(n -> n.getType().equals(type) && n.getProductNodeSpec().getNodeProperty("vmName").equals(name)).findFirst().orElse(null);
 		return productNode;
 	}
+	
+	/**
+	 * Requests an inventory sync operation on the environment.
+	 * @param connection The LCM Connection
+	 * @param environmentId Environment ID to sync
+	 * @return The Requests generated for each Product that is installed
+	 */
+	public List<Request> getEnvironmentSyncRequest(Connection connection, String environmentId) {
+		return dao.environmentSyncRequest(connection, environmentId);
+	}
+	
+	// Product Actions
+	public Request executePowerOn(Connection connection, String environmentId, String productId) {
+		log.debug("executePowerOn() - "+connection+", "+environmentId+", "+productId);
+		return dao.powerOnRequest(connection, environmentId, productId);
+	}
+	
+	public Request executePowerOff(Connection connection, String environmentId, String productId) {
+		log.debug("executePowerOff() - "+connection+", "+environmentId+", "+productId);
+		return dao.powerOffRequest(connection, environmentId, productId);
+	}
+	
+	/** NYI
+	 * 
+	 * @param connection
+	 * @param environmentId
+	 * @param productId
+	 * @param description
+	 * @param prefix
+	 * @param memory
+	 * @param shutdown
+	 * @return
+	 */
+	public Request executeCreateSnapshot(Connection connection, String environmentId, String productId, String description, String prefix, Boolean memory, Boolean shutdown) {
+		return dao.createSnapshotRequest(connection, environmentId, productId, description, prefix, memory, shutdown);
+	}
+	
+
+
 }

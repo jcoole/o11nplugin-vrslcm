@@ -30,7 +30,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class BusinessCloudProduct extends BaseProduct {
+public class BusinessCloudProduct extends AbstractProduct {
 
 	public BusinessCloudProduct() {
 		super();

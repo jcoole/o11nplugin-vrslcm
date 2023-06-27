@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
@@ -27,6 +28,7 @@ public class ProductNode extends BaseLifecycleManagerObject {
 	
 	private String type;
 	private String name;
+	private EnvironmentService environmentService;
 	
 	public ProductNode() {
 		
@@ -61,6 +63,14 @@ public class ProductNode extends BaseLifecycleManagerObject {
 	
 	public void setProductNodeSpec(ProductNodeSpec productNodeSpec) {
 		this.productNodeSpec = productNodeSpec;
+	}
+
+	public final EnvironmentService getEnvironmentService() {
+		return environmentService;
+	}
+
+	public final void setEnvironmentService(EnvironmentService environmentService) {
+		this.environmentService = environmentService;
 	}
 	
 	

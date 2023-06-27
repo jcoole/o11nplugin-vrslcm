@@ -29,7 +29,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class ExtensibilityProxyProduct extends BaseProduct {
+public class ExtensibilityProxyProduct extends AbstractProduct {
 
 	public ExtensibilityProxyProduct() {
 		super();

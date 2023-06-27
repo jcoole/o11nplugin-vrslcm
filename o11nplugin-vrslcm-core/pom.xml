@@ -10,7 +10,7 @@
 	<parent>
 		<artifactId>vrslcm</artifactId>
 		<groupId>com.sprockitconsulting.vrslcm.plugin</groupId>
-		<version>0.3.3-SNAPSHOT</version>
+		<version>0.3.4-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Exported from [server]</comment>
+<entry key="categoryPath">Library.vRealize Suite Lifecycle Manager.Lifecycle Operations.Products</entry>
+<entry key="categoryPathEscaped">TGlicmFyeQ==.dlJlYWxpemUgU3VpdGUgTGlmZWN5Y2xlIE1hbmFnZXI=.TGlmZWN5Y2xlIE9wZXJhdGlvbnM=.UHJvZHVjdHM=</entry>
+<entry key="name">Execute Power Operations</entry>
+<entry key="id">fcfea746-14ae-4ee3-804f-903b5ea764f2</entry>
+<entry key="type">Workflow</entry>
+</properties>

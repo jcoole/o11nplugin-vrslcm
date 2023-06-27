@@ -1,12 +1,18 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
+import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 
@@ -30,8 +36,11 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class AutomationProduct extends BaseProduct {
-
+public class AutomationProduct extends AbstractProduct implements IPowerCycleSupport {
+	
+	// Enable Logging
+	private static final Logger log = LoggerFactory.getLogger(AutomationProduct.class);
+	
 	public AutomationProduct() {
 		super();
 		this.setName("vRealize/Aria Automation");
@@ -39,10 +48,24 @@ public class AutomationProduct extends BaseProduct {
 	}
 
 	@Override
+	@VsoMethod(description = "Request that the system power on the Automation product and its related components. This action will also automatically kick off the deploy script.")
+	public Request powerOn() {
+		log.debug("Requesting power on of "+this.getInternalId());
+		return getEnvironmentService().executePowerOn(this.getConnection(), this.getEnvironmentId(), this.getProductId());
+	}
+
+	@Override
+	@VsoMethod(description = "Request that the system power off the Automation product and its related components. This action will first SSH into the system to gracefully shutdown the pods before Powering off.")
+	public Request powerOff() {
+		log.debug("Requesting power off of "+this.getInternalId());
+		return getEnvironmentService().executePowerOff(this.getConnection(), this.getEnvironmentId(), this.getProductId());
+	}
+
+	@Override
 	public String toString() {
 		return String.format(
-				"AutomationProduct [internalId=%s, productId()=%s, productVersion()=%s]",
-				internalId, getProductId(), getProductVersion());
+				"AutomationProduct [getProductId()=%s, getEnvironmentId()=%s, getName()=%s, getResourceId()=%s, getConnection()=%s]",
+				getProductId(), getEnvironmentId(), getName(), getResourceId(), getConnection());
 	}
 
 

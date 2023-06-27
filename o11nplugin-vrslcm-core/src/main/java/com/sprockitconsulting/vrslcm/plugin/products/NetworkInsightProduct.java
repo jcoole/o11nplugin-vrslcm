@@ -30,7 +30,7 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class NetworkInsightProduct extends BaseProduct {
+public class NetworkInsightProduct extends AbstractProduct {
 
 	public NetworkInsightProduct() {
 		super();
