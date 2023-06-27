@@ -32,11 +32,10 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class OrchestratorProduct extends BaseProduct {
+public class OrchestratorProduct extends AbstractProduct {
 
-	@Autowired
-	public OrchestratorProduct(EnvironmentService environmentService) {
-		super(environmentService);
+	public OrchestratorProduct() {
+		super();
 		this.setName("vRealize/Aria Orchestrator");
 		this.setProductId("vro");
 	}

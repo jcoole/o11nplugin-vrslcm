@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
-import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -65,13 +64,14 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
  *  
  *  From a vRO Perspective - annotate a generic 'getProperty' method for scriptable use.
  *  
- *  BaseProduct should be extended to VidmProduct, AutomationProduct, etc for VsoFinder inventory view
+ *  AbstractProduct should be extended to VidmProduct, AutomationProduct, etc for VsoFinder inventory view
  *  
  * @author justin
  *
  */
 
-
+@Component
+@Scope(value = "prototype")
 /*
  * The @JsonTypeInfo is used to handle subclass deserialization.
  * In this setup when the JSON is returned, it is keying off of the 'id' property of the Product to determine what subclass it is.
@@ -101,15 +101,13 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
     @Type(value = ExtensibilityProxyProduct.class, name = "abxcloudproxy")
 })
 @VsoObject(description = "Represents a Product object in LCM.", create = false)
-public abstract class BaseProduct extends BaseLifecycleManagerObject {
+public abstract class AbstractProduct extends BaseLifecycleManagerObject {
 	
 	private String productId; // api ID - vidm, vra, vrli, vrops, vrni, etc. used in the internal ID
 	private String productVersion;
 	private String name; // Friendly name aka "vRealize Automation", set in extended classes
 	private String environmentId;
-	
-	// Since all Products are tied to Environments, to perform actions on them this service needs to be wired to all sub-classes
-	protected final EnvironmentService environmentService;
+	private EnvironmentService environmentService;
 	
 	// Since the 'properties' and 'nodes' of each Product vary widely, these values are exposed via generic methods for Workflow developers to key off of.
 	@JsonUnwrapped
@@ -119,10 +117,8 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	@JsonProperty("nodes")
 	private ProductNode[] productNodes;
 	
-	public BaseProduct(EnvironmentService environmentService) {
-		this.environmentService = environmentService;
-	}
-
+	public AbstractProduct() {}
+	
 	@VsoProperty(description = "The Product ID", readOnly = true)
 	public String getProductId() {
 		return productId;
@@ -176,6 +172,14 @@ public abstract class BaseProduct extends BaseLifecycleManagerObject {
 	
 	public void setProductNodes(ProductNode[] productNodes) {
 		this.productNodes = productNodes;
+	}
+
+	public final EnvironmentService getEnvironmentService() {
+		return environmentService;
+	}
+	
+	public final void setEnvironmentService(EnvironmentService environmentService) {
+		this.environmentService = environmentService;
 	}
 
 	@Override

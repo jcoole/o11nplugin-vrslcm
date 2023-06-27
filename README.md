@@ -25,6 +25,8 @@ For now, this is what it can do:
 - Certificates : Get, Create, Import, Delete
 - Credentials : Get, Create, Update, Delete
 - Products: Get
+  - Identity Manager: Power On/Off
+  - Automation: Power On/Off
 - Product Nodes: Get
 
 # Semi-Supported Resources

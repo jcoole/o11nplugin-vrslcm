@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
-import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
+import com.sprockitconsulting.vrslcm.plugin.products.AbstractProduct;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.CertificateFolder;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.ContentManagementFolder;
@@ -353,11 +353,11 @@ public final class vRSLCMPluginFactory extends AbstractSpringPluginFactory {
         		// Get the environment object.
         		Environment env = environmentService.getByValue(connection, parent.getId().split("@")[0]);
         		
-           		List<BaseProduct> products = new ArrayList<BaseProduct>();
+           		List<AbstractProduct> products = new ArrayList<AbstractProduct>();
         		
            		// Get products from environment, see if they match the type in the relation
            		// Each Environment can only have one instance of the Product, so the ResourceID@ConnectionID will always be the same - the only difference is the relationName, which in this case we use the same value as the Product class names.
-        		for (BaseProduct product: env.getProducts()) {
+        		for (AbstractProduct product: env.getProducts()) {
         			log.debug("Checking for Product ["+product.getClass().getSimpleName()+"] in ["+product.getInternalId()+"]");
         			if(product.getClass().getSimpleName().equals(relationName)) {
         				log.debug("Found product ["+product.getInternalId()+"] of type ["+product.getClass().getSimpleName()+"] in the environment matching type ["+relationName+"], adding it");

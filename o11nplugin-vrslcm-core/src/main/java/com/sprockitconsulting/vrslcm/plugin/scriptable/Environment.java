@@ -1,7 +1,10 @@
 package com.sprockitconsulting.vrslcm.plugin.scriptable;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +12,9 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sprockitconsulting.vrslcm.plugin.products.BaseProduct;
+import com.sprockitconsulting.vrslcm.plugin.products.AbstractProduct;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
@@ -52,11 +56,14 @@ public class Environment extends BaseLifecycleManagerObject {
 	
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(Environment.class);
-
+	
+	@Autowired
+	private EnvironmentService environmentService;
+	
 	private String name;
 	private EnvironmentInfrastructure infrastructure;
 	private Datacenter datacenter;
-	private BaseProduct[] products;
+	private AbstractProduct[] products;
 	
 	public Environment() {
 		super();
@@ -105,29 +112,35 @@ public class Environment extends BaseLifecycleManagerObject {
 	
 	@SuppressWarnings("unchecked")
 	@VsoProperty(description = "The Products that are deployed in the specified environment.")
-	public <T extends BaseProduct> T[] getProducts() {
+	public <T extends AbstractProduct> T[] getProducts() {
 		return (T[]) products;
 	}
 	
 	@JsonProperty("products")
-	public <T extends BaseProduct> void setProducts(T[] products) {
-		this.products = (BaseProduct[]) products;
+	public <T extends AbstractProduct> void setProducts(T[] products) {
+		this.products = (AbstractProduct[]) products;
 	}
 	
-	@VsoMethod(description = "Trigger Inventory Sync on the Environment.")
-	public void triggerInventorySync() {
-		throw new RuntimeException("triggerInventorySync is not implemented!");
+	@VsoMethod(description = "Trigger Inventory Sync on the Environment. A separate Request object is returned for each Product in the environment.")
+	public List<Request> triggerInventorySync() {
+		return environmentService.getEnvironmentSyncRequest(this.getConnection(), this.getResourceId());
 	}
 	
 	/**
 	 * Used to update Product and Node internalId values once the Connection is assigned.
+	 * Since Products and their nodes are directly attached to Environments and not independently manageable, it's not possible to inject services into them otherwise.
+	 * Thus, the environmentService spring bean is assigned when the Environment is deserialized.
 	 */
 	public void assignFinderIdValuesToProductsAndNodes() {
-		for (BaseProduct product : getProducts()) {
+		EnvironmentService environmentService = (EnvironmentService) context.getBean("environmentService");
+		for (AbstractProduct product : getProducts()) {
     		// Products are unique per Environment/Connection. The 'productId' string used in lookup is handled in the Finder methods.
-			String productInternalId = this.resourceId+"@"+this.connection.getId();
+			String productInternalId = resourceId+"@"+connection.getId();
 			product.setInternalId(productInternalId);
-			log.debug("Assigned internal ID to product ["+productInternalId+"]");
+			product.setConnection(connection);
+			product.setEnvironmentId(resourceId);
+			product.setEnvironmentService(environmentService);
+			log.debug("Assigned Internal ID, Connection, Environment ID values to product ["+productInternalId+"]");
 			
 			// Nodes internalId follows this format -- [vmName]:[type]:[product]:[environmentId]@[connectionId]
 			for (ProductNode node : product.getProductNodes()) {
@@ -135,6 +148,8 @@ public class Environment extends BaseLifecycleManagerObject {
 				String nodeInternalId = vmName+":"+node.getType()+":"+product.getProductId()+":"+this.resourceId;
 				node.setName(vmName+" - "+node.getType());
 				node.setInternalId(nodeInternalId);
+				node.setConnection(connection);
+				node.setEnvironmentService(environmentService);
 				log.debug("Assigned internal ID to node ["+nodeInternalId+"]");
 			}
 		}

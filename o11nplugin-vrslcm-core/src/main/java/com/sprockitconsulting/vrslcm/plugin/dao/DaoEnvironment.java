@@ -120,7 +120,21 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		return req;
 	}
 	
-	public Request inventorySyncRequest(Connection connection, String environmentId, String productId) {
+	/**
+	 * Environment sync request.
+	 * @param connection
+	 * @param id
+	 * @return
+	 */
+	public List<Request> environmentSyncRequest(Connection connection, String id) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("id", id);
+		Request[] requests = doApiRequest(connection, "POST", URL_GET_BY_VALUE+"/inventory-sync", "{}", Request[].class, uriVariables);
+		assignConnectionToArray(connection, requests);
+		return Arrays.asList(requests);
+	}
+	
+	public Request productSyncRequest(Connection connection, String environmentId, String productId) {
 		Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("id", environmentId);
 		uriVariables.put("productId", productId);

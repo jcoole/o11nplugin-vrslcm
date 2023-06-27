@@ -13,7 +13,6 @@ import com.sprockitconsulting.vrslcm.plugin.endpoints.ConnectionRepository;
 import com.sprockitconsulting.vrslcm.plugin.services.ConfigurationService;
 import com.sprockitconsulting.vrslcm.plugin.services.LifecycleOperationsService;
 import com.sprockitconsulting.vrslcm.plugin.services.LockerService;
-//import com.sprockitconsulting.vrslcm.plugin.services.
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;

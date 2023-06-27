@@ -1,12 +1,10 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
@@ -32,11 +30,10 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class NetworkInsightProxyProduct extends BaseProduct {
+public class NetworkInsightProxyProduct extends AbstractProduct {
 
-	@Autowired
-	public NetworkInsightProxyProduct(EnvironmentService environmentService) {
-		super(environmentService);
+	public NetworkInsightProxyProduct() {
+		super();
 		this.setName("vRNI Cloud Proxy");
 		this.setProductId("vrnicloudproxy");
 	}

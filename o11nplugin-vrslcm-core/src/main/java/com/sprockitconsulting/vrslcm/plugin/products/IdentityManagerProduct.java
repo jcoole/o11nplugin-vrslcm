@@ -35,14 +35,14 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 		@VsoRelation(name = "ProductNodes", type = "ProductNode", inventoryChildren = true, cardinality = Cardinality.TO_MANY)
 	}
 )
-public class IdentityManagerProduct extends BaseProduct implements IPowerCycleSupport {
+public class IdentityManagerProduct extends AbstractProduct implements IPowerCycleSupport {
 	
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(IdentityManagerProduct.class);
 	
 	@Autowired
-	public IdentityManagerProduct(EnvironmentService environmentService) {
-		super(environmentService);
+	public IdentityManagerProduct() {
+		super();
 		this.setName("VMware Identity Manager/Workspace ONE Access");
 		this.setProductId("vidm");
 	}
@@ -50,15 +50,15 @@ public class IdentityManagerProduct extends BaseProduct implements IPowerCycleSu
 	@Override
 	@VsoMethod(description = "Request that the system power on the Identity Manager product and its related components. In a clustered scenario it will also remediate the cluster to ensure everything comes up properly.")
 	public Request powerOn() {
-		log.debug("powerOn() this - "+this.getConnection()+", "+this.getEnvironmentId()+", "+this.getProductId());
-		return environmentService.executePowerOn(this.getConnection(), this.getEnvironmentId(), this.getProductId());
+		log.debug("Requesting power on of "+this.getInternalId());
+		return getEnvironmentService().executePowerOn(this.getConnection(), this.getEnvironmentId(), this.getProductId());
 	}
 
 	@Override
 	@VsoMethod(description = "Request that the system power off the Identity Manager product and its related components. In a clustered scenario it will also ensure that all components are shut down in the proper order.")
 	public Request powerOff() {
-		log.debug("powerOff() this - "+this.getConnection()+", "+this.getEnvironmentId()+", "+this.getProductId());
-		return environmentService.executePowerOff(this.getConnection(), this.getEnvironmentId(), this.getProductId());
+		log.debug("Requesting power off of "+this.getInternalId());
+		return getEnvironmentService().executePowerOff(this.getConnection(), this.getEnvironmentId(), this.getProductId());
 	}
 	
 	@Override
