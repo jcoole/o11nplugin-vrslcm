@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<dunes-script-module name="powerOffProduct" result-type="vRSLCM:Request" api-version="6.0.0" id="6bb8f4fc-7748-4ced-bbfe-179751258cc8" version="0.0.0" allowed-operations="vef">
+<dunes-script-module name="powerOffProduct" result-type="vRSLCM:Request" api-version="6.0.0" id="6bb8f4fc-7748-4ced-bbfe-179751258cc8" version="1.0.0" allowed-operations="vef">
   <description><![CDATA[Requests that the specified Product is Powered Off via LCM.]]></description>
   <param n="environment" t="vRSLCM:Environment"><![CDATA[Environment containing the Product]]></param>
   <param n="productId" t="string"><![CDATA[ID of the Product. Supported values are vidm, vra]]></param>

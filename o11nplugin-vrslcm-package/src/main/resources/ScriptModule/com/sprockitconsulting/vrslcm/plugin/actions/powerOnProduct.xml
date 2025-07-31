@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<dunes-script-module name="powerOnProduct" result-type="vRSLCM:Request" api-version="6.0.0" id="192e1b31-1b6f-4c51-b1f9-d59a9f379cef" version="0.0.0" allowed-operations="vef">
+<dunes-script-module name="powerOnProduct" result-type="vRSLCM:Request" api-version="6.0.0" id="192e1b31-1b6f-4c51-b1f9-d59a9f379cef" version="1.0.0" allowed-operations="vef">
   <description><![CDATA[Requests that the specified Product is Powered On via LCM.]]></description>
   <param n="environment" t="vRSLCM:Environment"><![CDATA[Environment containing the Product]]></param>
   <param n="productId" t="string"><![CDATA[ID of the Product. Supported values are vidm, vra]]></param>

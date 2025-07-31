@@ -102,7 +102,7 @@ public abstract class DaoAbstract<T> implements IDaoGeneric<T> {
 			assignConnectionToObject(connection, resource);
 		}
 	}
-
+	
 	/**
 	 * This is the core method that performs the exchange of requests and responses for objects in the LCM API.
 	 * 

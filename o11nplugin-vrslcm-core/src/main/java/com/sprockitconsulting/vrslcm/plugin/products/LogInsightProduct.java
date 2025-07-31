@@ -1,12 +1,16 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
+import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
 import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 
@@ -31,12 +35,16 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoRelation;
 	}
 )
 public class LogInsightProduct extends AbstractProduct {
-
+	
+	// Enable Logging
+	private static final Logger log = LoggerFactory.getLogger(LogInsightProduct.class);
+	
 	public LogInsightProduct() {
 		super();
 		this.setName("vRealize/Aria Log Insight");
 		this.setProductId("vrli");
 	}
+
 
 	@Override
 	public String toString() {
