@@ -14,6 +14,7 @@ import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.dao.DaoEnvironment;
 import com.sprockitconsulting.vrslcm.plugin.products.AbstractProduct;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
+import com.sprockitconsulting.vrslcm.plugin.products.ProductSnapshot;
 /**
  * This service governs access to the LCM Environment resources and related objects.
  * It is autowired into the LifecycleOperationsService, used in Orchestrator for users to manage objects.
@@ -109,6 +110,8 @@ public class EnvironmentService extends AbstractService {
 	}
 	
 	// Product Actions
+	
+	// Power Cycle
 	public Request executePowerOn(Connection connection, String environmentId, String productId) {
 		log.debug("executePowerOn() - "+connection+", "+environmentId+", "+productId);
 		return dao.powerOnRequest(connection, environmentId, productId);
@@ -119,21 +122,18 @@ public class EnvironmentService extends AbstractService {
 		return dao.powerOffRequest(connection, environmentId, productId);
 	}
 	
-	/** NYI
-	 * 
-	 * @param connection
-	 * @param environmentId
-	 * @param productId
-	 * @param description
-	 * @param prefix
-	 * @param memory
-	 * @param shutdown
-	 * @return
-	 */
+	// Snapshot Management
+	
 	public Request executeCreateSnapshot(Connection connection, String environmentId, String productId, String description, String prefix, Boolean memory, Boolean shutdown) {
 		return dao.createSnapshotRequest(connection, environmentId, productId, description, prefix, memory, shutdown);
 	}
-	
 
+	public List<ProductSnapshot> getProductSnapshots(Connection connection, String environmentId, String productId) {
+		return dao.findProductSnapshots(connection, environmentId, productId);
+	}
+
+	public Request executeDeleteSnapshot(Connection connection, String environmentId, String productId,	ProductSnapshot snapshot) {
+		return dao.deleteSnapshotRequest(connection, environmentId, productId, snapshot);
+	}
 
 }

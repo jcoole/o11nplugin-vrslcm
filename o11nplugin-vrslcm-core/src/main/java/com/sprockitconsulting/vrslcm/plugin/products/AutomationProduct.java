@@ -2,14 +2,12 @@ package com.sprockitconsulting.vrslcm.plugin.products;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
-import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.vmware.o11n.plugin.sdk.annotation.Cardinality;
 import com.vmware.o11n.plugin.sdk.annotation.VsoFinder;
 import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
@@ -67,6 +65,4 @@ public class AutomationProduct extends AbstractProduct implements IPowerCycleSup
 				"AutomationProduct [getProductId()=%s, getEnvironmentId()=%s, getName()=%s, getResourceId()=%s, getConnection()=%s]",
 				getProductId(), getEnvironmentId(), getName(), getResourceId(), getConnection());
 	}
-
-
 }

@@ -1,8 +1,85 @@
-To update orchestrator objects in src folder from the vCO database, use the import-package maven goal.
+== Generating a content package using 'vco-cli' ==
 
-Example:
-mvn o11n-package:import-package -DserverUrl=user:pass@localhost:8281
+First, generate a custom JKS keystore to sign your package, containing a key-pair under the alias '_DunesRSA_Alias_'
 
-Alternative if the import-package goal won't work for you:
+* Create Keystore
+keytool -keystore sprockitpackage.keystore -genkey -alias _DunesRSA_Alias_ -keyalg rsa -validity 1536 -storetype JKS -storepass password123 -dname "CN=Sprockit Package Signing, OU=Lab, O=Sprockit Consulting, L=Seattle, ST=WA, C=US"
 
-https://communities.vmware.com/t5/vCenter-Orchestrator-Plug-in-SDK/o11n-package-import-package-unable-to-sync-workflows-from-vRO-8/m-p/2967047
+* Generate CSR and Private Key with the new keystore
+keytool -keystore sprockitpackage.keystore -certreq -alias _DunesRSA_Alias_ -keyalg rsa -file sprockitpackagerequest.csr -storepass password123 -sigalg SHA256withRSA -keysize 2048
+
+* Get the CSR signed, and import the full chain into the keystore, then your signed cert.
+keytool -import -keystore sprockitpackage.keystore -file chain.cer -storepass password123 -trustcacerts
+keytool -import -keystore sprockitpackage.keystore -file mycertificate.cer -alias _DunesRSA_Alias_
+
+* Update the properties pointing to the keystore to reference the new one.
+
+<properties>
+	<keystoreLocation>sprockit.keystore</keystoreLocation>
+	<keystorePassword>password123</keystorePassword>
+</properties>	
+
+* Once you have built your workflows/actions, etc put together your package.
+* Ensure you have a copy of the 'vco-cli-java-x.xx.x.jar' in the directory.
+* Add the following plugin(s) to your POM.xml build configuration.
+
+<build>
+	<plugins>
+		<plugin>
+			<artifactId>exec-maven-plugin</artifactId>
+			<version>3.0.0</version>
+			<groupId>org.codehaus.mojo</groupId>
+			<executions>
+				<execution>
+					<!-- Step 1 - Run vCO-CLI to pull the package contents into /src/main/resources prior to repackaging -->
+					<id>Sync Content from Orchestrator</id>
+					<phase>generate-resources</phase>
+					<goals>
+						<goal>exec</goal>
+					</goals>
+					<configuration>
+						<executable>java</executable>
+						<arguments>
+						<!-- The variables used in these arguments are defined in the root POM.xml properties -->						
+						<argument>-Dlog4j2.formatMsgNoLookups=true</argument>
+						<argument>-DincludeConfigurationSecureStringValues=true</argument>
+						<argument>-DignoreServerCertificate=true</argument>
+						<argument>-DexportVersionHistory=false</argument>
+						<argument>-DexactPackageNameMatch=true</argument>
+						<argument>-Dusername=${orchestratorUser}</argument>
+						<argument>-Dpassword=${orchestratorPass}</argument>
+						<argument>-DserverHost=${orchestratorHost}</argument>
+						<argument>-DserverPort=443</argument>
+						<argument>-jar</argument>
+						<argument>vco-cli-java-8.10.0.jar</argument>
+						<argument>de</argument>
+						<argument>${remotePackageName}</argument>
+						<argument>${project.basedir}/src/main/resources</argument>
+						</arguments>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
+			<groupId>com.vmware.o11n.mojo.pkg</groupId>
+			<artifactId>o11n-package-maven-plugin</artifactId>
+			<version>${vco.version}</version>
+			<extensions>true</extensions>
+			<configuration>
+				<!-- Step 2: Create the VMO workflow package using the contents of the child folders -->
+				<packageName>com.sprockitconsulting.vrslcm.plugin</packageName>
+				<!-- Set the local path to the vmokeystore file created above to sign the content -->
+				<keystoreLocation>${keystoreLocation}</keystoreLocation>
+				<keystorePassword>${keystorePassword}</keystorePassword>
+				<includes>
+					<include>**/*.element_info.xml</include>
+				</includes>
+				<packageFileName>o11nplugin-vrslcm-package-${project.version}</packageFileName>
+				<!-- Remove the 'e' below to disable editing before release -->
+				<allowedMask>vef</allowedMask>
+			</configuration>
+		</plugin>
+	</plugins>
+</build>
+
+Run your build process in Eclipse and you should see the contents download

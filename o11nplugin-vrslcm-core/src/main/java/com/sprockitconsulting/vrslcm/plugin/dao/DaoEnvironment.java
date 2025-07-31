@@ -1,25 +1,35 @@
 package com.sprockitconsulting.vrslcm.plugin.dao;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.sprockitconsulting.vrslcm.plugin.products.AbstractProduct;
+import com.sprockitconsulting.vrslcm.plugin.products.ProductNode;
+import com.sprockitconsulting.vrslcm.plugin.products.ProductSnapshot;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductSnapshotRequest;
+import com.sprockitconsulting.vrslcm.plugin.products.ProductSnapshotRequest.Create;
+import com.sprockitconsulting.vrslcm.plugin.products.ProductSnapshotRequest.Delete;
 import com.sprockitconsulting.vrslcm.plugin.products.ProductUpdateCredentialRequest;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Connection;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Credential;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Environment;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
+import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 /**
- * This class contains the data access and manipulation methods for the Environment Service.
+ * This class contains the data access and manipulation methods for the Environment Service and related content, such as Products and their respective Day 2 Actions.
  * @author justin
  */
 @Repository
@@ -27,6 +37,12 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 	
 	// Enable Logging
 	private static final Logger log = LoggerFactory.getLogger(DaoEnvironment.class);
+	
+	@Autowired
+	private EnvironmentService environmentService;
+	
+	// Base URL for snapshot management.
+	private String snapshotInventoryUrl = "/lcm/lcops/api/environments/{environmentId}/products/{productId}/snapshot/inventory";
 
 	public DaoEnvironment() {
 		super();
@@ -65,7 +81,8 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		assignConnectionToObject(connection, env);
 		
 		// Update Product and Product Node IDs
-		env.assignFinderIdValuesToProductsAndNodes();
+		//env.assignFinderIdValuesToProductsAndNodes();
+		assignFinderIdValuesToProductsAndNodes(env);
 		
 		return env;
 	}
@@ -101,30 +118,11 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		return req;
 	}
 	
-	public Request createSnapshotRequest(Connection connection, String environmentId, String productId, String snapshotDescription, String snapshotPrefix, Boolean snapshotMemory, Boolean snapshotShutdown) {
-		Map<String, Object> uriVariables = new HashMap<>();
-		uriVariables.put("id", environmentId);
-		uriVariables.put("productId", productId);
-		String url = URL_GET_BY_VALUE+"/products/{productId}/snapshot/inventory";
-		
-		ProductSnapshotRequest snapshotRequest = new ProductSnapshotRequest(snapshotDescription, snapshotPrefix, snapshotShutdown, snapshotMemory);
-		String snapshotBody = null;
-		try {
-			snapshotBody = vroObjectMapper.writeValueAsString(snapshotRequest);
-		} catch (JsonProcessingException e) {
-			log.error("Unable to create body for the snapshot creation request: "+e.getMessage());
-			e.printStackTrace();
-		}
-		Request req = doApiRequest(connection, "POST", url, snapshotBody, Request.class, uriVariables);
-		assignConnectionToObject(connection, req);
-		return req;
-	}
-	
 	/**
 	 * Environment sync request.
-	 * @param connection
-	 * @param id
-	 * @return
+	 * @param connection The LCM Server Connection
+	 * @param id Environment ID
+	 * @return Environment sync requests - one for each product in the environment
 	 */
 	public List<Request> environmentSyncRequest(Connection connection, String id) {
 		Map<String, Object> uriVariables = new HashMap<>();
@@ -174,5 +172,94 @@ public class DaoEnvironment extends DaoAbstract<Environment> {
 		Request req = doApiRequest(connection, "PUT", url, updateBody, Request.class, uriVariables);
 		assignConnectionToObject(connection, req);
 		return req;
+	}
+	
+	// Snapshot requests.
+	public Request createSnapshotRequest(Connection connection, String environmentId, String productId, String snapshotDescription, String snapshotPrefix, Boolean snapshotMemory, Boolean snapshotShutdown) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("environmentId", environmentId);
+		uriVariables.put("productId", productId);
+		String url = "/lcm/lcops/api/environments/{environmentId}/products/{productId}/snapshot/inventory";
+		
+		// Create a snapshot request as object, which will be turned to a JSON string.
+		ProductSnapshotRequest.Create createRequest = new Create(snapshotDescription, snapshotPrefix, snapshotShutdown, snapshotMemory);
+		String snapshotBody = null;
+		try {
+			snapshotBody = vroObjectMapper.writeValueAsString(createRequest);
+		} catch (JsonProcessingException e) {
+			log.error("Unable to create body for the snapshot creation request: "+e.getMessage());
+			e.printStackTrace();
+		}
+		Request req = doApiRequest(connection, "POST", url, snapshotBody, Request.class, uriVariables);
+		assignConnectionToObject(connection, req);
+		return req;
+	}
+	public List<ProductSnapshot> findProductSnapshots(Connection connection, String environmentId, String productId) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("environmentId", environmentId);
+		uriVariables.put("productId", productId);
+		
+		List<ProductSnapshot> req = Arrays.asList(doApiRequest(connection, "GET", snapshotInventoryUrl, "{}", ProductSnapshot[].class, uriVariables));
+		assignConnectionToList(connection, req);
+		
+		// Assign the environment/product to the return values.
+		req.forEach(snap -> snap.setEnvironmentId(environmentId));
+		req.forEach(snap -> snap.setProductId(productId));
+
+		return req;
+	}
+
+	public Request deleteSnapshotRequest(Connection connection, String environmentId, String productId,	ProductSnapshot snapshot) {
+		Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("environmentId", environmentId);
+		uriVariables.put("productId", productId);
+		
+		// Create a snapshot request as object, which will be turned to a JSON string.
+		ProductSnapshotRequest.Delete deleteRequest = new Delete(snapshot.getResourceId());
+		String snapshotBody = null;
+		try {
+			snapshotBody = vroObjectMapper.writeValueAsString(deleteRequest);
+		} catch (JsonProcessingException e) {
+			log.error("Unable to create body for the snapshot delete request: "+e.getMessage());
+			e.printStackTrace();
+		}
+
+		Request req = doApiRequest(connection, "DELETE", snapshotInventoryUrl, snapshotBody, Request.class, uriVariables);
+		assignConnectionToObject(connection, req);
+		return req;
+	}
+	
+	// Helper and miscellaneous methods
+	
+	/**
+	 * Used to update Product and Node internalId values once the Connection is assigned.
+	 * Since Products and their nodes are directly attached to Environments and not independently manageable, it's not possible to inject services into them otherwise.
+	 * Thus, the environmentService spring bean is assigned using this helper method when the Environment is deserialized.
+	 * @param environment The environment to update prior to returning to the user.
+	 */
+	public void assignFinderIdValuesToProductsAndNodes(Environment environment) {
+
+		for (AbstractProduct product : environment.getProducts()) {
+
+			// Products are unique per Environment/Connection. The 'productId' string used in lookup is handled in the Finder methods.
+			String productInternalId = environment.getResourceId()+"@"+environment.getConnection().getId();
+			product.setInternalId(productInternalId);
+			product.setConnection(environment.getConnection());
+			product.setEnvironmentId(environment.getResourceId());
+			product.setEnvironmentService(environmentService);
+			
+			log.debug("Assigned Internal ID, Connection, Environment ID values to product ["+productInternalId+"]");
+			
+			// Nodes internalId follows this format -- [vmName]:[type]:[product]:[environmentId]@[connectionId]
+			for (ProductNode node : product.getProductNodes()) {
+				String vmName = node.getProductNodeSpec().getNodeProperty("vmName").toString();
+				String nodeInternalId = vmName+":"+node.getType()+":"+product.getProductId()+":"+environment.getResourceId();
+				node.setName(vmName+" - "+node.getType());
+				node.setInternalId(nodeInternalId);
+				node.setConnection(environment.getConnection());
+				node.setEnvironmentService(environmentService);
+				log.debug("Assigned internal ID to node ["+nodeInternalId+"]");
+			}
+		}
 	}
 }

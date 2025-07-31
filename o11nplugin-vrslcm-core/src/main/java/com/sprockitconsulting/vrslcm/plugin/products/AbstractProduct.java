@@ -1,5 +1,9 @@
 package com.sprockitconsulting.vrslcm.plugin.products;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -8,10 +12,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.sprockitconsulting.vrslcm.plugin.scriptable.BaseLifecycleManagerObject;
+import com.sprockitconsulting.vrslcm.plugin.scriptable.Request;
 import com.sprockitconsulting.vrslcm.plugin.services.EnvironmentService;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.vmware.o11n.plugin.sdk.annotation.VsoMethod;
 import com.vmware.o11n.plugin.sdk.annotation.VsoObject;
+import com.vmware.o11n.plugin.sdk.annotation.VsoParam;
 import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
 
 /**
@@ -101,13 +108,16 @@ import com.vmware.o11n.plugin.sdk.annotation.VsoProperty;
     @Type(value = ExtensibilityProxyProduct.class, name = "abxcloudproxy")
 })
 @VsoObject(description = "Represents a Product object in LCM.", create = false)
-public abstract class AbstractProduct extends BaseLifecycleManagerObject {
+public abstract class AbstractProduct extends BaseLifecycleManagerObject implements ISnapshotSupport {
 	
 	private String productId; // api ID - vidm, vra, vrli, vrops, vrni, etc. used in the internal ID
 	private String productVersion;
 	private String name; // Friendly name aka "vRealize Automation", set in extended classes
 	private String environmentId;
 	private EnvironmentService environmentService;
+	
+	// Enable Logging
+	private static final Logger log = LoggerFactory.getLogger(AbstractProduct.class);
 	
 	// Since the 'properties' and 'nodes' of each Product vary widely, these values are exposed via generic methods for Workflow developers to key off of.
 	@JsonUnwrapped
@@ -181,7 +191,28 @@ public abstract class AbstractProduct extends BaseLifecycleManagerObject {
 	public final void setEnvironmentService(EnvironmentService environmentService) {
 		this.environmentService = environmentService;
 	}
-
+	
+	@VsoMethod(description = "Request that LCM create a new Snapshot in vSphere of the Product.")
+	public Request createSnapshot(
+			@VsoParam(description = "Description for the Snapshot")String snapshotDescription, 
+			@VsoParam(description = "Prefix for the Snapshot")String snapshotPrefix, 
+			@VsoParam(description = "Whether or not to snapshot with memory, enabling point in time revert. This parameter is incompatible with 'snapshotShutdown' and will cause a silent failure. Also, some products such as vRA are not compatible with this flag.")Boolean snapshotMemory, 
+			@VsoParam(description = "Whether or not to shut down the VMs prior to snapshot. This parameter is incompatible with 'snapshotMemory' and will cause a silent failure.")Boolean snapshotShutdown) {
+		log.debug("Requesting create snapshot of "+getInternalId());
+		return getEnvironmentService().executeCreateSnapshot(getConnection(), getEnvironmentId(), getProductId(), snapshotDescription, snapshotPrefix, snapshotMemory, snapshotShutdown);
+	}
+	
+	@VsoMethod(description = "Get the snapshots (if any) in use by the Product.")
+	public List<ProductSnapshot> getSnapshots() {
+		return getEnvironmentService().getProductSnapshots(getConnection(), getEnvironmentId(), getProductId());
+	}
+	
+	@VsoMethod(description = "Request that LCM delete the specified snapshot.")
+	public Request deleteSnapshot(
+			@VsoParam(description = "The snapshot on the Product to delete.")ProductSnapshot snapshot) {
+		return getEnvironmentService().executeDeleteSnapshot(getConnection(), getEnvironmentId(), getProductId(), snapshot);
+	}
+	
 	@Override
 	public String toString() {
 		return String.format(

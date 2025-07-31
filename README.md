@@ -1,6 +1,8 @@
-# Lifecycle Manager plugin for vRealize/Aria Orchestrator
+NOTICE: Underlying product is no longer maintained or updated as of VCF 9!
 
-This plugin provides an interface to interact with Lifecycle Manager and its related components.
+# vRealize Suite Lifecycle Manager plugin for Orchestrator
+
+This plugin provides an interface to interact with Lifecycle Manager 8.x and its related components.
 
 Features a fully functional plugin inventory for review and executing actions upon.
 

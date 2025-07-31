@@ -61,6 +61,7 @@ public class IdentityManagerProduct extends AbstractProduct implements IPowerCyc
 		return getEnvironmentService().executePowerOff(this.getConnection(), this.getEnvironmentId(), this.getProductId());
 	}
 	
+	
 	@Override
 	public String toString() {
 		return String.format(
